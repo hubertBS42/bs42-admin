@@ -1,0 +1,15 @@
+.mainWrapper {
+	display: flex;
+	position: relative;
+	font-weight: 300;
+
+	.right {
+		flex-grow: 1;
+		min-height: 100vh;
+		border-left: 1px solid #3c3f43;
+
+		main {
+			padding: 1.5em;
+		}
+	}
+}

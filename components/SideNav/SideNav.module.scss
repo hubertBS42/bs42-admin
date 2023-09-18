@@ -1,0 +1,23 @@
+.mainWrapper {
+	width: max-content;
+	height: 100vh;
+	position: sticky;
+	top: 0;
+
+	.header {
+		padding-left: 1em;
+		height: 55px;
+		display: flex;
+		align-items: center;
+
+		// .logoWrapper {
+		// 	position: relative;
+		// 	width: 130px;
+		// 	height: 30px;
+
+		// 	img {
+		// 		object-fit: contain;
+		// 	}
+		// }
+	}
+}

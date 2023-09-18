@@ -1,0 +1,16 @@
+.pageTitle {
+	font-size: 20px;
+	font-weight: 600;
+	cursor: default;
+	text-transform: capitalize;
+
+	&:hover {
+		color: unset;
+	}
+}
+
+.avatar {
+	font-size: 1em;
+	height: 35px;
+	width: 35px;
+}

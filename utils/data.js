@@ -1,0 +1,18 @@
+export const regions = [
+	{ name: 'Ahafo', capital: 'Goaso' },
+	{ name: 'Ashanti', capital: 'Kumasi' },
+	{ name: 'Bono East', capital: 'Goaso' },
+	{ name: 'Brong Ahafo', capital: 'Sunyani' },
+	{ name: 'Central', capital: 'Cape Coast' },
+	{ name: 'Eastern', capital: 'Koforidua' },
+	{ name: 'Greater Accra', capital: 'Accra' },
+	{ name: 'North East', capital: 'Nalerigu' },
+	{ name: 'Northern', capital: 'Tamale' },
+	{ name: 'Oti', capital: 'Dambai' },
+	{ name: 'Savannah', capital: 'Damongo' },
+	{ name: 'Upper East', capital: 'Bolgatanga' },
+	{ name: 'Upper West', capital: 'Wa' },
+	{ name: 'Western', capital: 'Sekondi-Takoradi' },
+	{ name: 'Western North', capital: 'Sefwi Wiaso' },
+	{ name: 'Volta', capital: 'Ho' },
+]
