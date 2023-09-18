@@ -58,6 +58,10 @@ const SideNav = () => {
 		activePage = '6-1'
 	}
 
+	if (pathname.includes('rate')) {
+		activePage = '6-2'
+	}
+
 	const defaultOpenKeys = activePage.split('-')
 	defaultOpenKeys.pop()
 
@@ -157,6 +161,9 @@ const SideNav = () => {
 								href='/settings/homepage'
 							>
 								Home Page
+							</Nav.Item>
+							<Nav.Item eventKey='6-2' as={NavLink} href='/settings/rate'>
+								Rate
 							</Nav.Item>
 						</Nav.Menu>
 					</Nav>
