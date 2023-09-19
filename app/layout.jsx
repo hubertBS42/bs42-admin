@@ -2,8 +2,8 @@
 import 'rsuite/dist/rsuite.min.css'
 import './globals.scss'
 import { generatePageTitle } from '@/utils/functions'
-import AllProviders from '@/components/Providers/AllProviders'
 import { poppins } from '@/utils/font'
+import AllProviders from '@/components/Providers/AllProviders'
 
 export default function RootLayout({ children }) {
 	const pageTitle = generatePageTitle()
