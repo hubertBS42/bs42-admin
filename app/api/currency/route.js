@@ -1,17 +1,17 @@
-import Rate from '@/models/Rate'
+import Currency from '@/models/Currency'
 import { connectToDB } from '@/utils/database'
 
 export const GET = async request => {
 	try {
 		await connectToDB()
 
-		const rates = await Rate.find().lean()
+		const currencies = await Currency.find().lean()
 
 		return new Response(
 			JSON.stringify({
 				status: 'success',
 				message: null,
-				data: rates,
+				data: currencies,
 			}),
 			{
 				status: 200,

@@ -1,4 +1,4 @@
-import Rate from '@/models/Rate'
+import Currency from '@/models/Currency'
 import { connectToDB } from '@/utils/database'
 import { NextResponse } from 'next/server'
 
@@ -9,14 +9,14 @@ export const POST = async (request, { params }) => {
 	try {
 		await connectToDB()
 
-		const rate = await Rate.create(data)
+		const currency = await Currency.create(data)
 
-		if (rate) {
+		if (currency) {
 			return new NextResponse(
 				JSON.stringify({
 					status: 'success',
 					message: null,
-					data: rate,
+					data: currency,
 				}),
 				{ status: 201 }
 			)

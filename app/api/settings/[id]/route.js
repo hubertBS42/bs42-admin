@@ -1,4 +1,4 @@
-import Rate from '@/models/Rate'
+import Setting from '@/models/Setting'
 import { connectToDB } from '@/utils/database'
 import { NextResponse } from 'next/server'
 
@@ -10,13 +10,13 @@ export const PATCH = async (request, { params }) => {
 	try {
 		await connectToDB()
 
-		await Rate.findOneAndUpdate({ _id: id }, data)
+		await Setting.findOneAndUpdate({ _id: id }, data)
 
 		return new NextResponse(
 			JSON.stringify({
 				status: 'success',
 				data: null,
-				message: 'Rate was updated successfully.',
+				message: 'Setting was updated successfully.',
 			}),
 			{ status: 200 }
 		)

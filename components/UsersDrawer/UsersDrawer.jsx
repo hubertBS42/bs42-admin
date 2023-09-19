@@ -97,8 +97,8 @@ const UsersDrawer = () => {
 			setFormValue(prev => {
 				return {
 					...prev,
-					firstName: user.firstName,
-					lastName: user.lastName,
+					firstName: user.firstName || '',
+					lastName: user.lastName || '',
 					email: user.email,
 					phone1: user.phone1,
 					phone2: user.phone2,

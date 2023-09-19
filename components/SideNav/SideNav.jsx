@@ -54,12 +54,8 @@ const SideNav = () => {
 		activePage = '5'
 	}
 
-	if (pathname.includes('homepage')) {
-		activePage = '6-1'
-	}
-
-	if (pathname.includes('rate')) {
-		activePage = '6-2'
+	if (pathname.includes('settings')) {
+		activePage = '6'
 	}
 
 	const defaultOpenKeys = activePage.split('-')
@@ -154,18 +150,14 @@ const SideNav = () => {
 							Blogs
 						</Nav.Item>
 
-						<Nav.Menu eventKey='6' title='Settings' icon={<GearIcon />}>
-							<Nav.Item
-								eventKey='6-1'
-								as={NavLink}
-								href='/settings/homepage'
-							>
-								Home Page
-							</Nav.Item>
-							<Nav.Item eventKey='6-2' as={NavLink} href='/settings/rate'>
-								Rate
-							</Nav.Item>
-						</Nav.Menu>
+						<Nav.Item
+							as={NavLink}
+							eventKey='6'
+							icon={<GearIcon />}
+							href='/settings'
+						>
+							Settings
+						</Nav.Item>
 					</Nav>
 				</Sidenav.Body>
 				<Sidenav.Toggle onToggle={expanded => setExpanded(expanded)} />
