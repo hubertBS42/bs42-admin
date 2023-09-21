@@ -82,6 +82,7 @@ const SignInForm = () => {
 					type='email'
 					label='Email Address'
 					accepter={Input}
+					autoFocus
 				/>
 				<PasswordField
 					name='password'
