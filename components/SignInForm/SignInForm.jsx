@@ -93,6 +93,7 @@ const SignInForm = () => {
 					appearance='primary'
 					disabled={loading}
 					loading={loading}
+					type='submit'
 				>
 					Sign in
 				</Button>
