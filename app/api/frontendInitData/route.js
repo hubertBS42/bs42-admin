@@ -1,7 +1,9 @@
 import Product from '@/models/Product'
 import Brand from '@/models/Brand'
+import Currency from '@/models/Currency'
 import Category from '@/models/Category'
 import { connectToDB } from '@/utils/database'
+import Setting from '@/models/Setting'
 
 export const GET = async request => {
 	try {
@@ -31,21 +33,34 @@ export const GET = async request => {
 			.select('name slug parent images isActive')
 			.lean()
 
+		const fetchSettingsQuery = Setting.find()
+			.collation({ locale: 'en' })
+			.sort({ createdAt: 'desc' })
+			.limit(1)
+			.populate({
+				path: 'exchangeRate.currency',
+				model: 'Currency',
+				select: '-exchangeRateHistory',
+			})
+			.lean()
+
 		const fetchBrandsQuery = Brand.find()
 			.collation({ locale: 'en' })
 			.sort({ name: 'asc' })
 			.select('-description -updatedAt')
 			.lean()
 
-		const [products, categories, brands] = await Promise.all([
+		const [products, categories, settings, brands] = await Promise.all([
 			fetchProductsQuery,
 			fetchCategoriesQuery,
+			fetchSettingsQuery,
 			fetchBrandsQuery,
 		])
 
 		const data = {
 			products,
 			categories,
+			settings,
 			brands,
 		}
 
