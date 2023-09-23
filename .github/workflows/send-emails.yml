@@ -3,7 +3,6 @@ name: Send emails as a test
 on:
  schedule:
   - cron: '*/2 * * * *' #Schedule to run every 2 minutes
- workflow_dispatch:
 
 jobs:
  send-email:
