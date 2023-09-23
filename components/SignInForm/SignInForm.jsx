@@ -33,7 +33,8 @@ const SignInForm = () => {
 		password: '',
 	})
 
-	const handleSubmit = async () => {
+	const handleSubmit = async e => {
+		e.preventDefault()
 		if (
 			!formRef.current.check() ||
 			formValue.email === '' ||
