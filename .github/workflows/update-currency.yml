@@ -1,0 +1,25 @@
+name: Update system's currency rate
+
+on:
+ schedule:
+  - cron: '0 0 * * *' #Schedule to run at  00:00 every day
+
+jobs:
+ send-email:
+  runs-on: ubuntu-latest
+
+  steps:
+   - name: Checkout Repository
+     uses: actions/checkout@v2
+
+   - name: Set Up Node.js
+     uses: actions/setup-node@v2
+     with:
+      node-version: '18.x'
+
+   - name: Install Dependencies
+     run: npm install
+
+   - name: Fetch and store current rate
+     run: |
+      curl -X GET https://portal.bs42.net/api/updateCurrentRate

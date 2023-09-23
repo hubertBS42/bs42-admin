@@ -10,10 +10,10 @@ const CurrencySchema = new mongoose.Schema(
 		abbreviation: { type: String, required: true, default: 'USD' },
 		country: { type: String, required: true, default: 'United States' },
 		symbol: { type: String, required: true, default: '$' },
-		exchangeRateHistory: [
+		history: [
 			{
-				currencyRate: { type: Number, required: true },
-				downloadDate: { type: Date, default: Date.now },
+				rate: { type: Number, required: true },
+				timestamp: { type: Date, default: Date.now },
 			},
 		],
 	},
