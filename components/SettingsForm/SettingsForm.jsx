@@ -4,8 +4,6 @@ import {
 	Button,
 	Col,
 	Form,
-	Grid,
-	Input,
 	InputNumber,
 	Panel,
 	Row,
@@ -79,84 +77,101 @@ const SettingsForm = ({ data }) => {
 			toast.success('Settings were updated successfully.')
 			return
 		}
-		console.log(message)
 		toast.error('Failed to to update settings.')
 	}
+
+	const handleChange = checked => {
+		if (!checked) {
+			const selectedCurrency = data.currencies.find(
+				currency => currency._id === formValue.currency
+			)
+			const currentRate = selectedCurrency.history[0].rate
+
+			setFormValue(prev => {
+				return { ...prev, currentRate }
+			})
+		}
+	}
+
 	return (
-		<Form
-			ref={formRef}
-			onChange={setFormValue}
-			onCheck={setFormError}
-			formValue={formValue}
-			model={model}
-			fluid
-			disabled={loading}
-		>
-			<Stack direction='column' alignItems='stretch' spacing={20}>
-				<Stack justifyContent='flex-end'>
-					<Button
-						onClick={handleSubmit}
-						appearance='primary'
-						startIcon={<CheckIcon />}
-						loading={loading}
-						disabled={loading}
+		<>
+			<Form
+				ref={formRef}
+				onChange={setFormValue}
+				onCheck={setFormError}
+				formValue={formValue}
+				model={model}
+				fluid
+				disabled={loading}
+			>
+				<Stack direction='column' alignItems='stretch' spacing={20}>
+					<Stack justifyContent='flex-end'>
+						<Button
+							onClick={handleSubmit}
+							appearance='primary'
+							startIcon={<CheckIcon />}
+							loading={loading}
+							disabled={loading}
+						>
+							Save
+						</Button>
+					</Stack>
+
+					<Panel header='Homepage Carousel' bordered></Panel>
+
+					<Panel
+						header={
+							<Stack justifyContent='space-between'>
+								<span>Exchange Rate</span>
+								<div style={{ width: '120px' }}>
+									<CustomToggle
+										accepter={Toggle}
+										name='manualOverride'
+										label='Manual'
+										onChange={handleChange}
+									/>
+								</div>
+							</Stack>
+						}
+						bordered
 					>
-						Save
-					</Button>
-				</Stack>
-
-				<Panel header='Homepage Carousel' bordered></Panel>
-
-				<Panel
-					header={
-						<Stack justifyContent='space-between'>
-							<span>Exchange Rate</span>
-							<div style={{ width: '120px' }}>
-								<CustomToggle
-									accepter={Toggle}
-									name='manualOverride'
-									label='Manual'
+						<Row style={{ marginBottom: 25 }}>
+							<Col xs={24}>
+								<Field
+									name='currency'
+									label='Currency'
+									accepter={SelectPicker}
+									error={formError.currency}
+									data={currencies}
+									disabled
 								/>
-							</div>
-						</Stack>
-					}
-					bordered
-				>
-					<Row style={{ marginBottom: 25 }}>
-						<Col xs={24}>
-							<Field
-								name='currency'
-								label='Currency'
-								accepter={SelectPicker}
-								error={formError.currency}
-								data={currencies}
-							/>
-						</Col>
-					</Row>
-					<Row style={{ marginBottom: 15 }}>
-						<Col xs={22}>
-							<Field
-								name='currentRate'
-								label='Current Rate'
-								accepter={InputNumber}
-								error={formError.currentRate}
-								disabled={!formValue.manualOverride}
-							/>
-						</Col>
-						<Col xs={2}>
-							<Button
-								appearance='primary'
-								size='md'
-								style={{ marginTop: 22 }}
-								block
-							>
-								<HistoryIcon />
-							</Button>
-						</Col>
-					</Row>
-				</Panel>
-			</Stack>
-		</Form>
+							</Col>
+						</Row>
+						<Row style={{ marginBottom: 15 }}>
+							<Col xs={22}>
+								<Field
+									name='currentRate'
+									label='Current Rate'
+									accepter={InputNumber}
+									error={formError.currentRate}
+									disabled={!formValue.manualOverride}
+								/>
+							</Col>
+							<Col xs={2}>
+								<Button
+									appearance='primary'
+									size='md'
+									style={{ marginTop: 22 }}
+									block
+								>
+									<HistoryIcon />
+								</Button>
+							</Col>
+						</Row>
+					</Panel>
+				</Stack>
+			</Form>
+		</>
 	)
 }
 export default SettingsForm

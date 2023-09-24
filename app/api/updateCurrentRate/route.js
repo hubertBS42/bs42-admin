@@ -30,6 +30,19 @@ export const GET = async request => {
 
 		await data.save()
 
+		if (!settings[0].exchangeRate.manualOverride) {
+			const newSetting = {
+				carouselSlides: settings[0].carouselSlides,
+				exchangeRate: {
+					currency: settings[0].exchangeRate.currency,
+					currentRate: rates.GHS,
+					manualOverride: settings[0].exchangeRate.manualOverride,
+				},
+			}
+
+			await Setting.create(newSetting)
+		}
+
 		return new Response(
 			JSON.stringify({
 				status: 'success',

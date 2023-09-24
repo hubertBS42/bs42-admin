@@ -1,18 +1,15 @@
 'use client'
 import SettingsForm from '@/components/SettingsForm/SettingsForm'
 import { fetcher } from '@/utils/functions'
-import { useEffect, useState } from 'react'
+import { use } from 'react'
 
+const loadData = async () => {
+	const { data } = await fetcher('/api/settings')
+	return data
+}
 const SettingsPage = () => {
-	const [data, setData] = useState(null)
-	useEffect(() => {
-		const loadData = async () => {
-			const { data } = await fetcher('/api/settings')
-			setData(data)
-		}
+	const data = use(loadData())
 
-		loadData()
-	}, [])
 	return <>{data && <SettingsForm data={data} />}</>
 }
 export default SettingsPage

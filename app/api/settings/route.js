@@ -18,7 +18,6 @@ export const GET = async request => {
 		const fetchCurrenciesQuery = Currency.find()
 			.collation({ locale: 'en' })
 			.sort({ country: 'asc' })
-			.select('-exchangeRateHistory')
 			.lean()
 
 		const [settings, currencies] = await Promise.all([
