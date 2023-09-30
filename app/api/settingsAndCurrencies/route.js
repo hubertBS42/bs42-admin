@@ -30,16 +30,9 @@ export const GET = async request => {
 			currencies,
 		}
 
-		return new Response(
-			JSON.stringify({
-				status: 'success',
-				message: null,
-				data,
-			}),
-			{
-				status: 200,
-			}
-		)
+		return new Response(JSON.stringify(data), {
+			status: 200,
+		})
 	} catch (error) {
 		return new Response(
 			JSON.stringify({
