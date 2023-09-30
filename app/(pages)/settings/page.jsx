@@ -10,7 +10,7 @@
 // }
 
 const SettingsPage = async () => {
-	const data = await loadData()
+	// const data = await loadData()
 	// return <SettingsForm data={data} />
 	return <>hello</>
 }
