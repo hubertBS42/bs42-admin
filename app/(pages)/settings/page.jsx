@@ -4,10 +4,9 @@ import { fetcher } from '@/utils/functions'
 import { use } from 'react'
 
 const loadData = async () => {
-	const { data } = await fetcher(
-		`${process.env.NEXT_PUBLIC_HOST}/api/settingsAndCurrencies`,
-		{ cache: 'no-store' }
-	)
+	const { data } = await fetcher('/api/settingsAndCurrencies', {
+		cache: 'no-store',
+	})
 	return data
 }
 
