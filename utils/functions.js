@@ -127,3 +127,9 @@ export const getUnassignedResources = (resources, permissions) => {
 
 	return results
 }
+
+export const roundMoney = amount => {
+	const roundedAmount =
+		Math.round(amount * Math.pow(10, 2)) / Math.pow(10, 2)
+	return roundedAmount.toFixed(2)
+}

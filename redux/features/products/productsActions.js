@@ -1,5 +1,6 @@
 import { fetcher } from '@/utils/functions'
 import {
+	setCurrentRate,
 	setDisabledProducts,
 	setLoading,
 	setProducts,
@@ -29,7 +30,14 @@ export const loadData = async () => {
 	const {
 		status,
 		message,
-		data: { products, disabledProducts, count, categories, brands },
+		data: {
+			products,
+			currentRate,
+			disabledProducts,
+			count,
+			categories,
+			brands,
+		},
 	} = await fetcher('/api/products')
 
 	if (status === 'error') {
@@ -38,6 +46,7 @@ export const loadData = async () => {
 	}
 
 	dispatch(setProducts(products))
+	dispatch(setCurrentRate(currentRate))
 	dispatch(setProductsCount(count))
 	dispatch(setDisabledProducts(disabledProducts))
 	dispatch(setAllCategories(categories))

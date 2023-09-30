@@ -12,6 +12,8 @@ import {
 import styles from './page.module.scss'
 import ProductsDrawer from '@/components/ProductsDrawer/ProductsDrawer'
 import DisabledProductsNotification from '@/components/DisabledProductsNotification/DisabledProductsNotification'
+import { useSelector } from 'react-redux'
+import { getCurrentRate } from '@/redux/features/products/productsSlice'
 
 const ProductsPage = () => {
 	const handleDelete = async data => {
@@ -22,11 +24,14 @@ const ProductsPage = () => {
 		loadData()
 	}, [])
 
+	let currentRate = useSelector(getCurrentRate)
+	currentRate = currentRate[0]?.exchangeRate.currentRate
+
 	return (
 		<div className={styles.mainWrapper}>
 			<DisabledProductsNotification />
 			<ProductsTable />
-			<ProductsDrawer />
+			<ProductsDrawer currentRate={currentRate} />
 			<DeleteModal handleDelete={handleDelete} />
 		</div>
 	)

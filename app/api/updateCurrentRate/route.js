@@ -21,7 +21,8 @@ export const GET = async request => {
 		const id = currency._id
 
 		const { rates } = await fetcher(
-			`https://openexchangerates.org/api/latest.json?app_id=a2e14f92bd4447dfb27a4c43234cacd8&base=${abbreviation}`
+			`https://openexchangerates.org/api/latest.json?app_id=a2e14f92bd4447dfb27a4c43234cacd8&base=${abbreviation}`,
+			{ cache: 'no-store' }
 		)
 
 		const data = await Currency.findById(id)
@@ -40,7 +41,7 @@ export const GET = async request => {
 				},
 			}
 
-			await Setting.create(newSetting)
+			await Setting.findByIdAndUpdate(settings[0]._id, newSetting)
 		}
 
 		return new Response(

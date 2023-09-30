@@ -10,13 +10,15 @@ export const PATCH = async (request, { params }) => {
 	try {
 		await connectToDB()
 
-		await Setting.findOneAndUpdate({ _id: id }, data)
+		const setting = await Setting.findOneAndUpdate({ _id: id }, data, {
+			new: true,
+		})
 
 		return new NextResponse(
 			JSON.stringify({
 				status: 'success',
-				data: null,
-				message: 'Setting was updated successfully.',
+				data: setting,
+				message: 'Settings was updated successfully.',
 			}),
 			{ status: 200 }
 		)

@@ -5,7 +5,10 @@ export const GET = async request => {
 	try {
 		await connectToDB()
 
-		const currencies = await Currency.find().lean()
+		const currencies = await Currency.find()
+			.collation({ locale: 'en' })
+			.sort({ country: 'asc' })
+			.lean()
 
 		return new Response(
 			JSON.stringify({

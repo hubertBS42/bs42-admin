@@ -2,6 +2,7 @@ import { createSlice } from '@reduxjs/toolkit'
 
 const initialState = {
 	products: [],
+	currentRate: 0,
 	disabledProducts: [],
 	count: 0,
 	isLoading: false,
@@ -14,6 +15,9 @@ const productsSlice = createSlice({
 		setProducts: (state, action) => {
 			state.products = action.payload
 			state.isLoading = false
+		},
+		setCurrentRate: (state, action) => {
+			state.currentRate = action.payload
 		},
 		setProductsCount: (state, action) => {
 			state.count = action.payload
@@ -29,6 +33,7 @@ const productsSlice = createSlice({
 })
 
 export const selectAllProducts = state => state.products.products
+export const getCurrentRate = state => state.products.currentRate
 export const selectAllDisabledProducts = state =>
 	state.products.disabledProducts
 export const getProductsCount = state => state.products.count
@@ -37,6 +42,7 @@ export const getProductsLoadingState = state =>
 
 export const {
 	setProducts,
+	setCurrentRate,
 	setProductsCount,
 	setDisabledProducts,
 	setLoading,

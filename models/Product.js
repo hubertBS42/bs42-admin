@@ -22,7 +22,7 @@ const ProductSchema = new mongoose.Schema(
 				max: { type: Number, default: 0 },
 				price: { type: Number, default: 0 },
 				resellerPrice: { type: Number, default: 0 },
-				id: { type: String },
+				index: { type: String },
 			},
 		],
 		images: [
@@ -57,7 +57,7 @@ const ProductSchema = new mongoose.Schema(
 			{
 				question: { type: String, trim: true },
 				answer: { type: String, trim: true },
-				id: { type: String },
+				index: { type: String },
 			},
 		],
 		unitsSold: { type: Number, default: 0 },

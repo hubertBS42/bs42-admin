@@ -38,6 +38,7 @@ import TextEditor from '../TextEditor/TextEditor'
 import {
 	formatCategoriesForTreePicker,
 	formatData,
+	roundMoney,
 } from '@/utils/functions'
 import QuantityPresets from '../QuantityPresets/QuantityPresets'
 import FileUploader from '../FileUploader/FileUploader'
@@ -66,7 +67,7 @@ const model = Schema.Model({
 	discount: NumberType(),
 })
 
-const ProductsDrawer = () => {
+const ProductsDrawer = ({ currentRate }) => {
 	const dispatch = useDispatch()
 
 	const formRef = useRef()
@@ -120,7 +121,7 @@ const ProductsDrawer = () => {
 					sellPrice: product.sellPrice,
 					resellerPrice: product.resellerPrice,
 					isQuantityPreset: product.isQuantityPreset,
-					quantityPresets: product.quantityPresets,
+					quantityPresets: product.quantityPresets || [],
 					images: product.images,
 					countInStock: product.countInStock,
 					category: product.category === null ? '' : product.category,
@@ -397,7 +398,7 @@ const ProductsDrawer = () => {
 							bordered
 						>
 							<Row style={{ marginBottom: '1.4em' }}>
-								<Col xs={24}>
+								<Col xs={12}>
 									<Field
 										name='buyPrice'
 										label='Buy Price'
@@ -405,6 +406,17 @@ const ProductsDrawer = () => {
 										error={formError.buyPrice}
 										min={0}
 										prefix='$'
+										postfix={`@ ${currentRate}`}
+									/>
+								</Col>
+								<Col xs={12}>
+									<Field
+										name='buyPriceCedisEquiv'
+										label='Buy Price'
+										accepter={InputNumber}
+										value={roundMoney(formValue.buyPrice * currentRate)}
+										prefix='GHS'
+										readOnly
 									/>
 								</Col>
 							</Row>
@@ -412,7 +424,7 @@ const ProductsDrawer = () => {
 							{!formValue.isQuantityPreset && (
 								<>
 									<Row style={{ marginBottom: '1.4em' }}>
-										<Col xs={24}>
+										<Col xs={12}>
 											<Field
 												name='sellPrice'
 												label='Sell Price'
@@ -420,12 +432,23 @@ const ProductsDrawer = () => {
 												error={formError.sellPrice}
 												min={0}
 												prefix='$'
+												postfix={`@ ${currentRate}`}
+											/>
+										</Col>
+										<Col xs={12}>
+											<Field
+												name='sellPriceCedisEquiv'
+												label='Sell Price'
+												accepter={InputNumber}
+												value={roundMoney(formValue.sellPrice * currentRate)}
+												prefix='GHS'
+												readOnly
 											/>
 										</Col>
 									</Row>
 
 									<Row style={{ marginBottom: '1.4em' }}>
-										<Col xs={24}>
+										<Col xs={12}>
 											<Field
 												name='resellerPrice'
 												label='Reseller Price'
@@ -433,6 +456,17 @@ const ProductsDrawer = () => {
 												error={formError.resellerPrice}
 												min={0}
 												prefix='$'
+												postfix={`@ ${currentRate}`}
+											/>
+										</Col>
+										<Col xs={12}>
+											<Field
+												name='resellerPriceCedisEquiv'
+												label='Reseller Price'
+												accepter={InputNumber}
+												value={roundMoney(formValue.resellerPrice * currentRate)}
+												prefix='GHS'
+												readOnly
 											/>
 										</Col>
 									</Row>

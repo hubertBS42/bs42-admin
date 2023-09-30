@@ -2,6 +2,7 @@ import Product from '@/models/Product'
 import Brand from '@/models/Brand'
 import Category from '@/models/Category'
 import { connectToDB } from '@/utils/database'
+import Setting from '@/models/Setting'
 
 export const GET = async request => {
 	const { searchParams } = new URL(request.url)
@@ -23,6 +24,13 @@ export const GET = async request => {
 				model: 'Brand',
 				select: 'name',
 			})
+			.lean()
+
+		const fetchCurrentRateQuery = Setting.find()
+			.collation({ locale: 'en' })
+			.sort({ createdAt: 'desc' })
+			.limit(1)
+			.select('exchangeRate.currentRate')
 			.lean()
 
 		const fetchDisabledProductsQuery = Product.find({
@@ -51,17 +59,25 @@ export const GET = async request => {
 			.select('name isActive')
 			.lean()
 
-		const [products, disabledProducts, count, categories, brands] =
-			await Promise.all([
-				fetchProductsQuery,
-				fetchDisabledProductsQuery,
-				getCountQuery,
-				fetchCategoriesQuery,
-				fetchBrandsQuery,
-			])
+		const [
+			products,
+			currentRate,
+			disabledProducts,
+			count,
+			categories,
+			brands,
+		] = await Promise.all([
+			fetchProductsQuery,
+			fetchCurrentRateQuery,
+			fetchDisabledProductsQuery,
+			getCountQuery,
+			fetchCategoriesQuery,
+			fetchBrandsQuery,
+		])
 
 		const data = {
 			products,
+			currentRate,
 			disabledProducts,
 			count,
 			categories,

@@ -1,24 +1,14 @@
 'use client'
 
-import {
-	Button,
-	Col,
-	Form,
-	InputNumber,
-	Panel,
-	Row,
-	Schema,
-	SelectPicker,
-	Stack,
-	Toggle,
-} from 'rsuite'
+import { Button, Form, Schema, Stack } from 'rsuite'
 import CheckIcon from '@rsuite/icons/Check'
-import HistoryIcon from '@rsuite/icons/History'
 import { useRef, useState } from 'react'
-import CustomToggle from '../CustomToggle/CustomToggle'
-import Field from '../Field/Field'
-import { fetcher } from '@/utils/functions'
+import ExchangeRateSettings from '../ExchangeRateSettings/ExchangeRateSettings'
 import { toast } from 'react-toastify'
+import { fetcher } from '@/utils/functions'
+import CarouselSlidesTable from '../CarouselSlidesTable/CarouselSlidesTable'
+import CarouselSlidesDrawer from '../CarouselSlidesDrawer/CarouselSlidesDrawer'
+import { updateImages } from '@/utils/azure'
 
 const { StringType, ArrayType, NumberType } = Schema.Types
 
@@ -32,21 +22,83 @@ const model = Schema.Model({
 })
 
 const SettingsForm = ({ data }) => {
+	const { settings, currencies } = data
 	const formRef = useRef()
 	const [formError, setFormError] = useState({})
 	const [loading, setLoading] = useState(false)
+	const [imagesToBeDeleted, setImagesToBeDeleted] = useState([])
 	const [formValue, setFormValue] = useState({
-		carouselSlides: data.settings[0]?.carouselSlides || [],
-		currency: data.settings[0]?.exchangeRate?.currency._id,
-		currentRate: data.settings[0]?.exchangeRate?.currentRate || 1,
-		manualOverride:
-			data.settings[0]?.exchangeRate?.manualOverride || false,
+		carouselSlides: settings[0]?.carouselSlides || [],
+		currency: settings[0]?.exchangeRate?.currency._id,
+		currentRate: settings[0]?.exchangeRate?.currentRate || 1,
+		manualOverride: settings[0]?.exchangeRate?.manualOverride || false,
 	})
 
-	const currencies = data.currencies.map(currency => ({
-		label: currency.name + ' ' + currency.symbol,
-		value: currency._id,
-	}))
+	const toggleManualOverride = checked => {
+		if (!checked) {
+			const selectedCurrency = currencies.find(
+				currency => currency._id === formValue.currency
+			)
+			const currentRate = selectedCurrency.history[0].rate
+			setFormValue(prev => {
+				return { ...prev, currentRate }
+			})
+		}
+	}
+
+	const addImagesToBeDeleted = name => {
+		setImagesToBeDeleted(prev => {
+			return [...prev, name]
+		})
+	}
+
+	const addSlide = data => {
+		setFormValue(prev => {
+			return { ...prev, carouselSlides: [...prev.carouselSlides, data] }
+		})
+	}
+
+	const editSlide = data => {
+		const { imageToBeDeleted, ...slideData } = data
+
+		let updatedSlides
+		if (slideData.image[0].hasOwnProperty('blobFile')) {
+			updatedSlides = formValue.carouselSlides.map(slide => {
+				if (slide.index === slideData.index) {
+					return { ...slideData, image: slideData.image }
+				}
+				return slide
+			})
+		} else {
+			updatedSlides = formValue.carouselSlides.map(slide => {
+				if (slide.index === slideData.index) {
+					return { ...slideData, image: slideData.image[0] }
+				}
+				return slide
+			})
+		}
+
+		setImagesToBeDeleted(prev => {
+			return [...prev, ...imageToBeDeleted]
+		})
+
+		setFormValue(prev => {
+			return { ...prev, carouselSlides: updatedSlides }
+		})
+	}
+
+	const deleteSlide = data => {
+		const updatedSlides = formValue.carouselSlides.filter(
+			slide => slide.index !== data.index
+		)
+
+		if (data.image?.name) {
+			addImagesToBeDeleted(data.image.name)
+		}
+		setFormValue(prev => {
+			return { ...prev, carouselSlides: updatedSlides }
+		})
+	}
 
 	const handleSubmit = async () => {
 		if (!formRef.current.check()) {
@@ -55,8 +107,35 @@ const SettingsForm = ({ data }) => {
 
 		setLoading(true)
 
+		let newSlides = formValue.carouselSlides.filter(slide =>
+			Array.isArray(slide.image)
+		)
+
+		let currentSlides = formValue.carouselSlides.filter(
+			slide => !Array.isArray(slide.image)
+		)
+
+		let imagesToBeUploaded = []
+
+		if (newSlides.length > 0) {
+			const images = newSlides.map(slide => slide.image[0].blobFile)
+
+			imagesToBeUploaded = images
+		}
+
+		const uploadedImages = await updateImages(
+			imagesToBeUploaded,
+			imagesToBeDeleted
+		)
+
+		const updatedNewSlides = newSlides.map((slide, i) => {
+			return { ...slide, image: uploadedImages[i] }
+		})
+
+		const preparedSlides = [...currentSlides, ...updatedNewSlides]
+
 		const preparedData = {
-			carouselSlides: formValue.carouselSlides,
+			carouselSlides: preparedSlides,
 			exchangeRate: {
 				currency: formValue.currency,
 				currentRate: Number(formValue.currentRate),
@@ -64,34 +143,32 @@ const SettingsForm = ({ data }) => {
 			},
 		}
 
-		const { status, message } = await fetcher('/api/settings/add', {
-			method: 'POST',
-			body: JSON.stringify(preparedData),
-			headers: {
-				'Content-type': 'application/json; charset=UTF-8',
-			},
-		})
-		setLoading(false)
+		const { status, message, data } = await fetcher(
+			`/api/settings/${settings[0]._id}`,
+			{
+				method: 'PATCH',
+				body: JSON.stringify(preparedData),
+				headers: {
+					'Content-type': 'application/json; charset=UTF-8',
+				},
+			}
+		)
 
+		setLoading(false)
 		if (status === 'success') {
+			setFormValue(prev => {
+				return { ...prev, ...data }
+			})
+			setImagesToBeDeleted([])
 			toast.success('Settings were updated successfully.')
 			return
 		}
 		toast.error('Failed to to update settings.')
 	}
 
-	const handleChange = checked => {
-		if (!checked) {
-			const selectedCurrency = data.currencies.find(
-				currency => currency._id === formValue.currency
-			)
-			const currentRate = selectedCurrency.history[0].rate
-
-			setFormValue(prev => {
-				return { ...prev, currentRate }
-			})
-		}
-	}
+	// const handleDelete = async data => {
+	// 	await deleteBrand(data)
+	// }
 
 	return (
 		<>
@@ -117,58 +194,23 @@ const SettingsForm = ({ data }) => {
 						</Button>
 					</Stack>
 
-					<Panel header='Homepage Carousel' bordered></Panel>
-
-					<Panel
-						header={
-							<Stack justifyContent='space-between'>
-								<span>Exchange Rate</span>
-								<div style={{ width: '120px' }}>
-									<CustomToggle
-										accepter={Toggle}
-										name='manualOverride'
-										label='Manual'
-										onChange={handleChange}
-									/>
-								</div>
-							</Stack>
-						}
-						bordered
-					>
-						<Row style={{ marginBottom: 25 }}>
-							<Col xs={24}>
-								<Field
-									name='currency'
-									label='Currency'
-									accepter={SelectPicker}
-									error={formError.currency}
-									data={currencies}
-									disabled
-								/>
-							</Col>
-						</Row>
-						<Row style={{ marginBottom: 15 }}>
-							<Col xs={22}>
-								<Field
-									name='currentRate'
-									label='Current Rate'
-									accepter={InputNumber}
-									error={formError.currentRate}
-									disabled={!formValue.manualOverride}
-								/>
-							</Col>
-							<Col xs={2}>
-								<Button
-									appearance='primary'
-									size='md'
-									style={{ marginTop: 22 }}
-									block
-								>
-									<HistoryIcon />
-								</Button>
-							</Col>
-						</Row>
-					</Panel>
+					<CarouselSlidesTable
+						data={formValue}
+						deleteSlide={deleteSlide}
+					/>
+					{/* <DeleteModal handleDelete={handleDelete} /> */}
+					<CarouselSlidesDrawer
+						data={formValue}
+						settings={settings}
+						addSlide={addSlide}
+						editSlide={editSlide}
+					/>
+					<ExchangeRateSettings
+						currencies={currencies}
+						handleChange={toggleManualOverride}
+						formError={formError}
+						formValue={formValue}
+					/>
 				</Stack>
 			</Form>
 		</>

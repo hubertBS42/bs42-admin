@@ -15,7 +15,7 @@ import { nanoid } from '@reduxjs/toolkit'
 import TextArea from '../TextArea/TextArea'
 
 const FAQs = ({ faqs, setFormValue }) => {
-	const id = nanoid()
+	const index = nanoid()
 
 	const addFaq = () => {
 		setFormValue(prev => {
@@ -23,7 +23,7 @@ const FAQs = ({ faqs, setFormValue }) => {
 				...prev,
 				faqs: [
 					{
-						id,
+						index,
 						question: '',
 						answer: '',
 					},
@@ -33,16 +33,23 @@ const FAQs = ({ faqs, setFormValue }) => {
 		})
 	}
 
-	const handleDelete = id => {
-		const filtered = faqs.filter(faq => faq.id !== id)
+	const handleDelete = index => {
+		const filtered = faqs.filter(faq => faq.index !== index)
 		setFormValue(prev => {
 			return { ...prev, faqs: filtered }
 		})
 	}
 
-	const handleChange = (value, i, name) => {
-		const newData = [...faqs]
-		newData[i][name] = value
+	const handleChange = (value, index, name) => {
+		const newData = faqs.map(faq => {
+			if (faq.index === index) {
+				return {
+					...faq,
+					[name]: value,
+				}
+			}
+			return faq
+		})
 		setFormValue(prev => {
 			return { ...prev, faqs: newData }
 		})
@@ -66,15 +73,17 @@ const FAQs = ({ faqs, setFormValue }) => {
 		>
 			{faqs.length > 0 ? (
 				<PanelGroup>
-					{faqs.map((faq, index) => (
-						<Panel key={faq.id}>
+					{faqs.map(faq => (
+						<Panel key={faq.index}>
 							<Row style={{ marginBottom: '1.2em' }}>
 								<Col xs={24}>
 									<label style={{ fontSize: 13 }}>Question:</label>
 									<Input
 										name='question'
 										label='Question'
-										onChange={(val, e) => handleChange(val, index, 'question')}
+										onChange={(val, e) =>
+											handleChange(val, faq.index, 'question')
+										}
 										defaultValue={faq.question}
 										style={{ marginTop: '.3em' }}
 									/>
@@ -87,7 +96,9 @@ const FAQs = ({ faqs, setFormValue }) => {
 									<TextArea
 										name='answer'
 										label='Answer'
-										onChange={(val, e) => handleChange(val, index, 'answer')}
+										onChange={(val, e) =>
+											handleChange(val, faq.index, 'answer')
+										}
 										defaultValue={faq.answer}
 										style={{ marginTop: '.3em' }}
 									/>
@@ -100,7 +111,7 @@ const FAQs = ({ faqs, setFormValue }) => {
 									appearance='link'
 									color='red'
 									circle
-									onClick={() => handleDelete(faq.id)}
+									onClick={() => handleDelete(faq.index)}
 								/>
 							</Stack>
 						</Panel>

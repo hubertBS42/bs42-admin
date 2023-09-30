@@ -40,7 +40,7 @@ export const GET = async request => {
 			.populate({
 				path: 'exchangeRate.currency',
 				model: 'Currency',
-				select: '-exchangeRateHistory',
+				select: '-history',
 			})
 			.lean()
 

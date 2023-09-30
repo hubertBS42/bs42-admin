@@ -6,6 +6,7 @@ const SettingSchema = new mongoose.Schema(
 			{
 				title: { type: String, required: true, trim: true },
 				description: { type: String, required: true, trim: true },
+				index: { type: String, required: true, trim: true },
 				image: {
 					name: { type: String, required: true },
 					url: { type: String, required: true },

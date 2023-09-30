@@ -1,12 +1,11 @@
 import Setting from '@/models/Setting'
-import Currency from '@/models/Currency'
 import { connectToDB } from '@/utils/database'
 
 export const GET = async request => {
 	try {
 		await connectToDB()
 
-		const fetchSettingsQuery = Setting.find()
+		const settings = await Setting.find()
 			.collation({ locale: 'en' })
 			.sort({ createdAt: 'desc' })
 			.populate({
@@ -15,26 +14,11 @@ export const GET = async request => {
 			})
 			.lean()
 
-		const fetchCurrenciesQuery = Currency.find()
-			.collation({ locale: 'en' })
-			.sort({ country: 'asc' })
-			.lean()
-
-		const [settings, currencies] = await Promise.all([
-			fetchSettingsQuery,
-			fetchCurrenciesQuery,
-		])
-
-		const data = {
-			settings,
-			currencies,
-		}
-
 		return new Response(
 			JSON.stringify({
 				status: 'success',
 				message: null,
-				data,
+				data: settings,
 			}),
 			{
 				status: 200,

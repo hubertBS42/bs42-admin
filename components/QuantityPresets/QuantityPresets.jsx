@@ -14,28 +14,36 @@ import { nanoid } from '@reduxjs/toolkit'
 
 const QuantityPresets = ({ data, setFormValue }) => {
 	const handleClick = () => {
-		const id = nanoid()
+		const index = nanoid()
 		setFormValue(prev => {
 			return {
 				...prev,
 				quantityPresets: [
 					...data,
-					{ min: 0, max: 0, price: 0, resellerPrice: 0, id },
+					{ min: 0, max: 0, price: 0, resellerPrice: 0, index },
 				],
 			}
 		})
 	}
 
-	const handleDelete = id => {
-		const filtered = data.filter(preset => preset.id !== id)
+	const handleDelete = index => {
+		const filtered = data.filter(preset => preset.index !== index)
 		setFormValue(prev => {
 			return { ...prev, quantityPresets: filtered }
 		})
 	}
 
-	const handleChange = (value, i, name) => {
-		const newData = [...data]
-		newData[i][name] = value
+	const handleChange = (value, index, name) => {
+		const newData = data.map(preset => {
+			if (preset.index === index) {
+				return {
+					...preset,
+					[name]: Number(value),
+				}
+			}
+			return preset
+		})
+
 		setFormValue(prev => {
 			return { ...prev, quantityPresets: newData }
 		})
@@ -72,15 +80,15 @@ const QuantityPresets = ({ data, setFormValue }) => {
 						</Col>
 					</Row>
 				</List.Item>
-				{data.map((preset, i) => (
-					<List.Item key={preset.id}>
+				{data?.map(preset => (
+					<List.Item key={preset.index}>
 						<Row style={{ fontSize: 12 }}>
 							<Col xs={5}>
 								<InputNumber
 									name='min'
 									min={0}
 									defaultValue={preset.min}
-									onChange={(val, e) => handleChange(val, i, 'min')}
+									onChange={(val, e) => handleChange(val, preset.index, 'min')}
 									size='sm'
 								/>
 							</Col>
@@ -89,7 +97,7 @@ const QuantityPresets = ({ data, setFormValue }) => {
 									name='max'
 									min={0}
 									defaultValue={preset.max}
-									onChange={(val, e) => handleChange(val, i, 'max')}
+									onChange={(val, e) => handleChange(val, preset.index, 'max')}
 									size='sm'
 								/>
 							</Col>
@@ -98,7 +106,9 @@ const QuantityPresets = ({ data, setFormValue }) => {
 									name='price'
 									min={0}
 									defaultValue={preset.price}
-									onChange={(val, e) => handleChange(val, i, 'price')}
+									onChange={(val, e) =>
+										handleChange(val, preset.index, 'price')
+									}
 									prefix='$'
 									size='sm'
 								/>
@@ -108,7 +118,9 @@ const QuantityPresets = ({ data, setFormValue }) => {
 									name='resellerPrice'
 									min={0}
 									defaultValue={preset.resellerPrice}
-									onChange={(val, e) => handleChange(val, i, 'resellerPrice')}
+									onChange={(val, e) =>
+										handleChange(val, preset.index, 'resellerPrice')
+									}
 									prefix='$'
 									size='sm'
 								/>
@@ -125,7 +137,7 @@ const QuantityPresets = ({ data, setFormValue }) => {
 									size='xs'
 									appearance='primary'
 									color='red'
-									onClick={() => handleDelete(preset.id)}
+									onClick={() => handleDelete(preset.index)}
 									disabled={data.length === 1}
 									style={{ marginTop: 4 }}
 								/>
