@@ -4,9 +4,7 @@ import { fetcher } from '@/utils/functions'
 import { use } from 'react'
 
 const loadData = async () => {
-	const { data } = await fetcher('/api/settingsAndCurrencies', {
-		cache: 'no-store',
-	})
+	const { data } = await fetcher('/api/settingsAndCurrencies')
 	return data
 }
 
