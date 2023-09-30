@@ -1,10 +1,10 @@
 import { BlobServiceClient } from '@azure/storage-blob'
 
-// const picturesContainer = 'pictures'
-const picturesContainer = 'testpictures'
-const filesContainer = 'testfiles'
+const picturesContainer = 'pictures'
+// const picturesContainer = 'testpictures'
+// const filesContainer = 'testfiles'
 const vidoesContainer = 'videos'
-// const filesContainer = 'files'
+const filesContainer = 'files'
 
 const storageName =
 	process.env.NEXT_PUBLIC_AZURE_STORAGE_RESOURCE_NAME
