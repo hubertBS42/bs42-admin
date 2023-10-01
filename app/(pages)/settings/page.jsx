@@ -5,7 +5,6 @@ import useSWR from 'swr'
 
 const SettingsPage = () => {
 	const { data, error } = useSWR('/api/settingsAndCurrencies', fetcher)
-	console.log(data)
 
 	return <>{data && <SettingsForm data={data} />}</>
 }

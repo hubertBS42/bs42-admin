@@ -6,7 +6,6 @@ import TrashIcon from '@rsuite/icons/Trash'
 import EditIcon from '@rsuite/icons/Edit'
 import PlusIcon from '@rsuite/icons/Plus'
 import Status from '../Status/Status'
-import { setModalOpen } from '@/redux/features/modal/modalSlice'
 
 const CarouselSlidesTable = ({ data, deleteSlide }) => {
 	const { Column, HeaderCell, Cell } = Table
