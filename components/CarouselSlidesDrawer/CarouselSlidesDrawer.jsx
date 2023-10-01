@@ -33,6 +33,8 @@ const { StringType, ArrayType } = Schema.Types
 
 const model = Schema.Model({
 	title: StringType().isRequired('You must provide a title.'),
+	ctaLabel: StringType().isRequired('You must provide a CTA label.'),
+	ctaURL: StringType().isRequired('You must provide a CTA URL.'),
 	description: StringType().isRequired(
 		'You must provide a description.'
 	),
@@ -42,12 +44,7 @@ const model = Schema.Model({
 	),
 })
 
-const CarouselSlidesDrawer = ({
-	data,
-	settings,
-	addSlide,
-	editSlide,
-}) => {
+const CarouselSlidesDrawer = ({ addSlide, editSlide }) => {
 	const dispatch = useDispatch()
 	const formRef = useRef()
 	const [formError, setFormError] = useState({})
@@ -55,6 +52,8 @@ const CarouselSlidesDrawer = ({
 	const [formValue, setFormValue] = useState({
 		title: '',
 		description: '',
+		ctaLabel: '',
+		ctaURL: '',
 		image: [],
 		isActive: true,
 	})
@@ -71,6 +70,8 @@ const CarouselSlidesDrawer = ({
 				return {
 					...prev,
 					title: slide.title,
+					ctaLabel: slide.cta.label,
+					ctaURL: slide.cta.url,
 					description: slide.description,
 					image: slide.image ? [slide.image] : [],
 					isActive: slide.isActive,
@@ -79,6 +80,8 @@ const CarouselSlidesDrawer = ({
 		} else {
 			setFormValue({
 				title: '',
+				ctaLabel: '',
+				ctaURL: '',
 				description: '',
 				image: [],
 				isActive: true,
@@ -92,22 +95,34 @@ const CarouselSlidesDrawer = ({
 		if (!formRef.current.check()) {
 			return
 		}
+
 		dispatch(setDrawerClose())
 
 		if (isEditing) {
 			//update
+			const { ctaLabel, ctaURL, ...rest } = formValue
 			const slideData = {
-				...formValue,
+				...rest,
+				cta: {
+					label: ctaLabel,
+					url: ctaURL,
+				},
 				imageToBeDeleted,
 				index: slide.index,
 			}
 			editSlide(slideData)
 		} else {
 			//add
+			const { ctaLabel, ctaURL, ...rest } = formValue
 			const slideData = {
-				...formValue,
+				...rest,
+				cta: {
+					label: ctaLabel,
+					url: ctaURL,
+				},
 				index,
 			}
+			console.log(slideData)
 			addSlide(slideData)
 		}
 	}
@@ -188,6 +203,29 @@ const CarouselSlidesDrawer = ({
 								/>
 							</Col>
 						</Row>
+
+						<Row style={{ marginBottom: '1.4em' }}>
+							<Col xs={24}>
+								<Field
+									name='ctaLabel'
+									label='CTA Label'
+									accepter={Input}
+									error={formError.ctaLabel}
+								/>
+							</Col>
+						</Row>
+
+						<Row style={{ marginBottom: '1.4em' }}>
+							<Col xs={24}>
+								<Field
+									name='ctaURL'
+									label='CTA URL'
+									accepter={Input}
+									error={formError.ctaURL}
+								/>
+							</Col>
+						</Row>
+
 						<Row>
 							<Col xs={24}>
 								<ImagesUploader

@@ -48,7 +48,7 @@ const ExhangeRateSettings = ({
 						accepter={SelectPicker}
 						error={formError.currency}
 						data={formattedCurrencies}
-						readOnly
+						// readOnly
 					/>
 				</Col>
 			</Row>
