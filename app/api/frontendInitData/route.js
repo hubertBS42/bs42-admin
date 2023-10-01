@@ -6,6 +6,7 @@ import { connectToDB } from '@/utils/database'
 import Setting from '@/models/Setting'
 
 export const GET = async request => {
+	const { searchParams } = new URL(request.url)
 	try {
 		await connectToDB()
 
