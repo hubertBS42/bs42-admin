@@ -6,7 +6,8 @@ import EyeSlashIcon from '@rsuite/icons/legacy/EyeSlash'
 
 // eslint-disable-next-line react/display-name
 const PasswordField = React.forwardRef((props, ref) => {
-	const { name, message, label, accepter, error, ...rest } = props
+	const { name, message, label, accepter, error, size, ...rest } =
+		props
 
 	const [visible, setVisible] = useState(false)
 
@@ -29,8 +30,12 @@ const PasswordField = React.forwardRef((props, ref) => {
 					errorMessage={error}
 					autoComplete='off'
 					style={{ width: '100%' }}
+					size={size}
 				/>
-				<InputGroup.Button onClick={handleChange}>
+				<InputGroup.Button
+					onClick={handleChange}
+					style={{ padding: size && '20px 15px' }}
+				>
 					{visible ? <EyeIcon /> : <EyeSlashIcon />}
 				</InputGroup.Button>
 			</InputGroup>

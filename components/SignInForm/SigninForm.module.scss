@@ -1,8 +1,46 @@
-.panel {
-	width: 100%;
-	max-width: 500px;
+// .panel {
+// 	width: 100%;
+// 	max-width: 500px;
 
-	h3 {
-		font-weight: 400;
+// 	h3 {
+// 		font-weight: 400;
+// 	}
+// }
+
+.mainWrapper {
+	width: 100%;
+	max-width: 1000px;
+
+	.innerWrapper {
+		display: flex;
+		align-items: center;
+
+		.left {
+			padding: 1.5em;
+			img {
+				margin-bottom: 1.5em;
+			}
+
+			.heading {
+				margin-bottom: 0.5em;
+				font-weight: 500;
+				font-size: 38px;
+				text-align: center;
+			}
+		}
+
+		.right {
+			.imageWrapper {
+				position: relative;
+				width: 100%;
+				height: 600px;
+				overflow: hidden;
+				border-radius: 10px;
+
+				img {
+					object-fit: cover;
+				}
+			}
+		}
 	}
 }
