@@ -1,6 +1,6 @@
-'use client'
+import Stats from '@/components/Stats/Stats'
 
 const Dashboard = () => {
-	return <div>Dashboard</div>
+	return <>{/* <Stats /> */}</>
 }
 export default Dashboard

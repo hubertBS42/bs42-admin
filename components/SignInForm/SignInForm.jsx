@@ -20,6 +20,7 @@ import { useRouter } from 'next/navigation'
 import { toast } from 'react-toastify'
 import Image from 'next/image'
 import logo from 'public/images/logo-collapsed.png'
+import loginImage from 'public/images/dashboard.jpg'
 
 const { StringType } = Schema.Types
 
@@ -79,7 +80,14 @@ const SignInForm = () => {
 			<Row className={styles.innerWrapper}>
 				<Col xs={12} className={styles.left}>
 					<center>
-						<Image src={logo} alt='logo' height={80} width={80} />
+						<Image
+							src={logo}
+							alt='logo'
+							height={80}
+							width={80}
+							placeholder='blur'
+							priority
+						/>
 					</center>
 					<h1 className={styles.heading}>Portal Login</h1>
 					<Form
@@ -121,7 +129,13 @@ const SignInForm = () => {
 				</Col>
 				<Col xs={12} className={styles.right}>
 					<div className={styles.imageWrapper}>
-						<Image src='/images/dashboard.jpg' alt='' fill priority />
+						<Image
+							src={loginImage}
+							alt=''
+							fill
+							priority
+							placeholder='blur'
+						/>
 					</div>
 				</Col>
 			</Row>
