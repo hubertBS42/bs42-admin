@@ -15,13 +15,13 @@ import { nanoid } from '@reduxjs/toolkit'
 
 const DeliveryAddresses = ({ addresses, setFormValue, regions }) => {
 	const handleAdd = () => {
-		const id = nanoid()
+		const index = nanoid()
 		setFormValue(prev => {
 			return {
 				...prev,
 				deliveryAddresses: [
 					{
-						id,
+						index,
 						streetName: '',
 						digitalAddress: '',
 						area: '',
@@ -34,16 +34,18 @@ const DeliveryAddresses = ({ addresses, setFormValue, regions }) => {
 		})
 	}
 
-	const handleDelete = id => {
-		const filtered = addresses.filter(address => address.id !== id)
+	const handleDelete = index => {
+		const filtered = addresses.filter(
+			address => address.index !== index
+		)
 		setFormValue(prev => {
 			return { ...prev, deliveryAddresses: filtered }
 		})
 	}
 
-	const handleChange = (value, id, name) => {
+	const handleChange = (value, index, name) => {
 		const newData = addresses.map(address => {
-			if (address.id === id) {
+			if (address.index === index) {
 				return {
 					...address,
 					[name]: value,
@@ -81,15 +83,15 @@ const DeliveryAddresses = ({ addresses, setFormValue, regions }) => {
 						rowGap: '1.5em',
 					}}
 				>
-					{addresses.map((address, index) => (
-						<Panel key={address.id} bordered>
+					{addresses.map(address => (
+						<Panel key={address.index} bordered>
 							<Row style={{ marginBottom: '1.2em' }}>
 								<Col xs={24}>
 									<label style={{ fontSize: 13 }}>Street name</label>
 									<Input
 										name='streetName'
 										onChange={(val, e) =>
-											handleChange(val, address.id, 'streetName')
+											handleChange(val, address.index, 'streetName')
 										}
 										defaultValue={address.streetName}
 										style={{ marginTop: '.3em' }}
@@ -102,7 +104,9 @@ const DeliveryAddresses = ({ addresses, setFormValue, regions }) => {
 									<label style={{ fontSize: 13 }}>Area</label>
 									<Input
 										name='area'
-										onChange={(val, e) => handleChange(val, address.id, 'area')}
+										onChange={(val, e) =>
+											handleChange(val, address.index, 'area')
+										}
 										defaultValue={address.area}
 										style={{ marginTop: '.3em' }}
 									/>
@@ -115,7 +119,7 @@ const DeliveryAddresses = ({ addresses, setFormValue, regions }) => {
 									<SelectPicker
 										name='region'
 										onChange={(val, e) =>
-											handleChange(val, address.id, 'region')
+											handleChange(val, address.index, 'region')
 										}
 										value={address.region}
 										data={regions}
@@ -131,7 +135,7 @@ const DeliveryAddresses = ({ addresses, setFormValue, regions }) => {
 									<Input
 										name='digitalAddress'
 										onChange={(val, e) =>
-											handleChange(val, index, 'digitalAddress')
+											handleChange(val, address.index, 'digitalAddress')
 										}
 										defaultValue={address.digitalAddress}
 										style={{ marginTop: '.3em' }}
@@ -145,7 +149,7 @@ const DeliveryAddresses = ({ addresses, setFormValue, regions }) => {
 									appearance='link'
 									color='red'
 									circle
-									onClick={() => handleDelete(address.id)}
+									onClick={() => handleDelete(address.index)}
 								/>
 							</Stack>
 						</Panel>

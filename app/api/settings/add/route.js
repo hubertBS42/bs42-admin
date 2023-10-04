@@ -2,7 +2,6 @@ import Setting from '@/models/Setting'
 import { connectToDB } from '@/utils/database'
 import { NextResponse } from 'next/server'
 
-//PATCH
 export const POST = async (request, { params }) => {
 	const data = await request.json()
 

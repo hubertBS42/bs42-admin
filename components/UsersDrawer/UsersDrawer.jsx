@@ -52,6 +52,13 @@ const model = Schema.Model({
 	rDigitalAddress: StringType(),
 	rArea: StringType(),
 	rRegion: StringType(),
+	cName: StringType(),
+	cPhone: StringType(),
+	website: StringType(),
+	cStreetName: StringType(),
+	cDigitalAddress: StringType(),
+	cArea: StringType(),
+	cRegion: StringType(),
 	notes: StringType(),
 	profileImg: ArrayType(),
 	password: StringType().isRequired('You must provide a password.'),
@@ -75,12 +82,21 @@ const UsersDrawer = () => {
 		rDigitalAddress: '',
 		rArea: '',
 		rRegion: '',
+		cName: '',
+		cPhone: '',
+		website: '',
+		cStreetName: '',
+		cDigitalAddress: '',
+		cArea: '',
+		cRegion: '',
 		deliveryAddresses: [],
 		profileImg: [],
 		password: '',
 		role: '',
 		notes: '',
 		isActive: true,
+		isApproved: false,
+		canReceiveEmails: true,
 	})
 
 	const isOpen = useSelector(getDrawerOpenState)
@@ -106,12 +122,21 @@ const UsersDrawer = () => {
 					rDigitalAddress: user?.residentialAddress?.digitalAddress || '',
 					rArea: user?.residentialAddress?.area || '',
 					rRegion: user?.residentialAddress?.region || '',
+					cName: user?.company?.name || '',
+					cPhone: user?.company?.phone || '',
+					website: user?.company?.website || '',
+					cStreetName: user?.company?.address.streetName || '',
+					cDigitalAddress: user?.company?.address.digitalAddress || '',
+					cArea: user?.company?.address.area || '',
+					cRegion: user?.company?.address.region || '',
 					deliveryAddresses: user.deliveryAddresses,
 					password: 'default',
 					role: user.role._id,
 					profileImg: user.profileImg ? [user.profileImg] : [],
 					notes: user.notes,
-					isActive: true,
+					isActive: user.isActive,
+					isApproved: user.isApproved,
+					canReceiveEmails: user.canReceiveEmails,
 				}
 			})
 		} else {
@@ -126,11 +151,20 @@ const UsersDrawer = () => {
 				rArea: '',
 				rRegion: '',
 				deliveryAddresses: [],
+				cName: '',
+				cPhone: '',
+				website: '',
+				cStreetName: '',
+				cDigitalAddress: '',
+				cArea: '',
+				cRegion: '',
 				profileImg: [],
 				password: '',
 				role: '',
 				notes: '',
 				isActive: true,
+				isApproved: false,
+				canReceiveEmails: true,
 			})
 		}
 
@@ -197,12 +231,37 @@ const UsersDrawer = () => {
 					fluid
 					disabled={isLoading}
 				>
-					<div style={{ width: '80px', marginBottom: '1.5em' }}>
-						<CustomToggle
-							accepter={Toggle}
-							name='isActive'
-							label='Active'
-						/>
+					<div
+						style={{
+							marginBottom: '1.5em',
+							display: 'flex',
+							columnGap: '1em',
+							justifyContent: 'flex-end',
+						}}
+					>
+						<div>
+							<CustomToggle
+								accepter={Toggle}
+								name='isActive'
+								label='Active'
+							/>
+						</div>
+
+						<div>
+							<CustomToggle
+								accepter={Toggle}
+								name='isApproved'
+								label='Approved'
+							/>
+						</div>
+
+						<div>
+							<CustomToggle
+								accepter={Toggle}
+								name='canReceiveEmails'
+								label='Emails'
+							/>
+						</div>
 					</div>
 
 					<Panel
@@ -316,6 +375,90 @@ const UsersDrawer = () => {
 									noOfImages={formValue.profileImg.length}
 									disabled={formValue.profileImg.length === 1}
 									onRemove={grabRemovedImage}
+								/>
+							</Col>
+						</Row>
+					</Panel>
+
+					<Panel
+						header='Company Information'
+						bordered
+						style={{ marginBottom: '1.8em' }}
+					>
+						<Row style={{ marginBottom: '1.4em' }}>
+							<Col xs={23}>
+								<Field
+									name='cName'
+									label='Name'
+									accepter={Input}
+									error={formError.cName}
+								/>
+							</Col>
+						</Row>
+
+						<Row style={{ marginBottom: '1.4em' }}>
+							<Col xs={24}>
+								<Field
+									name='cPhone'
+									label='Phone Number'
+									accepter={Input}
+									error={formError.cPhone}
+								/>
+							</Col>
+						</Row>
+
+						<Row style={{ marginBottom: '1.4em' }}>
+							<Col xs={24}>
+								<Field
+									name='website'
+									label='Website'
+									accepter={Input}
+									error={formError.website}
+								/>
+							</Col>
+						</Row>
+
+						<Row style={{ marginBottom: '1.4em' }}>
+							<Col xs={24}>
+								<Field
+									name='cStreetName'
+									label='Street Name'
+									accepter={Input}
+									error={formError.cStreetName}
+								/>
+							</Col>
+						</Row>
+
+						<Row style={{ marginBottom: '1.4em' }}>
+							<Col xs={24}>
+								<Field
+									name='cDigitalAdddress'
+									label='Digital Address'
+									accepter={Input}
+									error={formError.cDigitalAdddress}
+								/>
+							</Col>
+						</Row>
+
+						<Row style={{ marginBottom: '1.4em' }}>
+							<Col xs={24}>
+								<Field
+									name='cArea'
+									label='Area'
+									accepter={Input}
+									error={formError.cArea}
+								/>
+							</Col>
+						</Row>
+
+						<Row style={{ marginBottom: '1.4em' }}>
+							<Col xs={24}>
+								<Field
+									name='cRegion'
+									label='Region'
+									accepter={SelectPicker}
+									error={formError.cRegion}
+									data={formattedRegions}
 								/>
 							</Col>
 						</Row>

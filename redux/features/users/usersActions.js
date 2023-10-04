@@ -175,8 +175,21 @@ export const createUser = async data => {
 			area: data.rArea,
 			region: data.rRegion,
 		},
+		company: {
+			name: data.cName,
+			phone: data.cPhone,
+			website: data.website,
+			address: {
+				streetName: data.cStreetName,
+				digitalAddress: data.cDigitalAddress,
+				area: data.cArea,
+				region: data.cRegion,
+			},
+		},
 		profileImg: uploadedProfileImg,
 	}
+
+	console.log(preparedData)
 
 	const { status, message } = await fetcher('/api/users/add', {
 		method: 'POST',
@@ -242,6 +255,17 @@ export const updateUser = async (user, data, imageToBeDeleted) => {
 				area: data.rArea,
 				region: data.rRegion,
 			},
+			company: {
+				name: data.cName,
+				phone: data.cPhone,
+				website: data.website,
+				address: {
+					streetName: data.cStreetName,
+					digitalAddress: data.cDigitalAddress,
+					area: data.cArea,
+					region: data.cRegion,
+				},
+			},
 			profileImg: imageToBeDeleted.length > 0 ? null : user.profileImg,
 			password:
 				data.password === 'default' ? user.password : data.password,
@@ -254,6 +278,17 @@ export const updateUser = async (user, data, imageToBeDeleted) => {
 				digitalAddress: data.rDigitalAddress,
 				area: data.rArea,
 				region: data.rRegion,
+			},
+			company: {
+				name: data.cName,
+				phone: data.cPhone,
+				website: data.website,
+				address: {
+					streetName: data.cStreetName,
+					digitalAddress: data.cDigitalAddress,
+					area: data.cArea,
+					region: data.cRegion,
+				},
 			},
 			profileImg: uploadedProfileImg,
 			password:

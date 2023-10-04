@@ -26,7 +26,7 @@ const UserSchema = new mongoose.Schema(
 				digitalAddress: { type: String },
 				area: { type: String },
 				region: { type: String },
-				id: { type: String },
+				index: { type: String },
 				isActive: { type: Boolean, default: false },
 			},
 		],
@@ -34,13 +34,26 @@ const UserSchema = new mongoose.Schema(
 			name: { type: String },
 			url: { type: String },
 		},
-		password: { type: String, required: true },
+		password: { type: String, default: 'default' },
 		role: {
 			type: mongoose.Schema.Types.ObjectId,
 			ref: 'Role',
 		},
+		company: {
+			name: { type: String, default: null },
+			phone: { type: String, default: null },
+			website: { type: String, default: null },
+			address: {
+				streetName: { type: String, default: null },
+				digitalAddress: { type: String, default: null },
+				area: { type: String, default: null },
+				region: { type: String, default: null },
+			},
+		},
 		notes: { type: String },
+		isApproved: { type: Boolean, default: false },
 		isActive: { type: Boolean, default: true },
+		canReceiveEmails: { type: Boolean, default: true },
 	},
 	{ timestamps: true }
 )

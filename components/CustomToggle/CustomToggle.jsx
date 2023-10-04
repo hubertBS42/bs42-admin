@@ -29,7 +29,6 @@ const CustomToggle = React.forwardRef((props, ref) => {
 					marginLeft: '5px',
 					fontWeight: '400',
 					fontSize: '14px',
-					width: '600px',
 				}}
 			>
 				{label}
