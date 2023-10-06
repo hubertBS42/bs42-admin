@@ -66,7 +66,7 @@ const SignInForm = () => {
 
 		if (status.error !== null) {
 			setLoading(false)
-			toast.error('Incorrect login details.')
+			toast.error(status.error.split(':')[1])
 		} else {
 			router.push('/')
 		}

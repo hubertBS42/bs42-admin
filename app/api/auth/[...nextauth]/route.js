@@ -14,31 +14,36 @@ const handler = NextAuth({
 			async authorize(credentials, req) {
 				try {
 					await connectToDB()
-					const user = await User.findOne({
-						email: credentials.email,
-					})
-						.populate({
-							path: 'role',
-							model: 'Role',
-							select: '_id',
-							populate: {
-								path: 'permissions.resource',
-								model: 'Resource',
-								select: '_id',
-							},
-						})
-						.select('firstName lastName email password role')
-						.lean()
-
-					if (!user) throw new Error('Incorrect login details')
-
-					const isPasswordCorrect = await compare(
-						credentials.password,
-						user.password
+					const user = await User.authUser(
+						credentials.email,
+						credentials.password
 					)
 
-					if (!isPasswordCorrect || user.email !== credentials.email)
-						throw new Error('Incorrect login details.')
+					// const user = await User.findOne({
+					// 	email: credentials.email,
+					// })
+					// 	.populate({
+					// 		path: 'role',
+					// 		model: 'Role',
+					// 		select: '_id',
+					// 		populate: {
+					// 			path: 'permissions.resource',
+					// 			model: 'Resource',
+					// 			select: '_id',
+					// 		},
+					// 	})
+					// 	.select('firstName lastName email password role')
+					// 	.lean()
+
+					// if (!user) throw new Error('Incorrect login details')
+
+					// const isPasswordCorrect = await compare(
+					// 	credentials.password,
+					// 	user.password
+					// )
+
+					// if (!isPasswordCorrect || user.email !== credentials.email)
+					// 	throw new Error('Incorrect login details.')
 
 					return user
 				} catch (error) {

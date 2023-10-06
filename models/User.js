@@ -1,5 +1,6 @@
 import { hash } from 'bcryptjs'
 import mongoose from 'mongoose'
+import { compare } from 'bcryptjs'
 
 const UserSchema = new mongoose.Schema(
 	{
@@ -59,6 +60,56 @@ const UserSchema = new mongoose.Schema(
 	{ timestamps: true }
 )
 
+UserSchema.methods.toJSON = function () {
+	const user = this.toObject()
+
+	delete user.password
+
+	return user
+}
+
+UserSchema.statics.authUser = async function (email, password) {
+	if (!email || !password) {
+		throw new Error('Email and password is required to login')
+	}
+
+	const user = await User.findOne({ email })
+		.populate({
+			path: 'role',
+			model: 'Role',
+			select: '_id',
+			populate: {
+				path: 'permissions.resource',
+				model: 'Resource',
+				select: '_id',
+			},
+		})
+		.select(
+			'firstName lastName email password isActive isApproved role'
+		)
+		.lean()
+
+	if (!user) {
+		throw new Error('Incorrect login details.')
+	}
+
+	const validPassword = await compare(password, user.password)
+
+	if (!validPassword) {
+		throw new Error('Incorrect login details.')
+	}
+
+	if (user.isApproved === false) {
+		throw new Error('This account has not been approved yet.')
+	}
+
+	if (!user.isActive) {
+		throw new Error('This account is not active.')
+	}
+
+	return user
+}
+
 // Hash the plain text password before saving
 UserSchema.pre('save', async function (next) {
 	const user = this
@@ -70,5 +121,7 @@ UserSchema.pre('save', async function (next) {
 	next()
 })
 
-export default mongoose.models.User ||
-	mongoose.model('User', UserSchema)
+const User =
+	mongoose.models.User || mongoose.model('User', UserSchema)
+
+export default User
