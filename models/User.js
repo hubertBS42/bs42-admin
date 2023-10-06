@@ -1,6 +1,8 @@
 import { hash } from 'bcryptjs'
 import mongoose from 'mongoose'
 import { compare } from 'bcryptjs'
+import Role from './Role'
+import Resource from './Resource'
 
 const UserSchema = new mongoose.Schema(
 	{
@@ -60,14 +62,6 @@ const UserSchema = new mongoose.Schema(
 	{ timestamps: true }
 )
 
-UserSchema.methods.toJSON = function () {
-	const user = this.toObject()
-
-	delete user.password
-
-	return user
-}
-
 UserSchema.statics.authUser = async function (email, password) {
 	if (!email || !password) {
 		throw new Error('Email and password is required to login')
@@ -77,11 +71,11 @@ UserSchema.statics.authUser = async function (email, password) {
 		.populate({
 			path: 'role',
 			model: 'Role',
-			select: '_id',
+			select: 'title',
 			populate: {
 				path: 'permissions.resource',
 				model: 'Resource',
-				select: '_id',
+				select: 'name',
 			},
 		})
 		.select(
@@ -106,6 +100,8 @@ UserSchema.statics.authUser = async function (email, password) {
 	if (!user.isActive) {
 		throw new Error('This account is not active.')
 	}
+
+	delete user.password
 
 	return user
 }

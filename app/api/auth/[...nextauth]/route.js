@@ -1,10 +1,7 @@
 import NextAuth from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
-import { compare } from 'bcryptjs'
 import { connectToDB } from '@/utils/database'
 import User from '@/models/User'
-import Role from '@/models/Role'
-import Resource from '@/models/Resource'
 
 const handler = NextAuth({
 	providers: [
@@ -19,32 +16,6 @@ const handler = NextAuth({
 						credentials.password
 					)
 
-					// const user = await User.findOne({
-					// 	email: credentials.email,
-					// })
-					// 	.populate({
-					// 		path: 'role',
-					// 		model: 'Role',
-					// 		select: '_id',
-					// 		populate: {
-					// 			path: 'permissions.resource',
-					// 			model: 'Resource',
-					// 			select: '_id',
-					// 		},
-					// 	})
-					// 	.select('firstName lastName email password role')
-					// 	.lean()
-
-					// if (!user) throw new Error('Incorrect login details')
-
-					// const isPasswordCorrect = await compare(
-					// 	credentials.password,
-					// 	user.password
-					// )
-
-					// if (!isPasswordCorrect || user.email !== credentials.email)
-					// 	throw new Error('Incorrect login details.')
-
 					return user
 				} catch (error) {
 					throw new Error(error)
@@ -53,12 +24,6 @@ const handler = NextAuth({
 		}),
 	],
 	session: {
-		// Choose how you want to save the user session.
-		// The default is `"jwt"`, an encrypted JWT (JWE) stored in the session cookie.
-		// If you use an `adapter` however, we default it to `"database"` instead.
-		// You can still force a JWT session by explicitly defining `"jwt"`.
-		// When using `"database"`, the session cookie will only contain a `sessionToken` value,
-		// which is used to look up the session in the database.
 		strategy: 'jwt',
 
 		// Seconds - How long until an idle session expires and is no longer valid.
@@ -80,7 +45,7 @@ const handler = NextAuth({
 			if (user)
 				return {
 					...token,
-					role: user?.role,
+					role: user?.role?.title,
 					firstName: user?.firstName,
 					lastName: user?.lastName,
 				}
