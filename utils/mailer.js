@@ -7,13 +7,13 @@ export async function sendMail(subject, toEmail, otpText) {
 		secure: true,
 		auth: {
 			// TODO: replace `user` and `pass` values from <https://forwardemail.net>
-			user: 'hubert@attelecoms.co.uk',
-			pass: 'HQSowah18',
+			user: process.env.NEXT_PUBLIC_SMTP_USER,
+			pass: process.env.NEXT_PUBLIC_SMTP_PASSWORD,
 		},
 	})
 
 	var mailOptions = {
-		from: 'hubert@attelecoms.co.uk',
+		from: process.env.NEXT_PUBLIC_SMTP_USER,
 		to: toEmail,
 		subject: subject,
 		text: otpText,
@@ -23,7 +23,6 @@ export async function sendMail(subject, toEmail, otpText) {
 		if (error) {
 			throw new Error(error)
 		} else {
-			console.log('Email Sent')
 			return true
 		}
 	})
