@@ -48,6 +48,7 @@ const handler = NextAuth({
 					role: user?.role?.title,
 					firstName: user?.firstName,
 					lastName: user?.lastName,
+					profileImg: user?.profileImg?.url || null,
 				}
 			return token
 		},

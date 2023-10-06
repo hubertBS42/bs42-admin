@@ -79,7 +79,7 @@ UserSchema.statics.authUser = async function (email, password) {
 			},
 		})
 		.select(
-			'firstName lastName email password isActive isApproved role'
+			'firstName lastName email password isActive isApproved role profileImg'
 		)
 		.lean()
 
