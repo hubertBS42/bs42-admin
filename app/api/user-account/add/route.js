@@ -8,7 +8,7 @@ export const POST = async request => {
 
 	try {
 		await connectToDB()
-		const newUser = await User.create(data)
+		const newUser = await User.create({ ...data, isActive: false })
 
 		if (!newUser) throw new Error('Failed to create user.')
 
@@ -19,8 +19,7 @@ export const POST = async request => {
 			},
 			subject: 'Account Registration',
 			toEmail: newUser.email,
-			message:
-				'Your application has been received. We will need to verify your details before your account is enabled and we may need to contact you for more information.',
+			message: `Hello ${newUser.firstName}, we have received your application. We will need to verify your details before your account is enabled and we may need to contact you for more information.`,
 		})
 
 		return new NextResponse(
