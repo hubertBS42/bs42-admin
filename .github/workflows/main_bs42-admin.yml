@@ -42,6 +42,12 @@ jobs:
      with:
       node-version: ${{ env.NODE_VERSION }}
 
+   - name: npm install, build, and test
+     run: |
+      npm install
+      npm run build --if-present
+      npm run test --if-present
+
    - uses: actions/cache@v3
      with:
       # See here for caching with `yarn` https://github.com/actions/cache/blob/main/examples.md#node---yarn or you can leverage caching with actions/setup-node https://github.com/actions/setup-node
@@ -53,12 +59,6 @@ jobs:
       # If source files changed but packages didn't, rebuild from a prior cache.
       restore-keys: |
        ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-
-
-   - name: npm install, build, and test
-     run: |
-      npm install
-      npm run build --if-present
-      npm run test --if-present
 
    - name: Zip all files for upload between jobs
      run: zip ${{ env.ZIP_PACKAGE_NAME }} ./* .next -qr
