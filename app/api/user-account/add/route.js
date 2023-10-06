@@ -12,11 +12,16 @@ export const POST = async request => {
 
 		if (!newUser) throw new Error('Failed to create user.')
 
-		sendMail(
-			'BS42.NET Account Application',
-			`${newUser.email}, hugheyq@gmail.com`,
-			'Your application for a BS42.NET account has been received. We will need to verify your details before your account is enabled and we may need to contact you for more information.'
-		)
+		sendMail({
+			sender: {
+				title: 'BS42.NET Support',
+				email: 'notify@bs42.net',
+			},
+			subject: 'Account Registration',
+			toEmail: newUser.email,
+			message:
+				'Your application has been received. We will need to verify your details before your account is enabled and we may need to contact you for more information.',
+		})
 
 		return new NextResponse(
 			JSON.stringify({

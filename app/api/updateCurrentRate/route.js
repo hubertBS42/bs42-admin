@@ -54,11 +54,19 @@ export const GET = async request => {
 			}
 		)
 	} catch (error) {
-		sendMail(
-			'BS42.NET CURRENCY RATE',
-			'hubert@attelecomms.co.uk',
-			'Scheduled task to update currency rate has failed.'
-		)
+		sendMail({
+			sender: {
+				title: 'BS42.NET Alert',
+				email: 'alert@bs42.net',
+			},
+			subject: 'System Error',
+			toEmail: newUser.email,
+			message: `The scheduled task to update the system's currency rate has failed for the following reason;
+				
+				${error.message}
+				`,
+		})
+
 		return new Response(
 			JSON.stringify({
 				status: 'error',
