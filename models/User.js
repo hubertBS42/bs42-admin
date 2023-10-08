@@ -37,7 +37,7 @@ const UserSchema = new mongoose.Schema(
 			name: { type: String },
 			url: { type: String },
 		},
-		password: { type: String, default: 'default' },
+		password: { type: String, default: null },
 		role: {
 			type: mongoose.Schema.Types.ObjectId,
 			ref: 'Role',
