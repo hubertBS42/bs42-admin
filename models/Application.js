@@ -14,13 +14,15 @@ const ApplicationSchema = new mongoose.Schema(
 			type: String,
 			required: true,
 		},
-		phone: {
+		phone1: {
 			type: String,
 			required: true,
 		},
-		companyName: {
-			type: String,
-			required: true,
+		company: {
+			name: {
+				type: String,
+				required: true,
+			},
 		},
 		canReceiveEmails: {
 			type: Boolean,
