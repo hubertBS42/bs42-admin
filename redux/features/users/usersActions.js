@@ -244,55 +244,38 @@ export const updateUser = async (user, data, imageToBeDeleted) => {
 		...rest
 	} = data
 
-	let preparedData
+	let preparedData = {
+		...rest,
+		residentialAddress: {
+			streetName: data.rStreetName,
+			digitalAddress: data.rDigitalAddress,
+			area: data.rArea,
+			region: data.rRegion,
+		},
+		company: {
+			name: data.cName,
+			phone: data.cPhone,
+			website: data.website,
+			address: {
+				streetName: data.cStreetName,
+				digitalAddress: data.cDigitalAddress,
+				area: data.cArea,
+				region: data.cRegion,
+			},
+		},
+		password:
+			data.password === 'default' ? user.password : data.password,
+	}
 
 	if (!uploadedProfileImg) {
 		preparedData = {
-			...rest,
-			residentialAddress: {
-				streetName: data.rStreetName,
-				digitalAddress: data.rDigitalAddress,
-				area: data.rArea,
-				region: data.rRegion,
-			},
-			company: {
-				name: data.cName,
-				phone: data.cPhone,
-				website: data.website,
-				address: {
-					streetName: data.cStreetName,
-					digitalAddress: data.cDigitalAddress,
-					area: data.cArea,
-					region: data.cRegion,
-				},
-			},
+			...preparedData,
 			profileImg: imageToBeDeleted.length > 0 ? null : user.profileImg,
-			password:
-				data.password === 'default' ? user.password : data.password,
 		}
 	} else {
 		preparedData = {
-			...rest,
-			residentialAddress: {
-				streetName: data.rStreetName,
-				digitalAddress: data.rDigitalAddress,
-				area: data.rArea,
-				region: data.rRegion,
-			},
-			company: {
-				name: data.cName,
-				phone: data.cPhone,
-				website: data.website,
-				address: {
-					streetName: data.cStreetName,
-					digitalAddress: data.cDigitalAddress,
-					area: data.cArea,
-					region: data.cRegion,
-				},
-			},
+			...preparedData,
 			profileImg: uploadedProfileImg,
-			password:
-				data.password === 'dafault' ? user.password : data.password,
 		}
 	}
 
