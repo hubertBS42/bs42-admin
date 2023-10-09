@@ -30,16 +30,16 @@ const DetailsModal = () => {
 			<Modal.Body>
 				<List bordered>
 					<List.Item>
-						Name: {data.firstName} {data.lastName}
+						Name: {data?.firstName} {data?.lastName}
 					</List.Item>
-					<List.Item>Email: {data.email}</List.Item>
-					<List.Item>Number: {data.phone1}</List.Item>
-					<List.Item>Company Name: {data.company.name}</List.Item>
+					<List.Item>Email: {data?.email}</List.Item>
+					<List.Item>Number: {data?.phone1}</List.Item>
+					<List.Item>Company Name: {data?.company.name}</List.Item>
 					<List.Item>
-						Receive Emails: {data.canReceiveEmails ? 'Yes' : 'No'}
+						Receive Emails: {data?.canReceiveEmails ? 'Yes' : 'No'}
 					</List.Item>
 					<List.Item>
-						Application Data: {formatDate(data.createdAt)}
+						Application Data: {formatDate(data?.createdAt)}
 					</List.Item>
 				</List>
 			</Modal.Body>

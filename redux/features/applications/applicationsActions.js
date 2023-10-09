@@ -18,9 +18,7 @@ const { dispatch } = store
 export const loadApplications = async () => {
 	dispatch(setLoading(true))
 
-	const { status, message, data } = await fetcher(
-		'/api/user-account/new'
-	)
+	const { status, message, data } = await fetcher('/api/applications')
 
 	if (status === 'error') {
 		dispatch(setLoading(false))
@@ -40,7 +38,7 @@ export const sortApplications = async (
 	dispatch(setLoading(true))
 
 	const { status, message, data } = await fetcher(
-		`/api/user-account/new?limit=${limit}&page=${page}&sortBy=${sortColumn}&sort=${sortType}`
+		`/api/applications?limit=${limit}&page=${page}&sortBy=${sortColumn}&sort=${sortType}`
 	)
 
 	if (status === 'error') {
@@ -55,7 +53,7 @@ export const limitApplications = async limit => {
 	dispatch(setLoading(true))
 
 	const { status, message, data } = await fetcher(
-		`/api/user-account/new?limit=${limit}`
+		`/api/applications?limit=${limit}`
 	)
 
 	if (status === 'error') {
@@ -75,7 +73,7 @@ export const paginateApplications = async (
 	dispatch(setLoading(true))
 
 	const { status, message, data } = await fetcher(
-		`/api/user-account/new?limit=${limit}&page=${value}&sortBy=${sortColumn}&sort=${sortType}`
+		`/api/applications?limit=${limit}&page=${value}&sortBy=${sortColumn}&sort=${sortType}`
 	)
 
 	if (status === 'error') {
@@ -91,7 +89,7 @@ export const searchApplications = async (query, limit, page) => {
 
 	if (query === '') {
 		const { status, message, data } = await fetcher(
-			`/api/user-account/new?limit=${limit}&page=${page}`
+			`/api/applications?limit=${limit}&page=${page}`
 		)
 
 		if (status === 'error') {
@@ -104,7 +102,7 @@ export const searchApplications = async (query, limit, page) => {
 	}
 
 	const { status, message, data } = await fetcher(
-		`/api/user-account/new/search?q=${query}`
+		`/api/applications/search?q=${query}`
 	)
 
 	if (status === 'error') {
