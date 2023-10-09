@@ -1,4 +1,4 @@
-import User from '@/models/User'
+import Application from '@/models/Application'
 import { connectToDB } from '@/utils/database'
 
 export const GET = async request => {
@@ -10,7 +10,7 @@ export const GET = async request => {
 
 	try {
 		await connectToDB()
-		const users = await User.find({ isApproved: false })
+		const applications = await Application.find()
 			.collation({ locale: 'en' })
 			.limit(limit * 1)
 			.skip((page - 1) * limit)
@@ -24,7 +24,7 @@ export const GET = async request => {
 			JSON.stringify({
 				status: 'success',
 				message: null,
-				data: users,
+				data: applications,
 			}),
 			{
 				status: 200,

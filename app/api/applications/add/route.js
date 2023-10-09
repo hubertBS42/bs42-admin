@@ -1,5 +1,4 @@
 import Application from '@/models/Application'
-import User from '@/models/User'
 import { connectToDB } from '@/utils/database'
 import { sendMail } from '@/utils/mailer'
 import { NextResponse } from 'next/server'
@@ -9,10 +8,7 @@ export const POST = async request => {
 
 	try {
 		await connectToDB()
-		const newApplication = await Application.create({
-			...data,
-			isActive: false,
-		})
+		const newApplication = await Application.create(data)
 
 		if (!newApplication) throw new Error('Application process failed.')
 
