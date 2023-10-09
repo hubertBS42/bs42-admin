@@ -4,6 +4,7 @@ import brandsReducer from './features/brands/brandsSlice'
 import usersReducer from './features/users/usersSlice'
 import resourcesReducer from './features/resources/resourcesSlice'
 import rolesReducer from './features/roles/rolesSlice'
+import applicationsReducer from './features/applications/applicationsSlice'
 import productsReducer from './features/products/productsSlice'
 import settingsReducer from './features/settings/settingsSlice'
 import currenciesReducer from './features/currencies/currenciesSlice'
@@ -17,6 +18,7 @@ export const store = configureStore({
 		users: usersReducer,
 		resources: resourcesReducer,
 		roles: rolesReducer,
+		applications: applicationsReducer,
 		products: productsReducer,
 		settings: settingsReducer,
 		currencies: currenciesReducer,

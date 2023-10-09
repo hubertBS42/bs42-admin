@@ -35,8 +35,9 @@ import ImagesUploader from '../ImagesUploader/ImagesUploader'
 import TextArea from '../TextArea/TextArea'
 import { regions } from '@/utils/data'
 import { selectAllRoles } from '@/redux/features/roles/rolesSlice'
-import { formatData } from '@/utils/functions'
+import { formatData, generatePassword } from '@/utils/functions'
 import DeliveryAddresses from '../DeliveryAddresses/DeliveryAddresses'
+import GeneratePasswordField from '../GeneratePasswordField/GeneratePasswordField'
 
 const { StringType, ArrayType } = Schema.Types
 
@@ -61,7 +62,6 @@ const model = Schema.Model({
 	cRegion: StringType(),
 	notes: StringType(),
 	profileImg: ArrayType(),
-	password: StringType().isRequired('You must provide a password.'),
 	role: StringType().isRequired(
 		'You must assign a role to this user.'
 	),
@@ -130,7 +130,7 @@ const UsersDrawer = () => {
 					cArea: user?.company?.address.area || '',
 					cRegion: user?.company?.address.region || '',
 					deliveryAddresses: user.deliveryAddresses,
-					password: 'default',
+					password: '',
 					role: user.role._id,
 					profileImg: user.profileImg ? [user.profileImg] : [],
 					notes: user.notes,
@@ -171,6 +171,12 @@ const UsersDrawer = () => {
 		return
 	}
 
+	const passwordRule = isEditing
+		? Schema.Types.StringType()
+		: Schema.Types.StringType().isRequired(
+				'You must provide a password.'
+		  )
+
 	const handleSubmit = async () => {
 		if (!formRef.current.check()) {
 			return
@@ -189,6 +195,20 @@ const UsersDrawer = () => {
 	const grabRemovedImage = file => {
 		setImageToBeDeleted(prev => {
 			return [...prev, file.name]
+		})
+	}
+
+	const handlePassword = () => {
+		const randPassword = generatePassword({
+			useSymbols: true,
+			useNumbers: true,
+			useLowerCase: true,
+			useUpperCase: true,
+			passwordLength: 10,
+		})
+
+		setFormValue(prev => {
+			return { ...prev, password: randPassword }
 		})
 	}
 
@@ -338,9 +358,9 @@ const UsersDrawer = () => {
 								<Field
 									name='password'
 									label='Password'
-									accepter={Input}
-									type='password'
-									error={formError.password}
+									accepter={GeneratePasswordField}
+									rule={passwordRule}
+									handlePassword={handlePassword}
 								/>
 							</Col>
 						</Row>

@@ -1,3 +1,4 @@
+import Application from '@/models/Application'
 import User from '@/models/User'
 import { connectToDB } from '@/utils/database'
 import { sendMail } from '@/utils/mailer'
@@ -8,9 +9,12 @@ export const POST = async request => {
 
 	try {
 		await connectToDB()
-		const newUser = await User.create({ ...data, isActive: false })
+		const newApplication = await Application.create({
+			...data,
+			isActive: false,
+		})
 
-		if (!newUser) throw new Error('Failed to create user.')
+		if (!newApplication) throw new Error('Application process failed.')
 
 		sendMail({
 			sender: {
@@ -18,15 +22,15 @@ export const POST = async request => {
 				email: 'notify@bs42.net',
 			},
 			subject: 'Account Registration',
-			toEmail: newUser.email,
-			message: `Hello ${newUser.firstName}, we have received your application. We will need to verify your details before your account is enabled and we may need to contact you for more information.`,
+			toEmail: newApplication.email,
+			message: `Hello ${newApplication.firstName}, we have received your application. We will need to verify your details before your account is enabled and we may need to contact you for more information.`,
 		})
 
 		return new NextResponse(
 			JSON.stringify({
 				status: 'success',
 				message: null,
-				data: newUser,
+				data: newApplication,
 			}),
 			{ status: 201 }
 		)

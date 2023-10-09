@@ -189,8 +189,6 @@ export const createUser = async data => {
 		profileImg: uploadedProfileImg,
 	}
 
-	console.log(preparedData)
-
 	const { status, message } = await fetcher('/api/users/add', {
 		method: 'POST',
 		body: JSON.stringify(preparedData),
@@ -263,8 +261,11 @@ export const updateUser = async (user, data, imageToBeDeleted) => {
 				region: data.cRegion,
 			},
 		},
-		password:
-			data.password === 'default' ? user.password : data.password,
+		password: data.password,
+	}
+
+	if (data.password === '') {
+		delete preparedData.password
 	}
 
 	if (!uploadedProfileImg) {
