@@ -3,6 +3,7 @@ import mongoose from 'mongoose'
 import { compare } from 'bcryptjs'
 import Role from './Role'
 import Resource from './Resource'
+import Application from './Application'
 
 const UserSchema = new mongoose.Schema(
 	{
@@ -55,9 +56,13 @@ const UserSchema = new mongoose.Schema(
 			},
 		},
 		notes: { type: String },
-		isApproved: { type: Boolean, default: false },
 		isActive: { type: Boolean, default: true },
 		canReceiveEmails: { type: Boolean, default: true },
+		application: {
+			type: mongoose.Schema.Types.ObjectId,
+			ref: 'Application',
+			default: null,
+		},
 	},
 	{ timestamps: true }
 )

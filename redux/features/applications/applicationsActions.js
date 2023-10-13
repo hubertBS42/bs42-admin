@@ -12,6 +12,10 @@ import {
 	setModalOpen,
 } from '../modal/modalSlice'
 import { store } from '@/redux/store'
+import {
+	setDrawerClose,
+	setDrawerLoading,
+} from '../drawer/drawerSlice'
 
 const { dispatch } = store
 
@@ -113,27 +117,27 @@ export const searchApplications = async (query, limit, page) => {
 	dispatch(setApplications(data))
 }
 
-// export const updateApplication = async (application, data) => {
-// 	dispatch(setDrawerLoading(true))
+export const updateApplication = async (data, preparedData) => {
+	dispatch(setDrawerLoading(true))
 
-// 	const { status, message } = await fetcher(
-// 		`/api/products/brands/${brand._id}`,
-// 		{
-// 			method: 'PATCH',
-// 			body: JSON.stringify(preparedData),
-// 			headers: {
-// 				'Content-type': 'application/json; charset=UTF-8',
-// 			},
-// 		}
-// 	)
-// 	dispatch(setDrawerClose())
-// 	dispatch(setDrawerLoading(false))
+	const { status, message } = await fetcher(
+		`/api/applications/${data._id}`,
+		{
+			method: 'PATCH',
+			body: JSON.stringify(preparedData),
+			headers: {
+				'Content-type': 'application/json; charset=UTF-8',
+			},
+		}
+	)
 
-// 	if (status === 'success') {
-// 		toast.success(message)
-// 		loadBrands()
-// 		return
-// 	}
+	dispatch(setDrawerLoading(false))
 
-// 	toast.error('Failed to update manufacturer')
-// }
+	if (status === 'success') {
+		toast.success(message)
+		dispatch(setDrawerClose())
+		loadApplications()
+	} else {
+		toast.error(message)
+	}
+}

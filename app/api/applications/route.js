@@ -16,7 +16,7 @@ export const GET = async request => {
 			.skip((page - 1) * limit)
 			.sort({ [field]: sort })
 			.select(
-				'firstName lastName company email phone1 canReceiveEmails createdAt'
+				'firstName lastName company email phone1 canReceiveEmails isApproved reviewNotes reviewer reviewDate createdAt'
 			)
 			.lean()
 

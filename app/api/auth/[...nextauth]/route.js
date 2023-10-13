@@ -47,6 +47,7 @@ const handler = NextAuth({
 					...token,
 					role: user?.role?.title,
 					firstName: user?.firstName,
+					id: user?._id,
 					lastName: user?.lastName,
 					profileImg: user?.profileImg?.url || null,
 				}
@@ -56,6 +57,7 @@ const handler = NextAuth({
 			// Send properties to the client, like an access_token and user id from a provider.
 			session.accessToken = token.accessToken
 			session.user.role = token.role
+			session.user.id = token.id
 			session.user.firstName = token.firstName
 			session.user.lastName = token.lastName
 

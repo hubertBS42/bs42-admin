@@ -1,4 +1,5 @@
 import mongoose from 'mongoose'
+import User from './User'
 
 const SettingSchema = new mongoose.Schema(
 	{
@@ -25,6 +26,15 @@ const SettingSchema = new mongoose.Schema(
 			},
 			currentRate: { type: Number, required: true },
 			manualOverride: { type: Boolean, default: false },
+		},
+		notifications: {
+			newApplications: {
+				recipients: [
+					{
+						user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+					},
+				],
+			},
 		},
 	},
 	{ timestamps: true }

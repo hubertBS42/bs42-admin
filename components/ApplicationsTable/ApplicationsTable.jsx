@@ -27,7 +27,6 @@ import {
 	getApplicationsLoadingState,
 	selectAllApplications,
 } from '@/redux/features/applications/applicationsSlice'
-import { setModalOpen } from '@/redux/features/modal/modalSlice'
 import { setDrawerOpen } from '@/redux/features/drawer/drawerSlice'
 
 const { Column, HeaderCell, Cell } = Table
@@ -114,12 +113,20 @@ const ApplicationsTable = () => {
 					</Column>
 
 					<Column flexGrow={1} sortable verticalAlign='middle'>
-						<HeaderCell>Company</HeaderCell>
-						<Cell>{rowData => rowData.company.name}</Cell>
+						<HeaderCell>Status</HeaderCell>
+						<Cell>
+							{rowData =>
+								rowData.isApproved === null
+									? 'Pending'
+									: rowData.isApproved === true
+									? 'Approved'
+									: 'Rejected'
+							}
+						</Cell>
 					</Column>
 
 					<Column flexGrow={1} sortable verticalAlign='middle'>
-						<HeaderCell>Dated created</HeaderCell>
+						<HeaderCell>Date Submitted</HeaderCell>
 						<Cell dataKey='createdAt'>
 							{rowData => formatDate(rowData.createdAt)}
 						</Cell>
@@ -133,7 +140,9 @@ const ApplicationsTable = () => {
 								<>
 									<Button
 										appearance='link'
-										onClick={() => dispatch(setModalOpen(rowData))}
+										onClick={() =>
+											dispatch(setDrawerOpen({ mode: 'edit', data: rowData }))
+										}
 										size='lg'
 									>
 										<VisibleIcon />

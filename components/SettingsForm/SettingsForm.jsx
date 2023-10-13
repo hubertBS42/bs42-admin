@@ -9,6 +9,7 @@ import { fetcher } from '@/utils/functions'
 import CarouselSlidesTable from '../CarouselSlidesTable/CarouselSlidesTable'
 import CarouselSlidesDrawer from '../CarouselSlidesDrawer/CarouselSlidesDrawer'
 import { updateImages } from '@/utils/azure'
+import NotificationsSettings from '../NotificationsSettings/NotificationsSettings'
 
 const { StringType, ArrayType, NumberType } = Schema.Types
 
@@ -29,6 +30,8 @@ const SettingsForm = ({ data }) => {
 	const [imagesToBeDeleted, setImagesToBeDeleted] = useState([])
 	const [formValue, setFormValue] = useState({
 		carouselSlides: settings[0]?.carouselSlides || [],
+		// aNotificationRecipients:
+		// 	settings[0]?.notifications?.newApplications?.recipients || [],
 		currency: settings[0]?.exchangeRate?.currency._id,
 		currentRate: settings[0]?.exchangeRate?.currentRate || 1,
 		manualOverride: settings[0]?.exchangeRate?.manualOverride || false,
@@ -172,6 +175,12 @@ const SettingsForm = ({ data }) => {
 
 	return (
 		<>
+			<CarouselSlidesDrawer
+				data={formValue}
+				settings={settings}
+				addSlide={addSlide}
+				editSlide={editSlide}
+			/>
 			<Form
 				ref={formRef}
 				onChange={setFormValue}
@@ -199,18 +208,14 @@ const SettingsForm = ({ data }) => {
 						deleteSlide={deleteSlide}
 					/>
 					{/* <DeleteModal handleDelete={handleDelete} /> */}
-					<CarouselSlidesDrawer
-						data={formValue}
-						settings={settings}
-						addSlide={addSlide}
-						editSlide={editSlide}
-					/>
+
 					<ExchangeRateSettings
 						currencies={currencies}
 						handleChange={toggleManualOverride}
 						formError={formError}
 						formValue={formValue}
 					/>
+					{/* <NotificationsSettings /> */}
 				</Stack>
 			</Form>
 		</>
