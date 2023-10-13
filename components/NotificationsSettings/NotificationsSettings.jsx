@@ -1,5 +1,6 @@
 'use client'
 import { Col, Panel, Row, Stack, TagPicker } from 'rsuite'
+import Field from '../Field/Field'
 
 const NotificationsSettings = () => {
 	return (
