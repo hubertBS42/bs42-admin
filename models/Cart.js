@@ -8,7 +8,7 @@ const CartSchema = new mongoose.Schema(
 			ref: 'User',
 			default: null,
 		},
-		sessionToken: { type: String, default: null },
+		token: { type: String, default: null },
 		items: [
 			{
 				product: {
@@ -18,6 +18,7 @@ const CartSchema = new mongoose.Schema(
 				quantity: { type: Number, default: 1 },
 			},
 		],
+		status: { type: String, default: 'pending' },
 	},
 	{ timestamps: true }
 )
@@ -29,7 +30,7 @@ CartSchema.methods.genSessionToken = async function () {
 		expiresIn: 60 * 60,
 	})
 
-	cart.sessionToken = token
+	cart.token = token
 
 	await cart.save()
 
