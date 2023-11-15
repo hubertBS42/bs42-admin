@@ -160,20 +160,23 @@ export const generatePassword = options => {
 }
 
 export const combineCartItems = (userCartItems, guestCartItems) => {
-	const combinedCartItems = [...userCartItems]
+	if (userCartItems.length > 0) {
+		const combinedCartItems = [...userCartItems]
 
-	guestCartItems.map(guestCartItem => {
-		const existingItem = combinedCartItems.find(
-			item =>
-				item.product._id.toString() ===
-				guestCartItem.product._id.toString()
-		)
-		if (existingItem) {
-			existingItem.quantity += guestCartItem.quantity
-		} else {
-			combinedCartItems.push({ ...guestCartItem })
-		}
-	})
+		guestCartItems.map(guestCartItem => {
+			const existingItem = combinedCartItems.find(
+				item =>
+					item.product._id.toString() ===
+					guestCartItem.product._id.toString()
+			)
+			if (existingItem) {
+				existingItem.quantity += guestCartItem.quantity
+			} else {
+				combinedCartItems.push({ ...guestCartItem })
+			}
+		})
+		return combinedCartItems
+	}
 
-	return combinedCartItems
+	return guestCartItems
 }
