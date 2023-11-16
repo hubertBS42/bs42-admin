@@ -24,7 +24,7 @@ export const GET = async request => {
 				.populate({
 					path: 'items.product',
 					model: 'Product',
-					select: 'images title brand sellPrice',
+					select: 'images title brand sellPrice countInStock',
 					populate: {
 						path: 'brand',
 					},
@@ -41,7 +41,7 @@ export const GET = async request => {
 				.populate({
 					path: 'items.product',
 					model: 'Product',
-					select: 'images title brand sellPrice',
+					select: 'images title brand sellPrice countInStock',
 					populate: {
 						path: 'brand',
 					},
@@ -56,7 +56,7 @@ export const GET = async request => {
 				.populate({
 					path: 'items.product',
 					model: 'Product',
-					select: 'images title brand sellPrice',
+					select: 'images title brand sellPrice countInStock',
 					populate: {
 						path: 'brand',
 					},
@@ -67,7 +67,7 @@ export const GET = async request => {
 				.populate({
 					path: 'items.product',
 					model: 'Product',
-					select: 'images title brand sellPrice',
+					select: 'images title brand sellPrice countInStock',
 					populate: {
 						path: 'brand',
 					},
@@ -93,28 +93,6 @@ export const GET = async request => {
 
 			data = saved
 		}
-
-		// if (userCart && guestCart) {
-		// 	const userCartItems = userCart.items
-		// 	const guestCartItems = guestCart.items
-
-		// 	const updatedItems = combineCartItems(
-		// 		userCartItems,
-		// 		guestCartItems
-		// 	)
-
-		// 	userCart.items = updatedItems
-		// 	const saved = await userCart.save()
-		// 	await guestCart.deleteOne()
-		// 	data = saved
-		// } else if (userCart && !guestCart) {
-		// 	data = userCart
-		// } else if (!userCart && guestCart) {
-		// 	guestCart.user = userID
-		// 	guestCart.token = null
-		// 	const saved = await guestCart.save()
-		// 	data = saved
-		// }
 
 		return new Response(
 			JSON.stringify({
