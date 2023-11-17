@@ -6,7 +6,7 @@ import { NextResponse } from 'next/server'
 
 //GET
 export const GET = async (request, { params }) => {
-	const url = request.url
+	const data = await request.json()
 	const { slug } = params
 	try {
 		await connectToDB()
