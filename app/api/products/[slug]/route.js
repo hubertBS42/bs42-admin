@@ -6,7 +6,6 @@ import { NextResponse } from 'next/server'
 
 //GET
 export const GET = async (request, { params }) => {
-	const data = await request.json()
 	const { slug } = params
 	try {
 		await connectToDB()
@@ -84,7 +83,7 @@ export const PATCH = async (request, { params }) => {
 //DELETE
 export const DELETE = async (request, { params }) => {
 	const { slug } = params
-	const url = request.url
+
 	try {
 		await connectToDB()
 
