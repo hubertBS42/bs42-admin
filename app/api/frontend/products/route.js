@@ -17,8 +17,16 @@ export const GET = async request => {
 	const field = searchParams.get('sortBy') || 'createdAt'
 	const category = searchParams.get('category') || null
 	const brand = searchParams.get('brand') || null
-	const maxPrice = searchParams.get('maxPrice') || null
-	const minPrice = searchParams.get('minPrice') || null
+
+	const maxPrice =
+		searchParams.get('maxPrice') === 'null'
+			? null
+			: searchParams.get('maxPrice')
+
+	const minPrice =
+		searchParams.get('minPrice') === 'null'
+			? null
+			: searchParams.get('minPrice')
 
 	let productsQuery = {}
 	let rate = null
