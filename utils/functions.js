@@ -180,3 +180,77 @@ export const combineCartItems = (userCartItems, guestCartItems) => {
 
 	return guestCartItems
 }
+
+// Helper function to extract ids from an array of categories
+const extractIds = categories => {
+	let ids = []
+
+	for (const category of categories) {
+		ids.push(category.id)
+
+		if (category.children && category.children.length > 0) {
+			// Recursively extract ids from children
+			ids.push(...extractIds(category.children))
+		}
+	}
+
+	return ids
+}
+
+export const groupCategories = (categories, parent = null) => {
+	return categories
+		.filter(category => category.parent === parent)
+		.map(category => ({
+			id: category._id,
+			name: category.name,
+			description: category.description,
+			parent: category.parent,
+			slug: category.slug,
+			images: category.images,
+			isActive: category.isActive,
+			createdAt: category.createdAt,
+			children: groupCategories(categories, category._id),
+		}))
+}
+
+export const findIdsOfCategoryAndChildrenBySlug = (
+	categories,
+	targetSlug
+) => {
+	for (const category of categories) {
+		if (category.slug === targetSlug) {
+			const result = [category.id]
+
+			if (category.children && category.children.length > 0) {
+				// Recursively extract ids from children
+				result.push(...extractIds(category.children))
+			}
+
+			return result
+		}
+
+		if (category.children && category.children.length > 0) {
+			const result = findIdsOfCategoryAndChildrenBySlug(
+				category.children,
+				targetSlug
+			)
+
+			if (result.length > 0) {
+				// If the category is found in children, return the result
+				return result
+			}
+		}
+	}
+
+	// If the category is not found
+	return []
+}
+
+export const convertToDollar = (value, rate) => {
+	const dollarEquavalent = value / rate
+	const roundedUp =
+		Math.round(dollarEquavalent * Math.pow(10, 2)) /
+		Math.pow(10, 2).toFixed(2)
+
+	return roundedUp
+}
