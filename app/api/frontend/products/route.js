@@ -13,10 +13,41 @@ export const GET = async request => {
 	const { searchParams } = new URL(request.url)
 	const page = searchParams.get('page') || 1
 	const limit = searchParams.get('limit') || 25
-	const sort = searchParams.get('sort') || 'desc'
-	const field = searchParams.get('sortBy') || 'createdAt'
+	// const sort = searchParams.get('sort') || 'desc'
+	const sortBy = searchParams.get('sortBy') || 'newest'
 	const category = searchParams.get('category') || null
 	const brand = searchParams.get('brand') || null
+
+	let field
+	let order
+
+	switch (sortBy) {
+		case 'newest':
+			field = 'createdAt'
+			order = 'desc'
+			break
+		case 'a-z':
+			field = 'title'
+			order = 'asc'
+			break
+		case 'z-a':
+			field = 'title'
+			order = 'desc'
+			break
+		case 'priceLow':
+			field = 'sellPrice'
+			order = 'asc'
+			break
+		case 'priceHigh':
+			field = 'sellPrice'
+			order = 'desc'
+			break
+
+		default:
+			field = 'createdAt'
+			order = 'desc'
+			break
+	}
 
 	const maxPrice =
 		searchParams.get('maxPrice') === 'null'
@@ -91,11 +122,13 @@ export const GET = async request => {
 			productsQuery.sellPrice = { $lte: convertToDollar(maxPrice, rate) }
 		}
 
+		if (sortBy === 'featured') productsQuery.featured = true
+
 		const fetchProductsQuery = Product.find(productsQuery)
 			.collation({ locale: 'en' })
 			.limit(limit * 1)
 			.skip((page - 1) * limit)
-			.sort({ [field]: sort })
+			.sort({ [field]: order })
 			.populate({
 				path: 'brand',
 				model: 'Brand',

@@ -50,3 +50,10 @@ export const GET = async request => {
 		)
 	}
 }
+
+//newest
+//featured
+//a-z
+//z-a
+//priceAscending
+//priceDescending
