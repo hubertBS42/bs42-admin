@@ -69,13 +69,14 @@ export const GET = async request => {
 		}
 
 		if (brand) {
-			const document = await Brand.findOne({ slug: brand })
+			const slugs = brand.split(',')
+			const documents = await Brand.find({ slug: { $in: slugs } })
 				.select('_id')
 				.lean()
 
-			if (document) {
-				const brandId = document._id
-				productsQuery.brand = { $in: brandId }
+			if (documents.length > 0) {
+				const brandIds = documents.map(document => document._id)
+				productsQuery.brand = { $in: brandIds }
 			}
 		}
 
