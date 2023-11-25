@@ -111,7 +111,7 @@ export const GET = async request => {
 			)
 			.lean()
 
-		const getCountQuery = Product.count()
+		const getCountQuery = Product.count(productsQuery)
 
 		const [products, count] = await Promise.all([
 			fetchProductsQuery,
