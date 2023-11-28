@@ -151,16 +151,10 @@ export const GET = async request => {
 			getCountQuery,
 		])
 
-		const data = {
-			products,
-			count,
-		}
-
 		return new Response(
 			JSON.stringify({
-				status: 'success',
-				message: null,
-				data,
+				products,
+				count,
 			}),
 			{
 				status: 200,
