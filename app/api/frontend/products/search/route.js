@@ -20,11 +20,11 @@ export const GET = async request => {
 				model: 'Brand',
 				select: 'name slug',
 			})
-			// .populate({
-			// 	path: 'category',
-			// 	model: 'Category',
-			// 	select: 'name slug',
-			// })
+			.populate({
+				path: 'category',
+				model: 'Category',
+				select: 'name slug',
+			})
 			.select('title slug brand images category isActive createdAt')
 			.lean()
 
