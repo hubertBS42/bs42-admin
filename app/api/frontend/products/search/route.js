@@ -30,7 +30,9 @@ export const GET = async request => {
 
 		return new Response(
 			JSON.stringify({
-				products,
+				status: 'error',
+				message: error.message,
+				data: products,
 			}),
 			{
 				status: 200,
