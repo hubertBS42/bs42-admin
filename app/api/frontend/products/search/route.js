@@ -30,8 +30,8 @@ export const GET = async request => {
 
 		return new Response(
 			JSON.stringify({
-				status: 'error',
-				message: error.message,
+				status: 'success',
+				message: null,
 				data: products,
 			}),
 			{
