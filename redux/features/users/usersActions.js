@@ -160,9 +160,9 @@ export const createUser = async data => {
 
 	const {
 		profileImg,
-		rStreetName,
+		rAddress,
 		rDigitalAddress,
-		rArea,
+		rTown,
 		rRegion,
 		...rest
 	} = data
@@ -170,9 +170,9 @@ export const createUser = async data => {
 	const preparedData = {
 		...rest,
 		residentialAddress: {
-			streetName: data.rStreetName,
+			address: data.rAddress,
 			digitalAddress: data.rDigitalAddress,
-			area: data.rArea,
+			town: data.rTown,
 			region: data.rRegion,
 		},
 		company: {
@@ -180,9 +180,9 @@ export const createUser = async data => {
 			phone: data.cPhone,
 			website: data.website,
 			address: {
-				streetName: data.cStreetName,
+				address: data.cAddress,
 				digitalAddress: data.cDigitalAddress,
-				area: data.cArea,
+				town: data.cTown,
 				region: data.cRegion,
 			},
 		},
@@ -235,9 +235,9 @@ export const updateUser = async (user, data, imageToBeDeleted) => {
 
 	const {
 		profileImg,
-		rStreetName,
+		rAddress,
 		rDigitalAddress,
-		rArea,
+		rTown,
 		rRegion,
 		...rest
 	} = data
@@ -245,9 +245,9 @@ export const updateUser = async (user, data, imageToBeDeleted) => {
 	let preparedData = {
 		...rest,
 		residentialAddress: {
-			streetName: data.rStreetName,
+			address: data.rAddress,
 			digitalAddress: data.rDigitalAddress,
-			area: data.rArea,
+			town: data.rTown,
 			region: data.rRegion,
 		},
 		company: {
@@ -255,9 +255,9 @@ export const updateUser = async (user, data, imageToBeDeleted) => {
 			phone: data.cPhone,
 			website: data.website,
 			address: {
-				streetName: data.cStreetName,
+				address: data.cAddress,
 				digitalAddress: data.cDigitalAddress,
-				area: data.cArea,
+				town: data.cTown,
 				region: data.cRegion,
 			},
 		},

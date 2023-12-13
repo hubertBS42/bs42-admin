@@ -78,16 +78,16 @@ const UsersDrawer = () => {
 		email: '',
 		phone1: '',
 		phone2: '',
-		rStreetName: '',
+		rAddress: '',
 		rDigitalAddress: '',
-		rArea: '',
+		rTown: '',
 		rRegion: '',
 		cName: '',
 		cPhone: '',
 		website: '',
-		cStreetName: '',
+		cAddress: '',
 		cDigitalAddress: '',
-		cArea: '',
+		cTown: '',
 		cRegion: '',
 		deliveryAddresses: [],
 		profileImg: [],
@@ -118,16 +118,16 @@ const UsersDrawer = () => {
 					email: user.email,
 					phone1: user.phone1,
 					phone2: user.phone2,
-					rStreetName: user?.residentialAddress?.streetName || '',
+					address: user?.residentialAddress?.address || '',
 					rDigitalAddress: user?.residentialAddress?.digitalAddress || '',
-					rArea: user?.residentialAddress?.area || '',
+					rTown: user?.residentialAddress?.town || '',
 					rRegion: user?.residentialAddress?.region || '',
 					cName: user?.company?.name || '',
 					cPhone: user?.company?.phone || '',
 					website: user?.company?.website || '',
-					cStreetName: user?.company?.address.streetName || '',
+					cAddress: user?.company?.address.address || '',
 					cDigitalAddress: user?.company?.address.digitalAddress || '',
-					cArea: user?.company?.address.area || '',
+					cTown: user?.company?.address.town || '',
 					cRegion: user?.company?.address.region || '',
 					deliveryAddresses: user.deliveryAddresses,
 					password: '',
@@ -146,17 +146,17 @@ const UsersDrawer = () => {
 				email: '',
 				phone1: '',
 				phone2: '',
-				rStreetName: '',
+				rAddress: '',
 				rDigitalAddress: '',
-				rArea: '',
+				rTown: '',
 				rRegion: '',
 				deliveryAddresses: [],
 				cName: '',
 				cPhone: '',
 				website: '',
-				cStreetName: '',
+				cAddress: '',
 				cDigitalAddress: '',
-				cArea: '',
+				cTown: '',
 				cRegion: '',
 				profileImg: [],
 				password: '',
@@ -441,10 +441,10 @@ const UsersDrawer = () => {
 						<Row style={{ marginBottom: '1.4em' }}>
 							<Col xs={24}>
 								<Field
-									name='cStreetName'
-									label='Street Name'
+									name='cAddress'
+									label='Address'
 									accepter={Input}
-									error={formError.cStreetName}
+									error={formError.cAddress}
 								/>
 							</Col>
 						</Row>
@@ -452,10 +452,10 @@ const UsersDrawer = () => {
 						<Row style={{ marginBottom: '1.4em' }}>
 							<Col xs={24}>
 								<Field
-									name='cDigitalAdddress'
+									name='cDigitalAddress'
 									label='Digital Address'
 									accepter={Input}
-									error={formError.cDigitalAdddress}
+									error={formError.cDigitalAddress}
 								/>
 							</Col>
 						</Row>
@@ -463,10 +463,10 @@ const UsersDrawer = () => {
 						<Row style={{ marginBottom: '1.4em' }}>
 							<Col xs={24}>
 								<Field
-									name='cArea'
-									label='Area'
+									name='cTown'
+									label='Town'
 									accepter={Input}
-									error={formError.cArea}
+									error={formError.cTown}
 								/>
 							</Col>
 						</Row>
@@ -492,10 +492,10 @@ const UsersDrawer = () => {
 						<Row style={{ marginBottom: '1.4em' }}>
 							<Col xs={24}>
 								<Field
-									name='rStreetName'
-									label='Street name'
+									name='rAddress'
+									label='Address'
 									accepter={Input}
-									error={formError.rStreetName}
+									error={formError.rAddress}
 								/>
 							</Col>
 						</Row>
@@ -514,10 +514,10 @@ const UsersDrawer = () => {
 						<Row style={{ marginBottom: '1.4em' }}>
 							<Col xs={24}>
 								<Field
-									name='rArea'
-									label='Area'
+									name='rTown'
+									label='Town'
 									accepter={Input}
-									error={formError.rArea}
+									error={formError.rTown}
 								/>
 							</Col>
 						</Row>

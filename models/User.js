@@ -19,16 +19,16 @@ const UserSchema = new mongoose.Schema(
 		phone1: { type: String },
 		phone2: { type: String },
 		residentialAddress: {
-			streetName: { type: String },
+			address: { type: String },
 			digitalAddress: { type: String },
-			area: { type: String },
+			town: { type: String },
 			region: { type: String },
 		},
 		deliveryAddresses: [
 			{
-				streetName: { type: String },
+				address: { type: String },
 				digitalAddress: { type: String },
-				area: { type: String },
+				town: { type: String },
 				region: { type: String },
 				index: { type: String },
 				isActive: { type: Boolean, default: false },
@@ -49,9 +49,9 @@ const UserSchema = new mongoose.Schema(
 			phone: { type: String, default: null },
 			website: { type: String, default: null },
 			address: {
-				streetName: { type: String, default: null },
+				address: { type: String, default: null },
 				digitalAddress: { type: String, default: null },
-				area: { type: String, default: null },
+				town: { type: String, default: null },
 				region: { type: String, default: null },
 			},
 		},
@@ -84,7 +84,7 @@ UserSchema.statics.authUser = async function (email, password) {
 			},
 		})
 		.select(
-			'firstName lastName email password isActive isApproved role profileImg'
+			'firstName lastName email phone1 phone2 deliveryAddresses password isActive isApproved role profileImg'
 		)
 		.lean()
 

@@ -22,9 +22,9 @@ const DeliveryAddresses = ({ addresses, setFormValue, regions }) => {
 				deliveryAddresses: [
 					{
 						index,
-						streetName: '',
+						address: '',
 						digitalAddress: '',
-						area: '',
+						town: '',
 						region: '',
 						isActive: false,
 					},
@@ -87,13 +87,13 @@ const DeliveryAddresses = ({ addresses, setFormValue, regions }) => {
 						<Panel key={address.index} bordered>
 							<Row style={{ marginBottom: '1.2em' }}>
 								<Col xs={24}>
-									<label style={{ fontSize: 13 }}>Street name</label>
+									<label style={{ fontSize: 13 }}>Address</label>
 									<Input
-										name='streetName'
+										name='address'
 										onChange={(val, e) =>
-											handleChange(val, address.index, 'streetName')
+											handleChange(val, address.index, 'address')
 										}
-										defaultValue={address.streetName}
+										defaultValue={address.address}
 										style={{ marginTop: '.3em' }}
 									/>
 								</Col>
@@ -101,13 +101,13 @@ const DeliveryAddresses = ({ addresses, setFormValue, regions }) => {
 
 							<Row style={{ marginBottom: '1.2em' }}>
 								<Col xs={24}>
-									<label style={{ fontSize: 13 }}>Area</label>
+									<label style={{ fontSize: 13 }}>Town</label>
 									<Input
-										name='area'
+										name='town'
 										onChange={(val, e) =>
-											handleChange(val, address.index, 'area')
+											handleChange(val, address.index, 'town')
 										}
-										defaultValue={address.area}
+										defaultValue={address.town}
 										style={{ marginTop: '.3em' }}
 									/>
 								</Col>
