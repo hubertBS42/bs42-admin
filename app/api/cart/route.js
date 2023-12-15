@@ -24,7 +24,7 @@ export const GET = async request => {
 				.populate({
 					path: 'items.product',
 					model: 'Product',
-					select: 'images title brand sellPrice countInStock',
+					select: 'images title brand sellPrice countInStock slug',
 					populate: {
 						path: 'brand',
 					},
@@ -41,7 +41,7 @@ export const GET = async request => {
 				.populate({
 					path: 'items.product',
 					model: 'Product',
-					select: 'images title brand sellPrice countInStock',
+					select: 'images title brand sellPrice countInStock slug',
 					populate: {
 						path: 'brand',
 					},
@@ -56,7 +56,7 @@ export const GET = async request => {
 				.populate({
 					path: 'items.product',
 					model: 'Product',
-					select: 'images title brand sellPrice countInStock',
+					select: 'images title brand sellPrice countInStock slug',
 					populate: {
 						path: 'brand',
 					},
@@ -67,7 +67,7 @@ export const GET = async request => {
 				.populate({
 					path: 'items.product',
 					model: 'Product',
-					select: 'images title brand sellPrice countInStock',
+					select: 'images title brand sellPrice countInStock slug',
 					populate: {
 						path: 'brand',
 					},
