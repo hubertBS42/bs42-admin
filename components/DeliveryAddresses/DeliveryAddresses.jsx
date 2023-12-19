@@ -22,6 +22,10 @@ const DeliveryAddresses = ({ addresses, setFormValue, regions }) => {
 				shippingAddresses: [
 					{
 						index,
+						firstName: '',
+						lastName: '',
+						email: '',
+						phone: '',
 						address: '',
 						digitalAddress: '',
 						town: '',
@@ -85,6 +89,56 @@ const DeliveryAddresses = ({ addresses, setFormValue, regions }) => {
 				>
 					{addresses.map(address => (
 						<Panel key={address.index} bordered>
+							<Row style={{ marginBottom: '1.2em' }}>
+								<Col xs={12}>
+									<label style={{ fontSize: 13 }}>First name</label>
+									<Input
+										name='firstName'
+										onChange={(val, e) =>
+											handleChange(val, address.index, 'firstName')
+										}
+										defaultValue={address.firstName}
+										style={{ marginTop: '.3em' }}
+									/>
+								</Col>
+								<Col xs={12}>
+									<label style={{ fontSize: 13 }}>Last name</label>
+									<Input
+										name='lastName'
+										onChange={(val, e) =>
+											handleChange(val, address.index, 'lastName')
+										}
+										defaultValue={address.lastName}
+										style={{ marginTop: '.3em' }}
+									/>
+								</Col>
+							</Row>
+
+							<Row style={{ marginBottom: '1.2em' }}>
+								<Col xs={12}>
+									<label style={{ fontSize: 13 }}>Email</label>
+									<Input
+										name='email'
+										onChange={(val, e) =>
+											handleChange(val, address.index, 'email')
+										}
+										defaultValue={address.email}
+										style={{ marginTop: '.3em' }}
+									/>
+								</Col>
+								<Col xs={12}>
+									<label style={{ fontSize: 13 }}>Phone</label>
+									<Input
+										name='phone'
+										onChange={(val, e) =>
+											handleChange(val, address.index, 'phone')
+										}
+										defaultValue={address.phone}
+										style={{ marginTop: '.3em' }}
+									/>
+								</Col>
+							</Row>
+
 							<Row style={{ marginBottom: '1.2em' }}>
 								<Col xs={24}>
 									<label style={{ fontSize: 13 }}>Address</label>

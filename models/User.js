@@ -26,6 +26,10 @@ const UserSchema = new mongoose.Schema(
 		},
 		shippingAddresses: [
 			{
+				firstName: { type: String },
+				lastName: { type: String },
+				email: { type: String },
+				phone: { type: String },
 				address: { type: String },
 				digitalAddress: { type: String },
 				town: { type: String },

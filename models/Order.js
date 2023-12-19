@@ -28,15 +28,6 @@ const OrderSchema = new mongoose.Schema(
 			},
 		],
 		totalPrice: { type: Number },
-		billingInfo: {
-			firstName: { type: String },
-			lastName: { type: String },
-			email: { type: String },
-			phone: { type: String },
-			region: { type: String },
-			town: { type: String },
-			address: { type: String },
-		},
 		shippingInfo: {
 			firstName: { type: String },
 			lastName: { type: String },
