@@ -89,7 +89,7 @@ const UsersDrawer = () => {
 		cDigitalAddress: '',
 		cTown: '',
 		cRegion: '',
-		deliveryAddresses: [],
+		shippingAddresses: [],
 		profileImg: [],
 		password: '',
 		role: '',
@@ -115,9 +115,9 @@ const UsersDrawer = () => {
 					...prev,
 					firstName: user.firstName || '',
 					lastName: user.lastName || '',
-					email: user.email,
-					phone1: user.phone1,
-					phone2: user.phone2,
+					email: user.email || '',
+					phone1: user.phone1 || '',
+					phone2: user.phone2 || '',
 					address: user?.residentialAddress?.address || '',
 					rDigitalAddress: user?.residentialAddress?.digitalAddress || '',
 					rTown: user?.residentialAddress?.town || '',
@@ -129,13 +129,13 @@ const UsersDrawer = () => {
 					cDigitalAddress: user?.company?.address.digitalAddress || '',
 					cTown: user?.company?.address.town || '',
 					cRegion: user?.company?.address.region || '',
-					deliveryAddresses: user.deliveryAddresses,
+					shippingAddresses: user?.shippingAddresses,
 					password: '',
 					role: user.role._id,
 					profileImg: user.profileImg ? [user.profileImg] : [],
 					notes: user.notes,
 					isActive: user.isActive,
-					isApproved: user.isApproved,
+					isApproved: user.isApproved || false,
 					canReceiveEmails: user.canReceiveEmails,
 				}
 			})
@@ -150,7 +150,7 @@ const UsersDrawer = () => {
 				rDigitalAddress: '',
 				rTown: '',
 				rRegion: '',
-				deliveryAddresses: [],
+				shippingAddresses: [],
 				cName: '',
 				cPhone: '',
 				website: '',
@@ -536,7 +536,7 @@ const UsersDrawer = () => {
 					</Panel>
 
 					<DeliveryAddresses
-						addresses={formValue.deliveryAddresses}
+						addresses={formValue.shippingAddresses}
 						setFormValue={setFormValue}
 						regions={formattedRegions}
 					/>

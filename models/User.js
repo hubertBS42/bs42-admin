@@ -24,7 +24,7 @@ const UserSchema = new mongoose.Schema(
 			town: { type: String },
 			region: { type: String },
 		},
-		deliveryAddresses: [
+		shippingAddresses: [
 			{
 				address: { type: String },
 				digitalAddress: { type: String },

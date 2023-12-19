@@ -19,7 +19,7 @@ const DeliveryAddresses = ({ addresses, setFormValue, regions }) => {
 		setFormValue(prev => {
 			return {
 				...prev,
-				deliveryAddresses: [
+				shippingAddresses: [
 					{
 						index,
 						address: '',
@@ -39,7 +39,7 @@ const DeliveryAddresses = ({ addresses, setFormValue, regions }) => {
 			address => address.index !== index
 		)
 		setFormValue(prev => {
-			return { ...prev, deliveryAddresses: filtered }
+			return { ...prev, shippingAddresses: filtered }
 		})
 	}
 
@@ -55,7 +55,7 @@ const DeliveryAddresses = ({ addresses, setFormValue, regions }) => {
 		})
 
 		setFormValue(prev => {
-			return { ...prev, deliveryAddresses: newData }
+			return { ...prev, shippingAddresses: newData }
 		})
 	}
 
@@ -63,7 +63,7 @@ const DeliveryAddresses = ({ addresses, setFormValue, regions }) => {
 		<Panel
 			header={
 				<Stack justifyContent='space-between'>
-					<span>Delivery Addresses</span>
+					<span>Shipping Addresses</span>
 					<IconButton
 						icon={<PlusIcon />}
 						circle
@@ -165,7 +165,7 @@ const DeliveryAddresses = ({ addresses, setFormValue, regions }) => {
 						marginBottom: '2em',
 					}}
 				>
-					There are no delivery addresses for this user.
+					There are no shipping addresses for this user.
 				</p>
 			)}
 		</Panel>
