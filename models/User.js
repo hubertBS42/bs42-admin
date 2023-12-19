@@ -84,7 +84,7 @@ UserSchema.statics.authUser = async function (email, password) {
 			},
 		})
 		.select(
-			'firstName lastName email phone1 phone2 deliveryAddresses password isActive isApproved role profileImg'
+			'firstName lastName email phone1 phone2 shippingAddresses password isActive isApproved role profileImg'
 		)
 		.lean()
 
