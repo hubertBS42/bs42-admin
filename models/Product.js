@@ -12,6 +12,7 @@ const ProductSchema = new mongoose.Schema(
 			type: mongoose.Schema.Types.ObjectId,
 			ref: 'Brand',
 		},
+		condition: { type: String, default: 'new' },
 		buyPrice: { type: Number, trim: true, default: 0 },
 		sellPrice: { type: Number, trim: true, default: 0 },
 		resellerPrice: { type: Number, trim: true, default: 0 },

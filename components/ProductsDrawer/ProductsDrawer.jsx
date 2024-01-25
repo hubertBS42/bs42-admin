@@ -11,6 +11,7 @@ import {
 	Panel,
 	Row,
 	Schema,
+	SelectPicker,
 	Stack,
 	TagInput,
 	Toggle,
@@ -54,6 +55,7 @@ const model = Schema.Model({
 	sku: StringType(),
 	title: StringType().isRequired('This field is required'),
 	brand: StringType().isRequired('This field is required'),
+	condition: StringType().isRequired('This field is required'),
 	category: StringType().isRequired('This field is required'),
 	tags: ArrayType(),
 	buyPrice: NumberType(),
@@ -79,6 +81,7 @@ const ProductsDrawer = ({ currentRate }) => {
 		sku: '',
 		title: '',
 		brand: '',
+		condition: 'new',
 		buyPrice: 0,
 		sellPrice: 0,
 		resellerPrice: 0,
@@ -117,6 +120,7 @@ const ProductsDrawer = ({ currentRate }) => {
 					sku: product.sku,
 					title: product.title,
 					brand: product?.brand?._id || null,
+					condition: product.condition,
 					buyPrice: product.buyPrice,
 					sellPrice: product.sellPrice,
 					resellerPrice: product.resellerPrice,
@@ -142,6 +146,7 @@ const ProductsDrawer = ({ currentRate }) => {
 				sku: '',
 				title: '',
 				brand: '',
+				condition: 'new',
 				buyPrice: 0,
 				sellPrice: 0,
 				resellerPrice: 0,
@@ -298,6 +303,23 @@ const ProductsDrawer = ({ currentRate }) => {
 										accepter={InputPicker}
 										error={formError.brand}
 										data={brands}
+									/>
+								</Col>
+							</Row>
+
+							<Row style={{ marginBottom: '1.2em' }}>
+								<Col xs={24}>
+									<Field
+										name='condition'
+										label='Condition'
+										accepter={SelectPicker}
+										error={formError.condition}
+										data={[
+											{ label: 'New', value: 'new' },
+											{ label: 'Used', value: 'used' },
+										]}
+										searchable={false}
+										// defaultValue={'new'}
 									/>
 								</Col>
 							</Row>
