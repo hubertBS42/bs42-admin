@@ -17,6 +17,7 @@ export const GET = async request => {
 	const sortBy = searchParams.get('sortBy') || 'newest'
 	const category = searchParams.get('category') || null
 	const brand = searchParams.get('brand') || null
+	const condition = searchParams.get('condition') || null
 
 	let field
 	let order
@@ -123,6 +124,8 @@ export const GET = async request => {
 		}
 
 		if (sortBy === 'featured') productsQuery.featured = true
+
+		if (condition) productsQuery.condition = condition
 
 		const fetchProductsQuery = Product.find(productsQuery)
 			.collation({ locale: 'en' })
