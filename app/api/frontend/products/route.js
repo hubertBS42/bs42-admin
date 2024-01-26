@@ -17,7 +17,10 @@ export const GET = async request => {
 	const sortBy = searchParams.get('sortBy') || 'newest'
 	const category = searchParams.get('category') || null
 	const brand = searchParams.get('brand') || null
-	const condition = searchParams.get('condition') || null
+	const condition =
+		searchParams.get('condition') === 'null'
+			? null
+			: searchParams.get('condition')
 
 	let field
 	let order
