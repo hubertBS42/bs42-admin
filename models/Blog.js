@@ -5,8 +5,10 @@ mongoose.plugin(slug)
 
 const BlogSchema = new mongoose.Schema(
 	{
-		title: { type: String, required: true },
+		title: { type: String, trim: true, required: true, index: true },
 		slug: { type: String, slug: 'title' },
+		excerpt: { type: String, required: true },
+		body: { type: String, required: true },
 		author: {
 			type: mongoose.Schema.Types.ObjectId,
 			ref: 'User',

@@ -41,12 +41,12 @@
 	border: 0;
 
 	.mantine-RichTextEditor-content {
-		border-radius: 6px;
+		// border-radius: 6px;
 		.ProseMirror {
 			// height: 100px;
 			background: #1a1d24;
 			border: 1px solid #3c3f43;
-			border-radius: 6px;
+			border-radius: 0 0 6px 6px;
 			color: #e9ebf0;
 			font-size: 14px;
 			transition: border-color 0.15s ease-in-out;

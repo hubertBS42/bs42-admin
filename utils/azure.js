@@ -226,3 +226,46 @@ export const updateFiles = async (toBeUploaded, toBeDeleted) => {
 
 	// return { name: uploadedFile, url: link, fileKey: 1 }
 }
+
+export const updateBlogImages = async (toBeUploaded, toBeDeleted) => {
+	const queries = []
+	const indices = []
+
+	if (toBeDeleted.length > 0) {
+		const options = {
+			deleteSnapshots: 'include', // or 'only'
+		}
+		for (const image of toBeDeleted) {
+			const blobClient =
+				picturesContainerClient.getBlockBlobClient(image)
+			queries.push(blobClient.deleteIfExists(options))
+		}
+	}
+
+	if (toBeUploaded.length > 0) {
+		toBeUploaded.forEach((image, i) => {
+			if (image !== null) {
+				queries.push(createBlobInPicturesContainer(image))
+			} else {
+				indices.push(i)
+			}
+		})
+	}
+
+	const data = await Promise.all(queries)
+
+	const images = data.filter(image => typeof image !== 'object')
+
+	const formatted = images.map(image => {
+		return {
+			name: image,
+			url: `https://${storageName}.blob.core.windows.net/${picturesContainer}/${image}`,
+		}
+	})
+
+	indices.map(index => {
+		formatted.splice(index, 0, null)
+	})
+
+	return formatted
+}

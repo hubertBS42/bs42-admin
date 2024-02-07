@@ -25,9 +25,26 @@ const TextEditor = ({ value, onChange, readOnly }) => {
 		},
 	})
 	return (
-		<RichTextEditor editor={editor} readOnly={readOnly}>
+		<RichTextEditor
+			editor={editor}
+			readOnly={readOnly}
+			styles={{
+				toolbar: {
+					backgroundColor: '#1a1d24',
+					border: '1px solid #3c3f43',
+					borderBottom: 'none',
+					borderRadius: '6px 6px 0 0',
+				},
+				content: {
+					borderRadius: '0 0 6px 6px',
+				},
+				linkEditor: {
+					backgroundColor: 'red',
+				},
+			}}
+		>
 			{editor && (
-				<BubbleMenu editor={editor}>
+				<RichTextEditor.Toolbar sticky stickyOffset={60}>
 					<RichTextEditor.ControlsGroup>
 						<RichTextEditor.Bold />
 						<RichTextEditor.Italic />
@@ -61,7 +78,7 @@ const TextEditor = ({ value, onChange, readOnly }) => {
 						<RichTextEditor.AlignJustify />
 						<RichTextEditor.AlignRight />
 					</RichTextEditor.ControlsGroup>
-				</BubbleMenu>
+				</RichTextEditor.Toolbar>
 			)}
 
 			<RichTextEditor.Content className={poppins.className} />
