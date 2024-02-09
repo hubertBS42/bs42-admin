@@ -48,6 +48,7 @@ export const GET = async request => {
 			blogsQuery.excerpt = { $regex: queryRegx }
 		}
 
+		// test
 		// if (period) {
 		// 	let categories = await Category.find().select('slug parent').lean()
 
