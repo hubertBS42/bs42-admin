@@ -9,6 +9,7 @@ import {
 	Panel,
 	Row,
 	Schema,
+	TagInput,
 	Toggle,
 	Uploader,
 } from 'rsuite'
@@ -52,6 +53,7 @@ const model = Schema.Model({
 		1,
 		'You need to upload a banner image.'
 	),
+	tags: ArrayType(),
 })
 
 const BlogsDrawer = () => {
@@ -66,6 +68,7 @@ const BlogsDrawer = () => {
 		author: '',
 		previewImage: [],
 		bannerImage: [],
+		tags: [],
 		isActive: true,
 	})
 
@@ -115,6 +118,7 @@ const BlogsDrawer = () => {
 					author: blog?.author?._id || null,
 					previewImage: blog.previewImage ? [blog.previewImage] : [],
 					bannerImage: blog.bannerImage ? [blog.bannerImage] : [],
+					tags: blog.tags,
 					isActive: blog.isActive,
 				}
 			})
@@ -126,6 +130,7 @@ const BlogsDrawer = () => {
 				author: '',
 				previewImage: [],
 				bannerImage: [],
+				tags: [],
 				isActive: true,
 			})
 		}
@@ -245,6 +250,17 @@ const BlogsDrawer = () => {
 									accepter={TextEditor}
 									error={formError.body}
 									value={blog ? blog.body : ''}
+								/>
+							</Col>
+						</Row>
+
+						<Row style={{ marginBottom: '1.4em' }}>
+							<Col xs={24}>
+								<Field
+									name='tags'
+									label='Tags'
+									accepter={TagInput}
+									error={formError.tags}
 								/>
 							</Col>
 						</Row>

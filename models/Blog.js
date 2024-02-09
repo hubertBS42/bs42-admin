@@ -9,6 +9,7 @@ const BlogSchema = new mongoose.Schema(
 		slug: { type: String, slug: 'title' },
 		excerpt: { type: String, required: true },
 		body: { type: String, required: true },
+		tags: [{ type: String, trim: true }],
 		author: {
 			type: mongoose.Schema.Types.ObjectId,
 			ref: 'User',
