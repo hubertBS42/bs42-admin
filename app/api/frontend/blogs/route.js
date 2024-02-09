@@ -4,6 +4,8 @@ import { connectToDB } from '@/utils/database'
 
 export const GET = async request => {
 	const { searchParams } = new URL(request.url)
+	const query =
+		searchParams.get('q') === 'null' ? null : searchParams.get('q')
 	const page = searchParams.get('page') || 1
 	const limit = searchParams.get('limit') || 25
 	const sortBy = searchParams.get('sortBy') || 'newest'
@@ -39,6 +41,12 @@ export const GET = async request => {
 
 	try {
 		await connectToDB()
+
+		if (query) {
+			const queryRegx = new RegExp(query, 'i')
+			blogsQuery.title = { $regex: queryRegx }
+			blogsQuery.excerpt = { $regex: queryRegx }
+		}
 
 		// if (period) {
 		// 	let categories = await Category.find().select('slug parent').lean()
