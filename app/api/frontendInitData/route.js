@@ -1,5 +1,6 @@
 import Product from '@/models/Product'
 import Brand from '@/models/Brand'
+import Blog from '@/models/Blog'
 import Currency from '@/models/Currency'
 import Category from '@/models/Category'
 import { connectToDB } from '@/utils/database'
@@ -51,18 +52,27 @@ export const GET = async request => {
 			.select('-description -updatedAt')
 			.lean()
 
-		const [products, categories, settings, brands] = await Promise.all([
-			fetchProductsQuery,
-			fetchCategoriesQuery,
-			fetchSettingsQuery,
-			fetchBrandsQuery,
-		])
+		const fetchBlogsQuery = Blog.find()
+			.collation({ locale: 'en' })
+			.sort({ name: 'asc' })
+			.select('_id')
+			.lean()
+
+		const [products, categories, settings, brands, blogs] =
+			await Promise.all([
+				fetchProductsQuery,
+				fetchCategoriesQuery,
+				fetchSettingsQuery,
+				fetchBrandsQuery,
+				fetchBlogsQuery,
+			])
 
 		const data = {
 			products,
 			categories,
 			settings,
 			brands,
+			blogs,
 		}
 
 		return new Response(
