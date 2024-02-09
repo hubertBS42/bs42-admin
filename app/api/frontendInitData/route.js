@@ -52,19 +52,15 @@ export const GET = async request => {
 			.select('-description -updatedAt')
 			.lean()
 
-		const fetchBlogsQuery = Blog.find()
-			.collation({ locale: 'en' })
-			.sort({ createdAt: 'desc' })
-			.select('_id')
-			.lean()
+		const fetchBlogsCount = Blog.count()
 
-		const [products, categories, settings, brands, blogs] =
+		const [products, categories, settings, brands, blogsCount] =
 			await Promise.all([
 				fetchProductsQuery,
 				fetchCategoriesQuery,
 				fetchSettingsQuery,
 				fetchBrandsQuery,
-				fetchBlogsQuery,
+				fetchBlogsCount,
 			])
 
 		const data = {
@@ -72,7 +68,7 @@ export const GET = async request => {
 			categories,
 			settings,
 			brands,
-			blogs,
+			blogsCount,
 		}
 
 		return new Response(
