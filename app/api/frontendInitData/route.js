@@ -54,7 +54,7 @@ export const GET = async request => {
 
 		const fetchBlogsQuery = Blog.find()
 			.collation({ locale: 'en' })
-			.sort({ name: 'asc' })
+			.sort({ createdAt: 'desc' })
 			.select('_id')
 			.lean()
 
