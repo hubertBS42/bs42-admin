@@ -6,6 +6,10 @@ export const GET = async request => {
 	const { searchParams } = new URL(request.url)
 	const query =
 		searchParams.get('q') === 'null' ? null : searchParams.get('q')
+	const author =
+		searchParams.get('author') === 'null'
+			? null
+			: searchParams.get('author')
 	const page = searchParams.get('page') || 1
 	const limit = searchParams.get('limit') || 25
 	const sortBy = searchParams.get('sortBy') || 'newest'
@@ -43,10 +47,14 @@ export const GET = async request => {
 		await connectToDB()
 
 		if (query) {
-			const queryRegx = new RegExp(query, 'i')
-			blogsQuery.title = { $regex: queryRegx }
-			blogsQuery.excerpt = { $regex: queryRegx }
+			blogsQuery.$or = [
+				{ title: { $regex: query, $options: 'i' } },
+				{ excerpt: { $regex: query, $options: 'i' } },
+				{ tags: { $elemMatch: { $regex: query, $options: 'i' } } },
+			]
 		}
+
+		if (author) blogsQuery.author = author
 
 		// test
 		// if (period) {
