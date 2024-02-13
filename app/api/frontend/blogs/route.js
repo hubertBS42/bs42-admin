@@ -13,10 +13,14 @@ export const GET = async request => {
 	const page = searchParams.get('page') || 1
 	const limit = searchParams.get('limit') || 25
 	const sortBy = searchParams.get('sortBy') || 'newest'
-	const period =
-		searchParams.get('period') === 'null'
+	const startDate =
+		searchParams.get('startDate') === 'null'
 			? null
-			: searchParams.get('period')
+			: searchParams.get('startDate')
+	const endDate =
+		searchParams.get('endDate') === 'null'
+			? null
+			: searchParams.get('endDate')
 
 	let field
 	let order
@@ -56,45 +60,14 @@ export const GET = async request => {
 
 		if (author && author !== 'all') blogsQuery.author = author
 
-		// test
-		// if (period) {
-		// 	let categories = await Category.find().select('slug parent').lean()
-
-		// 	categories = categories.map(category => {
-		// 		return {
-		// 			...category,
-		// 			_id: category._id.toString(),
-		// 			parent: category.parent?.toString() || null,
-		// 		}
-		// 	})
-
-		// 	const groupedCategories = groupCategories(categories)
-
-		// 	const categoriesIds = findIdsOfCategoryAndChildrenBySlug(
-		// 		groupedCategories,
-		// 		category
-		// 	)
-
-		// 	if (categoriesIds.length > 0) {
-		// 		productsQuery.category = { $in: categoriesIds }
-		// 	}
-		// }
-
-		// if (brand) {
-		// 	const slugs = brand.split(',')
-		// 	const documents = await Brand.find({ slug: { $in: slugs } })
-		// 		.select('_id')
-		// 		.lean()
-
-		// 	if (documents.length > 0) {
-		// 		const brandIds = documents.map(document => document._id)
-		// 		productsQuery.brand = { $in: brandIds }
-		// 	}
-		// }
-
-		// if (sortBy === 'featured') productsQuery.featured = true
-
-		// if (condition) productsQuery.condition = condition
+		if (startDate && endDate) {
+			const nextDay = new Date(endDate)
+			nextDay.setDate(nextDay.getDate() + 1)
+			blogsQuery.createdAt = {
+				$gte: new Date(startDate),
+				$lt: new Date(nextDay),
+			}
+		}
 
 		const fetchBlogsQuery = Blog.find(blogsQuery)
 			.collation({ locale: 'en' })
