@@ -54,7 +54,7 @@ export const GET = async request => {
 			]
 		}
 
-		if (author) blogsQuery.author = author
+		if (author && author !== 'all') blogsQuery.author = author
 
 		// test
 		// if (period) {
