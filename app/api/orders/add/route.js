@@ -2,6 +2,7 @@ import Cart from '@/models/Cart'
 import Order from '@/models/Order'
 import { connectToDB } from '@/utils/database'
 import { NextResponse } from 'next/server'
+import jwt from 'jsonwebtoken'
 
 export const POST = async request => {
 	const data = await request.json()
@@ -19,6 +20,7 @@ export const POST = async request => {
 		if (!newOrder) throw new Error('Failed to create order')
 
 		if (cartToken) {
+			jwt.verify(cartToken, 'abc123')
 			await Cart.findOneAndDelete({ token: cartToken })
 		}
 
@@ -35,6 +37,7 @@ export const POST = async request => {
 			{ status: 201 }
 		)
 	} catch (error) {
+		console.log(error)
 		return new NextResponse(
 			JSON.stringify({
 				status: 'error',
