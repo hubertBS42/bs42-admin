@@ -6,7 +6,7 @@ mongoose.plugin(slug)
 const OrderSchema = new mongoose.Schema(
 	{
 		customerInfo: {
-			user: {
+			userRef: {
 				type: mongoose.Schema.Types.ObjectId,
 				ref: 'User',
 			},
@@ -19,28 +19,43 @@ const OrderSchema = new mongoose.Schema(
 		rate: { type: Number },
 		products: [
 			{
-				product: {
+				productRef: {
 					type: mongoose.Schema.Types.ObjectId,
 					ref: 'Product',
 				},
+				title: { type: String },
+				brand: {
+					name: { type: String },
+					website: { type: String },
+					url: { type: String },
+				},
+				category: {
+					type: [String],
+				},
+				images: [{ name: { type: String }, url: { type: String } }],
 				quantity: { type: Number, default: 1 },
 				price: { type: Number },
 			},
 		],
 		totalPrice: { type: Number },
-		shippingInfo: {
-			firstName: { type: String },
-			lastName: { type: String },
-			email: { type: String },
-			phone: { type: String },
-			region: { type: String },
-			town: { type: String },
-			address: { type: String },
-			digitalAddress: { type: String },
+		shipping: {
+			address: {
+				firstName: { type: String },
+				lastName: { type: String },
+				email: { type: String },
+				phone: { type: String },
+				region: { type: String },
+				town: { type: String },
+				address: { type: String },
+				digitalAddress: { type: String },
+			},
+			method: { type: String },
+			status: { type: String, default: 'pending' },
 		},
-		paymentStatus: { type: String, default: 'pending' }, //pending, paid
-		paymentMethod: { type: String },
-		shippingMethod: { type: String },
+		payment: {
+			method: { type: String },
+			status: { type: String, default: 'pending' },
+		},
 		trackingInfo: {
 			carrier: { type: String },
 			trackingNumber: { type: String },
