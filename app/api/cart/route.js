@@ -27,21 +27,23 @@ export const GET = async request => {
 					model: 'Product',
 					select:
 						'images title brand category sellPrice countInStock slug',
-					populate: {
-						path: 'brand',
-					},
-					populate: {
-						path: 'category',
-						populate: {
-							path: 'parent',
+					populate: [
+						{
+							path: 'brand',
+						},
+						{
+							path: 'category',
 							populate: {
 								path: 'parent',
 								populate: {
 									path: 'parent',
+									populate: {
+										path: 'parent',
+									},
 								},
 							},
 						},
-					},
+					],
 				})
 
 			if (!guestCart)
@@ -65,6 +67,12 @@ export const GET = async request => {
 							path: 'category',
 							populate: {
 								path: 'parent',
+								populate: {
+									path: 'parent',
+									populate: {
+										path: 'parent',
+									},
+								},
 							},
 						},
 					],
@@ -89,6 +97,12 @@ export const GET = async request => {
 							path: 'category',
 							populate: {
 								path: 'parent',
+								populate: {
+									path: 'parent',
+									populate: {
+										path: 'parent',
+									},
+								},
 							},
 						},
 					],
@@ -109,6 +123,12 @@ export const GET = async request => {
 							path: 'category',
 							populate: {
 								path: 'parent',
+								populate: {
+									path: 'parent',
+									populate: {
+										path: 'parent',
+									},
+								},
 							},
 						},
 					],
