@@ -32,6 +32,9 @@ export const GET = async request => {
 					},
 					populate: {
 						path: 'category',
+						populate: {
+							path: 'parent',
+						},
 					},
 				})
 
@@ -52,7 +55,12 @@ export const GET = async request => {
 						{
 							path: 'brand',
 						},
-						{ path: 'category' },
+						{
+							path: 'category',
+							populate: {
+								path: 'parent',
+							},
+						},
 					],
 				})
 
@@ -71,7 +79,12 @@ export const GET = async request => {
 						{
 							path: 'brand',
 						},
-						{ path: 'category' },
+						{
+							path: 'category',
+							populate: {
+								path: 'parent',
+							},
+						},
 					],
 				})
 
@@ -86,7 +99,12 @@ export const GET = async request => {
 						{
 							path: 'brand',
 						},
-						{ path: 'category' },
+						{
+							path: 'category',
+							populate: {
+								path: 'parent',
+							},
+						},
 					],
 				})
 
