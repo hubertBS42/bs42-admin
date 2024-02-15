@@ -1,6 +1,7 @@
 import Cart from '@/models/Cart'
 import Product from '@/models/Product'
 import Brand from '@/models/Brand'
+import Category from '@/models/Category'
 import { connectToDB } from '@/utils/database'
 import jwt from 'jsonwebtoken'
 import { combineCartItems } from '@/utils/functions'
@@ -28,6 +29,9 @@ export const GET = async request => {
 					populate: {
 						path: 'brand',
 					},
+					populate: {
+						path: 'category',
+					},
 				})
 
 			if (!guestCart)
@@ -42,9 +46,12 @@ export const GET = async request => {
 					path: 'items.product',
 					model: 'Product',
 					select: 'images title brand sellPrice countInStock slug',
-					populate: {
-						path: 'brand',
-					},
+					populate: [
+						{
+							path: 'brand',
+						},
+						{ path: 'category' },
+					],
 				})
 
 			data = userCart
@@ -57,9 +64,12 @@ export const GET = async request => {
 					path: 'items.product',
 					model: 'Product',
 					select: 'images title brand sellPrice countInStock slug',
-					populate: {
-						path: 'brand',
-					},
+					populate: [
+						{
+							path: 'brand',
+						},
+						{ path: 'category' },
+					],
 				})
 
 			const guestCart = await Cart.findOne({ token: cartToken })
@@ -68,9 +78,12 @@ export const GET = async request => {
 					path: 'items.product',
 					model: 'Product',
 					select: 'images title brand sellPrice countInStock slug',
-					populate: {
-						path: 'brand',
-					},
+					populate: [
+						{
+							path: 'brand',
+						},
+						{ path: 'category' },
+					],
 				})
 
 			if (!guestCart)
