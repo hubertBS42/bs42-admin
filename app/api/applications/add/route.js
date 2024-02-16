@@ -22,6 +22,16 @@ export const POST = async request => {
 			message: `Hello ${newApplication.firstName}, we have received your application. We will need to verify your details before your account is enabled and we may need to contact you for more information.`,
 		})
 
+		sendMail({
+			sender: {
+				title: 'BS42.NET Notification',
+				email: 'notify@bs42.net',
+			},
+			subject: 'Account Registration',
+			toEmail: 'hubert@attelecomms.co.uk',
+			message: `Hello ${newApplication.firstName}, we have received your application. We will need to verify your details before your account is enabled and we may need to contact you for more information.`,
+		})
+
 		return new NextResponse(
 			JSON.stringify({
 				status: 'success',
