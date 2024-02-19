@@ -8,7 +8,7 @@ import {
 } from '@/redux/features/slides/slidesActions'
 import { useEffect } from 'react'
 
-const page = () => {
+const BannerSlidesPage = () => {
 	const handleDelete = async data => {
 		await deleteSlide(data)
 	}
@@ -24,4 +24,4 @@ const page = () => {
 		</div>
 	)
 }
-export default page
+export default BannerSlidesPage
