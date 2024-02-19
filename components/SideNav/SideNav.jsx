@@ -59,9 +59,21 @@ const SideNav = () => {
 		activePage = '6'
 	}
 
-	if (pathname.includes('settings')) {
-		activePage = '7'
+	if (pathname.includes('banner-slides')) {
+		activePage = '7-1'
 	}
+
+	if (pathname.includes('currency')) {
+		activePage = '7-2'
+	}
+
+	if (pathname.includes('notifications')) {
+		activePage = '7-3'
+	}
+
+	// if (pathname.includes('settings')) {
+	// 	activePage = '7'
+	// }
 
 	const defaultOpenKeys = activePage.split('-')
 	defaultOpenKeys.pop()
@@ -164,14 +176,38 @@ const SideNav = () => {
 							Blogs
 						</Nav.Item>
 
-						<Nav.Item
+						{/* <Nav.Item
 							as={NavLink}
 							eventKey='7'
 							icon={<GearIcon />}
 							href='/settings'
 						>
 							Settings
-						</Nav.Item>
+						</Nav.Item> */}
+
+						<Nav.Menu eventKey='7' title='Settings' icon={<GearIcon />}>
+							<Nav.Item
+								eventKey='7-1'
+								as={NavLink}
+								href='/settings/banner-slides'
+							>
+								Banner Slides
+							</Nav.Item>
+							<Nav.Item
+								eventKey='7-2'
+								as={NavLink}
+								href='/settings/currency'
+							>
+								Currency
+							</Nav.Item>
+							<Nav.Item
+								eventKey='7-3'
+								as={NavLink}
+								href='/settings/notifications'
+							>
+								Notifications
+							</Nav.Item>
+						</Nav.Menu>
 					</Nav>
 				</Sidenav.Body>
 				<Sidenav.Toggle onToggle={expanded => setExpanded(expanded)} />

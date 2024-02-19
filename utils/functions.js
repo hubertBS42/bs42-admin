@@ -39,7 +39,7 @@ export const generatePageTitle = () => {
 		return `${firstWord} ${secondWord}`
 	}
 
-	return capitalizeFirstLetter(choppedUp.pop())
+	return capitalizeFirstLetter(choppedUp.pop().replace(/-/g, ' '))
 }
 
 export const fetcher = (...args) =>

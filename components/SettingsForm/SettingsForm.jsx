@@ -9,7 +9,7 @@ import { fetcher } from '@/utils/functions'
 import CarouselSlidesTable from '../CarouselSlidesTable/CarouselSlidesTable'
 import CarouselSlidesDrawer from '../CarouselSlidesDrawer/CarouselSlidesDrawer'
 import { updateImages } from '@/utils/azure'
-// import NotificationsSettings from '../NotificationsSettings/NotificationsSettings'
+import NotificationsSettings from '../NotificationsSettings/NotificationsSettings'
 
 const { StringType, ArrayType, NumberType } = Schema.Types
 
@@ -215,7 +215,7 @@ const SettingsForm = ({ data }) => {
 						formError={formError}
 						formValue={formValue}
 					/>
-					{/* <NotificationsSettings /> */}
+					<NotificationsSettings />
 				</Stack>
 			</Form>
 		</>
