@@ -63,7 +63,7 @@ const SideNav = () => {
 		activePage = '7-1'
 	}
 
-	if (pathname.includes('currency')) {
+	if (pathname.includes('currencies')) {
 		activePage = '7-2'
 	}
 
@@ -196,9 +196,9 @@ const SideNav = () => {
 							<Nav.Item
 								eventKey='7-2'
 								as={NavLink}
-								href='/settings/currency'
+								href='/settings/currencies'
 							>
-								Currency
+								Currencies
 							</Nav.Item>
 							<Nav.Item
 								eventKey='7-3'

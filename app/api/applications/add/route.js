@@ -28,7 +28,8 @@ export const POST = async request => {
 				email: 'notify@bs42.net',
 			},
 			subject: 'New Account Registration',
-			toEmail: 'hubert@attelecomms.co.uk,hugheyq@gmail.com',
+			toEmail:
+				'tony@attelecomms.co.uk,seth@attelecoms.co.uk,daniel@attelecomms.co.uk',
 			message: `This is to notify you that there has been a new account application on BS42.Net. This applicaition will need to be reviewed and either be approved or rejected.`,
 		})
 
