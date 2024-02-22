@@ -35,16 +35,9 @@ export const GET = async request => {
 			.select('name slug parent images isActive')
 			.lean()
 
-		const fetchSettingsQuery = Setting.find()
-			.collation({ locale: 'en' })
-			.sort({ createdAt: 'desc' })
-			.limit(1)
-			.populate({
-				path: 'exchangeRate.currency',
-				model: 'Currency',
-				select: '-history',
-			})
-			.lean()
+		const fetchCurrencyQuery = Currency.findOne({
+			isActive: true,
+		}).lean()
 
 		const fetchBrandsQuery = Brand.find()
 			.collation({ locale: 'en' })
@@ -54,11 +47,11 @@ export const GET = async request => {
 
 		const fetchBlogsCount = Blog.count()
 
-		const [products, categories, settings, brands, blogsCount] =
+		const [products, categories, currency, brands, blogsCount] =
 			await Promise.all([
 				fetchProductsQuery,
 				fetchCategoriesQuery,
-				fetchSettingsQuery,
+				fetchCurrencyQuery,
 				fetchBrandsQuery,
 				fetchBlogsCount,
 			])
@@ -66,7 +59,7 @@ export const GET = async request => {
 		const data = {
 			products,
 			categories,
-			settings,
+			currency,
 			brands,
 			blogsCount,
 		}
