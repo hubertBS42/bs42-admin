@@ -9,6 +9,7 @@ import {
 	Row,
 	Schema,
 	SelectPicker,
+	Stack,
 	Toggle,
 	Uploader,
 } from 'rsuite'
@@ -248,41 +249,33 @@ const UsersDrawer = () => {
 					onCheck={setFormError}
 					formValue={formValue}
 					model={model}
-					fluid
 					disabled={isLoading}
 				>
-					<div
+					<Stack
+						spacing={30}
+						justifyContent='flex-end'
 						style={{
 							marginBottom: '1.5em',
-							display: 'flex',
-							columnGap: '1em',
-							justifyContent: 'flex-end',
 						}}
 					>
-						<div>
-							<CustomToggle
-								accepter={Toggle}
-								name='isActive'
-								label='Active'
-							/>
-						</div>
+						<CustomToggle
+							accepter={Toggle}
+							name='isActive'
+							label='Active'
+						/>
 
-						<div>
-							<CustomToggle
-								accepter={Toggle}
-								name='isApproved'
-								label='Approved'
-							/>
-						</div>
+						<CustomToggle
+							accepter={Toggle}
+							name='isApproved'
+							label='Approved'
+						/>
 
-						<div>
-							<CustomToggle
-								accepter={Toggle}
-								name='canReceiveEmails'
-								label='Emails'
-							/>
-						</div>
-					</div>
+						<CustomToggle
+							accepter={Toggle}
+							name='canReceiveEmails'
+							label='Emails'
+						/>
+					</Stack>
 
 					<Panel
 						header='General Information'

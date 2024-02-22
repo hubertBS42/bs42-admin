@@ -25,7 +25,6 @@ const ProductsPage = () => {
 	}, [])
 
 	let currentRate = useSelector(getCurrentRate)
-	currentRate = currentRate[0]?.exchangeRate.currentRate
 
 	return (
 		<div className={styles.mainWrapper}>

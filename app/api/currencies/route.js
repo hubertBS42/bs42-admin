@@ -2,19 +2,33 @@ import Currency from '@/models/Currency'
 import { connectToDB } from '@/utils/database'
 
 export const GET = async request => {
+	const { searchParams } = new URL(request.url)
+	const page = searchParams.get('page') || 1
+	const limit = searchParams.get('limit') || 10
+	const sort = searchParams.get('sort') || 'desc'
+	const field = searchParams.get('sortBy') || 'updatedAt'
 	try {
 		await connectToDB()
 
 		const currencies = await Currency.find()
 			.collation({ locale: 'en' })
-			.sort({ country: 'asc' })
+			.limit(limit * 1)
+			.skip((page - 1) * limit)
+			.sort({ [field]: sort })
 			.lean()
+
+		const count = await Currency.count()
+
+		const data = {
+			currencies,
+			count,
+		}
 
 		return new Response(
 			JSON.stringify({
 				status: 'success',
 				message: null,
-				data: currencies,
+				data,
 			}),
 			{
 				status: 200,

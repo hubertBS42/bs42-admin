@@ -52,7 +52,6 @@ const ApplicationsDrawer = () => {
 	})
 
 	const updateForm = data => {
-		console.log(data)
 		setFormValue(prev => {
 			return {
 				...prev,
@@ -124,17 +123,14 @@ const ApplicationsDrawer = () => {
 					ref={formRef}
 					onChange={setFormValue}
 					formValue={formValue}
-					fluid
 					disabled={isLoading}
 				>
-					<div style={{ width: '80px', marginBottom: '1.5em' }}>
-						<CustomToggle
-							accepter={Toggle}
-							name='canReceiveEmails'
-							label='Emails'
-							disabled
-						/>
-					</div>
+					<CustomToggle
+						accepter={Toggle}
+						name='canReceiveEmails'
+						label='Emails'
+						disabled
+					/>
 
 					<Panel bordered>
 						<Row style={{ marginBottom: '1.4em' }}>

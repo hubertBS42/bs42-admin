@@ -11,7 +11,7 @@ const FileUploader = React.forwardRef((props, ref) => {
 		<Form.Group
 			controlId={name}
 			ref={ref}
-			className={error ? 'has-error' : ''}
+			className={error ? 'has-error full-width' : 'full-width'}
 		>
 			<Form.ControlLabel>{label}</Form.ControlLabel>
 			<Form.Control

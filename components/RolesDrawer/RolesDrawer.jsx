@@ -129,16 +129,10 @@ const RolesDrawer = () => {
 					onCheck={setFormError}
 					formValue={formValue}
 					model={model}
-					fluid
 					disabled={isLoading}
 				>
-					<div style={{ width: '80px', marginBottom: '1.5em' }}>
-						<CustomToggle
-							accepter={Toggle}
-							name='isActive'
-							label='Active'
-						/>
-					</div>
+					<CustomToggle accepter={Toggle} name='isActive' label='Active' />
+
 					<Panel bordered>
 						<Grid fluid>
 							<Row style={{ marginBottom: '1.4em' }}>

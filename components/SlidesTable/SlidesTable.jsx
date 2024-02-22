@@ -108,7 +108,7 @@ const SlidesTable = () => {
 						<Cell dataKey='title' />
 					</Column>
 
-					<Column flexGrow={2} fixed sortable verticalAlign='middle'>
+					<Column flexGrow={3} fixed sortable verticalAlign='middle'>
 						<HeaderCell>Description</HeaderCell>
 						<Cell dataKey='description' />
 					</Column>

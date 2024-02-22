@@ -2,7 +2,7 @@ import Product from '@/models/Product'
 import Brand from '@/models/Brand'
 import Category from '@/models/Category'
 import { connectToDB } from '@/utils/database'
-import Setting from '@/models/Setting'
+import Currency from '@/models/Currency'
 
 export const GET = async request => {
 	const { searchParams } = new URL(request.url)
@@ -26,12 +26,9 @@ export const GET = async request => {
 			})
 			.lean()
 
-		const fetchCurrentRateQuery = Setting.find()
-			.collation({ locale: 'en' })
-			.sort({ createdAt: 'desc' })
-			.limit(1)
-			.select('exchangeRate.currentRate')
-			.lean()
+		const fetchCurrencyQuery = Currency.findOne({
+			isActive: true,
+		}).lean()
 
 		const fetchDisabledProductsQuery = Product.find({
 			$or: [{ brand: null }, { category: null }],
@@ -61,14 +58,14 @@ export const GET = async request => {
 
 		const [
 			products,
-			currentRate,
+			currency,
 			disabledProducts,
 			count,
 			categories,
 			brands,
 		] = await Promise.all([
 			fetchProductsQuery,
-			fetchCurrentRateQuery,
+			fetchCurrencyQuery,
 			fetchDisabledProductsQuery,
 			getCountQuery,
 			fetchCategoriesQuery,
@@ -77,7 +74,9 @@ export const GET = async request => {
 
 		const data = {
 			products,
-			currentRate,
+			currentRate: currency.isCustomRate
+				? currency.customRate
+				: currency.history[0].rate,
 			disabledProducts,
 			count,
 			categories,

@@ -16,12 +16,11 @@ const GeneratePasswordField = React.forwardRef((props, ref) => {
 	} = props
 
 	return (
-		<InputGroup>
+		<InputGroup style={{ width: '100%' }}>
 			<Form.Control
 				type='text'
 				name={name}
 				autoComplete='off'
-				style={{ width: '100%' }}
 				size={size}
 			/>
 			<InputGroup.Button

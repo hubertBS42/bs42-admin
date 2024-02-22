@@ -1,4 +1,5 @@
 import { usePathname } from 'next/navigation'
+import { format, isAfter, isBefore, parseISO } from 'date-fns'
 
 const capitalizeFirstLetter = word => {
 	const regex = /(\b[a-z](?!\s))/g
@@ -253,4 +254,25 @@ export const convertToDollar = (value, rate) => {
 		Math.pow(10, 2).toFixed(2)
 
 	return roundedUp
+}
+
+export const filterRatesByDateRange = (rates, startDate, endDate) => {
+	const filteredRates = rates.reduce((accumulator, rate) => {
+		const rateDate = parseISO(rate.date)
+		if (isAfter(rateDate, startDate) && isBefore(rateDate, endDate)) {
+			const formattedDate = format(rateDate, 'yyyy-MM-dd')
+			if (
+				!accumulator[formattedDate] ||
+				accumulator[formattedDate].rate < rate.rate
+			) {
+				accumulator[formattedDate] = {
+					date: formattedDate,
+					rate: rate.rate,
+				}
+			}
+		}
+		return accumulator
+	}, {})
+
+	return Object.values(filteredRates)
 }

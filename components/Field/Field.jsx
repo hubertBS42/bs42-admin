@@ -10,7 +10,7 @@ const Field = React.forwardRef((props, ref) => {
 		<Form.Group
 			controlId={name}
 			ref={ref}
-			className={error ? 'has-error' : ''}
+			className={error ? 'has-error full-width' : 'full-width'}
 		>
 			{label && <Form.ControlLabel>{label}</Form.ControlLabel>}
 

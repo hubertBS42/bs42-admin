@@ -240,16 +240,9 @@ const ProductsDrawer = ({ currentRate }) => {
 					onCheck={setFormError}
 					formValue={formValue}
 					model={model}
-					fluid
 					disabled={isLoading}
 				>
-					<div style={{ width: '80px', marginBottom: '1.5em' }}>
-						<CustomToggle
-							accepter={Toggle}
-							name='isActive'
-							label='Active'
-						/>
-					</div>
+					<CustomToggle accepter={Toggle} name='isActive' label='Active' />
 
 					<div
 						style={{
@@ -262,13 +255,11 @@ const ProductsDrawer = ({ currentRate }) => {
 							header={
 								<Stack justifyContent='space-between'>
 									<span>General Informaton</span>
-									<div style={{ width: '120px' }}>
-										<CustomToggle
-											accepter={Toggle}
-											name='featured'
-											label='Featured'
-										/>
-									</div>
+									<CustomToggle
+										accepter={Toggle}
+										name='featured'
+										label='Featured'
+									/>
 								</Stack>
 							}
 							bordered
@@ -399,22 +390,19 @@ const ProductsDrawer = ({ currentRate }) => {
 							header={
 								<Stack justifyContent='space-between'>
 									<span>Pricing Information</span>
-									<div style={{ display: 'flex' }}>
-										<div style={{ width: '120px' }}>
-											<CustomToggle
-												accepter={Toggle}
-												name='onSale'
-												label='On Sale'
-											/>
-										</div>
-										<div style={{ width: '180px' }}>
-											<CustomToggle
-												accepter={Toggle}
-												name='isQuantityPreset'
-												label='Preset Quantity'
-											/>
-										</div>
-									</div>
+									<Stack spacing={30}>
+										<CustomToggle
+											accepter={Toggle}
+											name='onSale'
+											label='On Sale'
+										/>
+
+										<CustomToggle
+											accepter={Toggle}
+											name='isQuantityPreset'
+											label='Preset Quantity'
+										/>
+									</Stack>
 								</Stack>
 							}
 							bordered

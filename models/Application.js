@@ -83,7 +83,7 @@ ApplicationSchema.pre('save', async function (next) {
 				},
 				subject: 'Account Activation',
 				toEmail: application.email,
-				message: `Hello ${application.firstName}, your account has been approved and activated. You may now be able to sign into your account using the following password. Make sure you change this password once you are logged in. Password: ${preparedData.password}`,
+				message: `Hello ${application.firstName}, your account has been approved and activated. You may now sign into your account using the following password. Make sure you change this password once you are logged in. Password: ${preparedData.password}`,
 			})
 
 			await User.create(preparedData)
