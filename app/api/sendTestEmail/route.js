@@ -1,8 +1,8 @@
 import { sendMail } from '@/utils/mailer'
 import { NextResponse } from 'next/server'
 
-export const POST = async request => {
-	const data = await request.json()
+export const GET = async request => {
+	const { searchParams } = new URL(request.url)
 
 	try {
 		sendMail({
