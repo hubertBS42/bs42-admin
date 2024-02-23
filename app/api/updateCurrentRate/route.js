@@ -4,6 +4,7 @@ import { fetcher } from '@/utils/functions'
 import { sendMail } from '@/utils/mailer'
 
 export const GET = async request => {
+	const { searchParams } = new URL(request.url)
 	try {
 		await connectToDB()
 
