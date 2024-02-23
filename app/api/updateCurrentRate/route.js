@@ -2,6 +2,7 @@ import Currency from '@/models/Currency'
 import { connectToDB } from '@/utils/database'
 import { fetcher } from '@/utils/functions'
 import { sendMail } from '@/utils/mailer'
+import { format } from 'date-fns'
 
 export const GET = async request => {
 	const { searchParams } = new URL(request.url)
@@ -11,10 +12,14 @@ export const GET = async request => {
 		const currency = await Currency.findOne({ isActive: true })
 		const abbreviation = currency.abbreviation
 
-		const { rates } = await fetcher(
+		const { rates, timestamp } = await fetcher(
 			`https://openexchangerates.org/api/latest.json?app_id=a2e14f92bd4447dfb27a4c43234cacd8&base=${abbreviation}`,
 			{ cache: 'no-store' }
 		)
+
+		const date = Date.now()
+
+		const formattedDate = format(date, 'yyyy-MM-dd HH:mm:ss')
 
 		currency.history.unshift({ rate: rates.GHS })
 
@@ -23,7 +28,7 @@ export const GET = async request => {
 		return new Response(
 			JSON.stringify({
 				status: 'success',
-				data: rates.GHS,
+				data: { rate: rates.GHS, date: formattedDate },
 				message: 'Currency rate was updated successfully',
 			}),
 			{
