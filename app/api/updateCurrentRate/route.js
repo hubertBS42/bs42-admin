@@ -23,6 +23,7 @@ export const GET = async request => {
 		return new Response(
 			JSON.stringify({
 				status: 'success',
+				data: rates.GHS,
 				message: 'Currency rate was updated successfully',
 			}),
 			{
