@@ -71,12 +71,24 @@ const SideNav = () => {
 		activePage = '7-3'
 	}
 
-	// if (pathname.includes('settings')) {
-	// 	activePage = '7'
-	// }
+	if (pathname.includes('outgoing-servers')) {
+		activePage = '7-3-1'
+	}
 
-	const defaultOpenKeys = activePage.split('-')
-	defaultOpenKeys.pop()
+	if (pathname.includes('notifications')) {
+		activePage = '7-3-2'
+	}
+
+	let defaultOpenKeys = activePage.split('-')
+
+	if (defaultOpenKeys.length > 2) {
+		defaultOpenKeys = [
+			`${defaultOpenKeys[0]}`,
+			`${defaultOpenKeys[0]}-${defaultOpenKeys[1]}`,
+		]
+	} else {
+		defaultOpenKeys.pop()
+	}
 
 	return (
 		<div
@@ -91,7 +103,7 @@ const SideNav = () => {
 				<Sidenav.Header className={styles.header}>
 					<div className={styles.logoWrapper}>
 						{expanded ? (
-							<Image src={logo} alt='bs42.net logo' width={100} priority />
+							<Image src={logo} alt='BS42.NET logo' width={100} priority />
 						) : (
 							<Image
 								src={logoCollapsed}
@@ -176,15 +188,6 @@ const SideNav = () => {
 							Blogs
 						</Nav.Item>
 
-						{/* <Nav.Item
-							as={NavLink}
-							eventKey='7'
-							icon={<GearIcon />}
-							href='/settings'
-						>
-							Settings
-						</Nav.Item> */}
-
 						<Nav.Menu eventKey='7' title='Settings' icon={<GearIcon />}>
 							<Nav.Item
 								eventKey='7-1'
@@ -200,13 +203,23 @@ const SideNav = () => {
 							>
 								Currencies
 							</Nav.Item>
-							<Nav.Item
-								eventKey='7-3'
-								as={NavLink}
-								href='/settings/notifications'
-							>
-								Notifications
-							</Nav.Item>
+
+							<Nav.Menu eventKey='7-3' title='Email'>
+								<Nav.Item
+									eventKey='7-3-1'
+									as={NavLink}
+									href='/settings/email/outgoing-servers'
+								>
+									Outgoing Servers
+								</Nav.Item>
+								<Nav.Item
+									eventKey='7-3-2'
+									as={NavLink}
+									href='/settings/email/notifications'
+								>
+									Notifications
+								</Nav.Item>
+							</Nav.Menu>
 						</Nav.Menu>
 					</Nav>
 				</Sidenav.Body>

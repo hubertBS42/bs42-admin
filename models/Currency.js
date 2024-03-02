@@ -1,3 +1,4 @@
+import { fetcher } from '@/utils/functions'
 import mongoose from 'mongoose'
 
 const CurrencySchema = new mongoose.Schema(
@@ -38,6 +39,10 @@ CurrencySchema.pre('save', async function (next) {
 				if (activeCurrency) {
 					activeCurrency.isActive = false
 					await activeCurrency.save()
+
+					await fetcher(
+						`http://portal.bs42.net/api/updateCurrentRate?currency=${currency._id}`
+					)
 				}
 			} catch (error) {
 				console.error('Error updating active currency:', error)

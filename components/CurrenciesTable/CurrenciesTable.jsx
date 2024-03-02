@@ -96,6 +96,7 @@ const CurrenciesTable = () => {
 								size='sm'
 								appearance='primary'
 								onClick={() => dispatch(setDrawerOpen({ mode: 'add' }))}
+								disabled
 							/>
 						</Stack>
 					</Stack>

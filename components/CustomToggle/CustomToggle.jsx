@@ -31,7 +31,7 @@ const CustomToggle = React.forwardRef((props, ref) => {
 				/>
 				{label}
 			</Form.ControlLabel>
-			<Form.HelpText>{message}</Form.HelpText>
+			{/* <Form.HelpText>{message}</Form.HelpText> */}
 		</Form.Group>
 	)
 })

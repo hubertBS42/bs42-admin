@@ -10,6 +10,7 @@ import applicationsReducer from './features/applications/applicationsSlice'
 import productsReducer from './features/products/productsSlice'
 import settingsReducer from './features/settings/settingsSlice'
 import currenciesReducer from './features/currencies/currenciesSlice'
+import serversReducer from './features/servers/serversSlice'
 import modalReducer from './features/modal/modalSlice'
 import drawerReducer from './features/drawer/drawerSlice'
 
@@ -26,6 +27,7 @@ export const store = configureStore({
 		products: productsReducer,
 		settings: settingsReducer,
 		currencies: currenciesReducer,
+		servers: serversReducer,
 		modal: modalReducer,
 		drawer: drawerReducer,
 	},
