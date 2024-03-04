@@ -172,7 +172,6 @@ const ServersDrawer = () => {
 									label='Label'
 									accepter={Input}
 									error={formError.label}
-									autoFocus
 								/>
 							</Col>
 						</Row>

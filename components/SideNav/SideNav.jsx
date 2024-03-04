@@ -75,8 +75,12 @@ const SideNav = () => {
 		activePage = '7-3-1'
 	}
 
-	if (pathname.includes('notifications')) {
+	if (pathname.includes('credentials')) {
 		activePage = '7-3-2'
+	}
+
+	if (pathname.includes('notifications')) {
+		activePage = '7-3-3'
 	}
 
 	let defaultOpenKeys = activePage.split('-')
@@ -214,6 +218,13 @@ const SideNav = () => {
 								</Nav.Item>
 								<Nav.Item
 									eventKey='7-3-2'
+									as={NavLink}
+									href='/settings/email/credentials'
+								>
+									Credentials
+								</Nav.Item>
+								<Nav.Item
+									eventKey='7-3-3'
 									as={NavLink}
 									href='/settings/email/notifications'
 								>

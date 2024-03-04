@@ -2,12 +2,9 @@
 
 import {
 	Button,
-	Col,
 	IconButton,
-	List,
 	Pagination,
 	Panel,
-	Row,
 	Stack,
 	Table,
 } from 'rsuite'
@@ -21,130 +18,123 @@ import { useState } from 'react'
 import { formatDate } from '@/utils/functions'
 import { useDispatch, useSelector } from 'react-redux'
 
+import {
+	limitCredentials,
+	paginateCredentials,
+	searchCredentials,
+	sortCredentials,
+} from '@/redux/features/credentials/credentialsActions'
+import {
+	getCredentialsCount,
+	getCredentialsLoadingState,
+	selectAllCredentials,
+} from '@/redux/features/credentials/credentialsSlice'
+import { setModalOpen } from '@/redux/features/modal/modalSlice'
+import { setDrawerOpen } from '@/redux/features/drawer/drawerSlice'
 import Status from '../Status/Status'
 
 const { Column, HeaderCell, Cell } = Table
 
-const CredentialsTable = ({ credentials }) => {
+const CredentialsTable = () => {
+	const dispatch = useDispatch()
+
 	const [sortType, setSortType] = useState('desc')
-
 	const [sortColumn, setSortColumn] = useState('createdAt')
+	const [limit, setLimit] = useState(10)
+	const [page, setPage] = useState(1)
 
-	// const handleSortColumn = async (sortColumn, sortType) => {
-	// 	sortServers(limit, page, sortColumn, sortType)
-	// 	setSortColumn(sortColumn)
-	// 	setSortType(sortType)
-	// }
+	const credentials = useSelector(selectAllCredentials)
+	const count = useSelector(getCredentialsCount)
+	const loading = useSelector(getCredentialsLoadingState)
 
-	// const handleChangeLimit = async dataKey => {
-	// 	setPage(1)
-	// 	setLimit(dataKey)
-	// 	limitServers(dataKey)
-	// }
+	const handleSortColumn = async (sortColumn, sortType) => {
+		sortCredentials(limit, page, sortColumn, sortType)
+		setSortColumn(sortColumn)
+		setSortType(sortType)
+	}
 
-	// const handlePageChange = async value => {
-	// 	setPage(value)
-	// 	paginateServers(limit, value, sortColumn, sortType)
-	// }
+	const handleChangeLimit = async dataKey => {
+		setPage(1)
+		setLimit(dataKey)
+		limitCredentials(dataKey)
+	}
 
-	// let typingTimer
-	// const handleSearch = async query => {
-	// 	clearTimeout(typingTimer)
+	const handlePageChange = async value => {
+		setPage(value)
+		paginateCredentials(limit, value, sortColumn, sortType)
+	}
 
-	// 	typingTimer = setTimeout(() => {
-	// 		searchServers(query, limit, page)
-	// 	}, 1000)
-	// }
+	let typingTimer
+	const handleSearch = async query => {
+		clearTimeout(typingTimer)
+
+		typingTimer = setTimeout(() => {
+			searchCredentials(query, limit, page)
+		}, 1000)
+	}
 
 	return (
 		<div>
 			<Panel
 				header={
 					<Stack justifyContent='space-between'>
-						<span>Credentials</span>
-						<IconButton
-							icon={<PlusIcon />}
-							circle
-							size='xs'
-							appearance='primary'
-						/>
+						<span>Credentials List</span>
+						<Stack spacing={10}>
+							<TableSearch handleSearch={handleSearch} />
+							<IconButton
+								icon={<PlusIcon />}
+								circle
+								size='sm'
+								appearance='primary'
+								onClick={() => dispatch(setDrawerOpen({ mode: 'add' }))}
+							/>
+						</Stack>
 					</Stack>
 				}
 				bordered
 				bodyFill
 			>
-				<List bordered>
-					<List.Item>
-						<Row style={{ fontSize: 12 }}>
-							<Col xs={5} style={{ opacity: '.8' }}>
-								Title
-							</Col>
-							<Col xs={5} style={{ opacity: '.8' }}>
-								User
-							</Col>
-							<Col xs={6} style={{ opacity: '.8' }}>
-								From Email
-							</Col>
-							<Col xs={6} style={{ opacity: '.8' }}>
-								Date created
-							</Col>
-							<Col xs={2} style={{ opacity: '.8', textAlign: 'center' }}>
-								...
-							</Col>
-						</Row>
-					</List.Item>
-					<List.Item>
-						<Row style={{ fontSize: 12 }}>
-							<Col xs={5}>Test</Col>
-							<Col xs={5}>Test</Col>
-							<Col xs={6}>Test</Col>
-							<Col xs={6}>Test</Col>
-							<Col
-								xs={2}
-								style={{
-									textAlign: 'center',
-								}}
-							>
-								<IconButton
-									icon={<EditIcon />}
-									appearance='link'
-									style={{ padding: 0, marginRight: '.7em' }}
-								/>
-								<IconButton
-									icon={<TrashIcon />}
-									appearance='link'
-									color='red'
-									style={{ padding: 0 }}
-								/>
-							</Col>
-						</Row>
-					</List.Item>
-				</List>
-				{/* <Table
+				<Table
+					// height={500}
 					autoHeight
-					hover={false}
 					data={credentials}
-					// loading={loading}
+					sortColumn={sortColumn}
+					sortType={sortType}
+					onSortColumn={handleSortColumn}
+					loading={loading}
+					wordWrap='break-word'
 				>
-					<Column flexGrow={1} fixed verticalAlign='middle'>
-						<HeaderCell>Title</HeaderCell>
-						<Cell dataKey='title' />
+					<Column flexGrow={1} fixed sortable verticalAlign='middle'>
+						<HeaderCell>Label</HeaderCell>
+						<Cell dataKey='label' />
 					</Column>
 
-					<Column flexGrow={1} fixed verticalAlign='middle'>
+					<Column flexGrow={1} fixed sortable verticalAlign='middle'>
 						<HeaderCell>User</HeaderCell>
 						<Cell dataKey='user' />
 					</Column>
 
-					<Column flexGrow={1} fixed verticalAlign='middle'>
-						<HeaderCell>From Email</HeaderCell>
+					<Column flexGrow={1} fixed sortable verticalAlign='middle'>
+						<HeaderCell>From email</HeaderCell>
 						<Cell dataKey='fromEmail' />
 					</Column>
 
-					<Column flexGrow={1} verticalAlign='middle'>
+					<Column flexGrow={1} fixed sortable verticalAlign='middle'>
+						<HeaderCell>Outgoing server</HeaderCell>
+						<Cell dataKey='server'>{rowData => rowData.server.label}</Cell>
+					</Column>
+
+					<Column flexGrow={1} sortable verticalAlign='middle'>
+						<HeaderCell>Status</HeaderCell>
+						<Cell dataKey='isActive'>
+							{rowData => <Status active={rowData.isActive} />}
+						</Cell>
+					</Column>
+
+					<Column flexGrow={1} sortable verticalAlign='middle'>
 						<HeaderCell>Dated created</HeaderCell>
-						<Cell dataKey='timestamp'>
-							{rowData => formatDate(rowData.timestamp)}
+						<Cell dataKey='createdAt'>
+							{rowData => formatDate(rowData.createdAt)}
 						</Cell>
 					</Column>
 
@@ -156,19 +146,46 @@ const CredentialsTable = ({ credentials }) => {
 								<>
 									<Button
 										appearance='link'
+										onClick={() =>
+											dispatch(setDrawerOpen({ mode: 'edit', data: rowData }))
+										}
 										style={{ padding: 0, marginRight: '.7em' }}
 									>
 										<EditIcon />
 									</Button>
-									<Button appearance='link' color='red' style={{ padding: 0 }}>
+									<Button
+										appearance='link'
+										color='red'
+										onClick={() => dispatch(setModalOpen(rowData))}
+										style={{ padding: 0 }}
+									>
 										<TrashIcon />
 									</Button>
 								</>
 							)}
 						</Cell>
 					</Column>
-				</Table> */}
+				</Table>
 			</Panel>
+			<div style={{ padding: '1em 0' }}>
+				<Pagination
+					prev
+					next
+					first
+					last
+					ellipsis
+					boundaryLinks
+					maxButtons={5}
+					size='xs'
+					layout={['total', '-', 'limit', '|', 'pager']}
+					total={count}
+					limitOptions={[10, 30, 50]}
+					limit={limit}
+					activePage={page}
+					onChangePage={handlePageChange}
+					onChangeLimit={handleChangeLimit}
+				/>
+			</div>
 		</div>
 	)
 }

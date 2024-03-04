@@ -7,6 +7,7 @@ import {
 	Form,
 	Input,
 	InputNumber,
+	InputPicker,
 	Panel,
 	Row,
 	Schema,
@@ -17,19 +18,38 @@ import CloseIcon from '@rsuite/icons/Close'
 import CheckIcon from '@rsuite/icons/Check'
 import CustomToggle from '../CustomToggle/CustomToggle'
 import Field from '../Field/Field'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
+
+import {
+	createCredential,
+	updateCredential,
+} from '@/redux/features/credentials/credentialsActions'
+
+import {
+	getDrawerData,
+	getDrawerLoadingState,
+	getDrawerOpenState,
+	getEditState,
+	setDrawerClose,
+} from '@/redux/features/drawer/drawerSlice'
 
 import TextArea from '../TextArea/TextArea'
+import { selectAllServers } from '@/redux/features/servers/serversSlice'
 
-const { StringType, NumberType } = Schema.Types
+const { StringType } = Schema.Types
 
 const model = Schema.Model({
-	title: StringType().isRequired('You must provide a title.'),
-	user: StringType().isRequired('You must provide an email address.'),
-	password: StringType().isRequired('You must provide a password.'),
-	fromEmail: StringType().isRequired(
-		'You must provide a from address.'
+	server: StringType().isRequired(
+		'You must choose an outgoing server.'
 	),
+	label: StringType().isRequired('You must provide a label.'),
+	user: StringType()
+		.isEmail('You must provide a valid email address.')
+		.isRequired('You must provide an email address.'),
+	password: StringType().isRequired('You must provide a password.'),
+	fromEmail: StringType()
+		.isRequired('You must provide a from address.')
+		.isEmail('You must provide a valid email address.'),
 	description: StringType().isRequired(
 		'You must provide a description.'
 	),
@@ -40,36 +60,46 @@ const CredentialsDrawer = () => {
 	const formRef = useRef()
 	const [formError, setFormError] = useState({})
 	const [formValue, setFormValue] = useState({
+		server: '',
 		label: '',
-		host: '',
-		port: '',
-		isSecure: true,
-		credentials: [],
+		user: '',
+		password: '',
+		fromEmail: '',
 		description: '',
 		isActive: true,
 	})
 
-	const updateForm = server => {
+	const isOpen = useSelector(getDrawerOpenState)
+	const isEditing = useSelector(getEditState)
+	const isLoading = useSelector(getDrawerLoadingState)
+	const credential = useSelector(getDrawerData)
+	const servers = useSelector(selectAllServers)
+
+	const formattedServers = servers.map(server => {
+		return { label: server.label, value: server._id }
+	})
+
+	const updateForm = credential => {
 		if (isEditing) {
 			setFormValue(prev => {
 				return {
 					...prev,
-					label: server.label,
-					host: server.host,
-					port: server.port,
-					isSecure: server.isSecure,
-					credentials: server.credentials ? server.credentials : [],
-					description: server.description,
-					isActive: server.isActive,
+					server: credential.server._id,
+					label: credential.label,
+					user: credential.user,
+					password: credential.password,
+					fromEmail: credential.fromEmail,
+					description: credential.description,
+					isActive: credential.isActive,
 				}
 			})
 		} else {
 			setFormValue({
+				server: '',
 				label: '',
-				host: '',
-				port: '',
-				isSecure: true,
-				credentials: [],
+				user: '',
+				password: '',
+				fromEmail: '',
 				description: '',
 				isActive: true,
 			})
@@ -85,10 +115,10 @@ const CredentialsDrawer = () => {
 
 		if (isEditing) {
 			//update
-			await updateServer(server, formValue)
+			await updateCredential(credential, formValue)
 		} else {
 			//add
-			await createServer(formValue)
+			await createCredential(formValue)
 		}
 	}
 
@@ -96,12 +126,12 @@ const CredentialsDrawer = () => {
 		<Drawer
 			open={isOpen}
 			onClose={() => dispatch(setDrawerClose())}
-			onEnter={() => updateForm(server)}
+			onEnter={() => updateForm(credential)}
 			backdrop='static'
 		>
 			<Drawer.Header style={{ paddingRight: '1.2em' }}>
 				<Drawer.Title>
-					{isEditing ? 'Edit' : 'Add'} Outgoing Server
+					{isEditing ? 'Edit' : 'Add'} Credential
 				</Drawer.Title>
 				<Drawer.Actions>
 					<Button
@@ -133,19 +163,18 @@ const CredentialsDrawer = () => {
 				>
 					<CustomToggle accepter={Toggle} name='isActive' label='Active' />
 
-					<Panel
-						bordered
-						header={
-							<Stack justifyContent='space-between'>
-								<span>Server Details</span>
-								<CustomToggle
-									accepter={Toggle}
-									name='isSecure'
-									label='Secure login'
+					<Panel bordered header='Credential Details'>
+						<Row style={{ marginBottom: '1.4em' }}>
+							<Col xs={24}>
+								<Field
+									name='server'
+									label='Outgoing server'
+									accepter={InputPicker}
+									error={formError.server}
+									data={formattedServers}
 								/>
-							</Stack>
-						}
-					>
+							</Col>
+						</Row>
 						<Row style={{ marginBottom: '1.4em' }}>
 							<Col xs={24}>
 								<Field
@@ -153,7 +182,6 @@ const CredentialsDrawer = () => {
 									label='Label'
 									accepter={Input}
 									error={formError.label}
-									autoFocus
 								/>
 							</Col>
 						</Row>
@@ -161,10 +189,10 @@ const CredentialsDrawer = () => {
 						<Row style={{ marginBottom: '1.4em' }}>
 							<Col xs={24}>
 								<Field
-									name='host'
-									label='Host name'
+									name='user'
+									label='User'
 									accepter={Input}
-									error={formError.host}
+									error={formError.user}
 								/>
 							</Col>
 						</Row>
@@ -172,10 +200,21 @@ const CredentialsDrawer = () => {
 						<Row style={{ marginBottom: '1.4em' }}>
 							<Col xs={24}>
 								<Field
-									name='port'
-									label='Port'
-									accepter={InputNumber}
-									error={formError.port}
+									name='password'
+									label='Password'
+									accepter={Input}
+									error={formError.password}
+								/>
+							</Col>
+						</Row>
+
+						<Row style={{ marginBottom: '1.4em' }}>
+							<Col xs={24}>
+								<Field
+									name='fromEmail'
+									label='From email'
+									accepter={Input}
+									error={formError.fromEmail}
 								/>
 							</Col>
 						</Row>

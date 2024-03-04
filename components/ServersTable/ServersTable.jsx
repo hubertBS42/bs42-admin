@@ -13,8 +13,6 @@ import TableSearch from '../TableSearch/TableSearch'
 import TrashIcon from '@rsuite/icons/Trash'
 import EditIcon from '@rsuite/icons/Edit'
 import PlusIcon from '@rsuite/icons/Plus'
-import CollaspedOutlineIcon from '@rsuite/icons/CollaspedOutline'
-import ExpandOutlineIcon from '@rsuite/icons/ExpandOutline'
 
 import { useState } from 'react'
 import { formatDate } from '@/utils/functions'
@@ -34,34 +32,8 @@ import {
 import { setModalOpen } from '@/redux/features/modal/modalSlice'
 import { setDrawerOpen } from '@/redux/features/drawer/drawerSlice'
 import Status from '../Status/Status'
-import CredentialsTable from '../CredentialsTable/CredentialsTable'
 
 const { Column, HeaderCell, Cell } = Table
-const rowKey = '_id'
-
-const ExpandCell = ({
-	rowData,
-	dataKey,
-	expandedRowKeys,
-	onChange,
-	...props
-}) => (
-	<Cell {...props} style={{ padding: 5 }}>
-		<IconButton
-			appearance='subtle'
-			onClick={() => {
-				onChange(rowData)
-			}}
-			icon={
-				expandedRowKeys.some(key => key === rowData[rowKey]) ? (
-					<CollaspedOutlineIcon />
-				) : (
-					<ExpandOutlineIcon />
-				)
-			}
-		/>
-	</Cell>
-)
 
 const ServersTable = () => {
 	const dispatch = useDispatch()
@@ -71,7 +43,6 @@ const ServersTable = () => {
 	const [sortColumn, setSortColumn] = useState('createdAt')
 	const [limit, setLimit] = useState(10)
 	const [page, setPage] = useState(1)
-	const [expandedRowKeys, setExpandedRowKeys] = useState([])
 
 	const servers = useSelector(selectAllServers)
 	const count = useSelector(getServersCount)
@@ -103,29 +74,6 @@ const ServersTable = () => {
 		}, 1000)
 	}
 
-	const handleExpanded = (rowData, dataKey) => {
-		let open = false
-		const nextExpandedRowKeys = []
-
-		expandedRowKeys.forEach(key => {
-			if (key === rowData[rowKey]) {
-				open = true
-			} else {
-				nextExpandedRowKeys.push(key)
-			}
-		})
-
-		if (!open) {
-			nextExpandedRowKeys.push(rowData[rowKey])
-		}
-
-		setExpandedRowKeys(nextExpandedRowKeys)
-	}
-
-	const renderRowExpanded = rowData => (
-		<CredentialsTable credentials={rowData.credentials} />
-	)
-
 	return (
 		<div>
 			<Panel
@@ -155,21 +103,8 @@ const ServersTable = () => {
 					sortType={sortType}
 					onSortColumn={handleSortColumn}
 					loading={loading}
-					rowKey={rowKey}
-					expandedRowKeys={expandedRowKeys}
-					shouldUpdateScroll={false}
-					renderRowExpanded={renderRowExpanded}
-					rowExpandedHeight={300}
 					hover={false}
 				>
-					<Column width={70} align='center'>
-						<HeaderCell>#</HeaderCell>
-						<ExpandCell
-							dataKey='_id'
-							expandedRowKeys={expandedRowKeys}
-							onChange={handleExpanded}
-						/>
-					</Column>
 					<Column flexGrow={1} fixed sortable verticalAlign='middle'>
 						<HeaderCell>Label</HeaderCell>
 						<Cell dataKey='label' />

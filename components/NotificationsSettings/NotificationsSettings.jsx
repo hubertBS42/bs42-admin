@@ -12,7 +12,7 @@ import {
 import Field from '../Field/Field'
 import TextEditor from '../TextEditor/TextEditor'
 
-const NotificationsSettings = () => {
+const NotificationsForm = () => {
 	return (
 		<Panel header='System Notifications' bordered>
 			<Stack direction='column' alignItems='stretch' spacing={20}>
@@ -130,4 +130,4 @@ const NotificationsSettings = () => {
 		</Panel>
 	)
 }
-export default NotificationsSettings
+export default NotificationsForm

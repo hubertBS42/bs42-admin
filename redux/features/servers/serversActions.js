@@ -37,6 +37,19 @@ export const loadServers = async () => {
 	dispatch(setServersCount(count))
 }
 
+export const loadAllServers = async () => {
+	dispatch(setLoading(true))
+
+	const { status, message, data } = await fetcher('/api/servers/all')
+
+	if (status === 'error') {
+		dispatch(setLoading(false))
+		return toast.error('Failed to load data.') //message site admin about error
+	}
+
+	dispatch(setServers(data))
+}
+
 export const sortServers = async (
 	limit,
 	page,
@@ -179,7 +192,7 @@ export const updateServer = async (server, data) => {
 		return
 	}
 
-	toast.error('Failed to update blog')
+	toast.error('Failed to update server')
 }
 
 export const deleteServer = async server => {
@@ -199,4 +212,105 @@ export const deleteServer = async server => {
 		toast.success(message)
 		loadServers()
 	}
+}
+
+export const addCredential = async (server, data) => {
+	const preparedData = {
+		...server,
+		credentials: server.credentials.concat(data),
+	}
+
+	dispatch(setDrawerLoading(true))
+
+	const { status, message } = await fetcher(
+		`/api/servers/${server._id}`,
+		{
+			method: 'PATCH',
+			body: JSON.stringify(preparedData),
+			headers: {
+				'Content-type': 'application/json; charset=UTF-8',
+			},
+		}
+	)
+	dispatch(setDrawerLoading(false))
+
+	if (status === 'success') {
+		toast.success('Credential has been added successfully')
+		loadServers()
+		return 'success'
+	}
+
+	toast.error('Failed to add credential.')
+	return 'failed'
+}
+
+export const updateCredential = async (server, credential, data) => {
+	const updatedCredentials = server.credentials.map(item => {
+		if (item._id === credential._id) {
+			return { ...item, ...data }
+		}
+		return item
+	})
+
+	const preparedData = {
+		...server,
+		credentials: updatedCredentials,
+	}
+
+	dispatch(setDrawerLoading(true))
+
+	const { status, message } = await fetcher(
+		`/api/servers/${server._id}`,
+		{
+			method: 'PATCH',
+			body: JSON.stringify(preparedData),
+			headers: {
+				'Content-type': 'application/json; charset=UTF-8',
+			},
+		}
+	)
+	dispatch(setDrawerLoading(false))
+
+	if (status === 'success') {
+		toast.success('Credential has been updated successfully')
+		loadServers()
+		return 'success'
+	}
+
+	toast.error('Failed to update credential.')
+	return 'failed'
+}
+
+export const deleteCredential = async (server, credential) => {
+	const updatedCredentials = server.credentials.filter(
+		item => item._id !== credential._id
+	)
+
+	const preparedData = {
+		...server,
+		credentials: updatedCredentials,
+	}
+
+	dispatch(setModalLoading(true))
+
+	const { status, message } = await fetcher(
+		`/api/servers/${server._id}`,
+		{
+			method: 'PATCH',
+			body: JSON.stringify(preparedData),
+			headers: {
+				'Content-type': 'application/json; charset=UTF-8',
+			},
+		}
+	)
+	dispatch(setModalLoading(false))
+
+	if (status === 'success') {
+		toast.success('Credential has been deleted successfully')
+		loadServers()
+		return 'success'
+	}
+
+	toast.error('Failed to delete credential.')
+	return 'failed'
 }

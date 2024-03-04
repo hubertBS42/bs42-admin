@@ -11,6 +11,7 @@ import productsReducer from './features/products/productsSlice'
 import settingsReducer from './features/settings/settingsSlice'
 import currenciesReducer from './features/currencies/currenciesSlice'
 import serversReducer from './features/servers/serversSlice'
+import credentialsReducer from './features/credentials/credentialsSlice'
 import modalReducer from './features/modal/modalSlice'
 import drawerReducer from './features/drawer/drawerSlice'
 
@@ -20,6 +21,7 @@ export const store = configureStore({
 		brands: brandsReducer,
 		blogs: blogsReducer,
 		slides: slidesReducer,
+		credentials: credentialsReducer,
 		users: usersReducer,
 		resources: resourcesReducer,
 		roles: rolesReducer,
