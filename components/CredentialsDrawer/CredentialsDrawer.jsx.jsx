@@ -161,7 +161,19 @@ const CredentialsDrawer = () => {
 					model={model}
 					disabled={isLoading}
 				>
-					<CustomToggle accepter={Toggle} name='isActive' label='Active' />
+					<Stack
+						justifyContent='space-between'
+						style={{ marginBottom: '1.4em' }}
+					>
+						<CustomToggle
+							accepter={Toggle}
+							name='isActive'
+							label='Active'
+						/>
+						<Button appearance='primary' size='sm'>
+							Test Email
+						</Button>
+					</Stack>
 
 					<Panel bordered header='Credential Details'>
 						<Row style={{ marginBottom: '1.4em' }}>

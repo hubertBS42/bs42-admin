@@ -32,6 +32,21 @@ export const loadCredentials = async () => {
 	dispatch(setCredentialsCount(count))
 }
 
+export const loadAllCredentials = async () => {
+	dispatch(setLoading(true))
+
+	const { status, message, data } = await fetcher(
+		'/api/credentials/all'
+	)
+
+	if (status === 'error') {
+		dispatch(setLoading(false))
+		return toast.error('Failed to load data.') //message site admin about error
+	}
+
+	dispatch(setCredentials(data))
+}
+
 export const sortCredentials = async (
 	limit,
 	page,

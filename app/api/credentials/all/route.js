@@ -1,24 +1,20 @@
-import Setting from '@/models/Setting'
+import Credential from '@/models/Credential'
 import { connectToDB } from '@/utils/database'
 
 export const GET = async request => {
+	const { searchParams } = new URL(request.url)
 	try {
 		await connectToDB()
 
-		const settings = await Setting.find()
-			.collation({ locale: 'en' })
-			.sort({ createdAt: 'desc' })
-			.populate({
-				path: 'exchangeRate.currency',
-				model: 'Currency',
-			})
+		const credentials = await Credential.find()
+			.sort({ label: 'asc' })
 			.lean()
 
 		return new Response(
 			JSON.stringify({
 				status: 'success',
 				message: null,
-				data: settings,
+				data: credentials,
 			}),
 			{
 				status: 200,

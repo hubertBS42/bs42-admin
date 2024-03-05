@@ -1,26 +1,28 @@
-import Setting from '@/models/Setting'
+import NotificationProfile from '@/models/NotificationProfile'
 import { connectToDB } from '@/utils/database'
 import { NextResponse } from 'next/server'
 
+//PATCH
 export const POST = async (request, { params }) => {
 	const data = await request.json()
 
 	try {
 		await connectToDB()
 
-		const setting = await Setting.create(data)
+		const profile = await NotificationProfile.create(data)
 
-		if (setting) {
+		if (profile) {
 			return new NextResponse(
 				JSON.stringify({
 					status: 'success',
 					message: null,
-					data: setting,
+					data: profile,
 				}),
 				{ status: 201 }
 			)
 		}
 	} catch (error) {
+		console.log(error)
 		return new NextResponse(
 			JSON.stringify({
 				status: 'error',
