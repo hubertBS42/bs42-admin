@@ -247,7 +247,6 @@ const NotificationProfilesDrawer = () => {
 												label='Email recipients'
 												accepter={TagInput}
 												error={formError?.admins?.recipients}
-												// data={formattedCurrencies}
 											/>
 										</Col>
 									</Row>
@@ -292,7 +291,6 @@ const NotificationProfilesDrawer = () => {
 												label='Email recipients'
 												accepter={TagInput}
 												error={formError?.users?.recipients}
-												// data={formattedCurrencies}
 											/>
 										</Col>
 									</Row>
@@ -303,7 +301,6 @@ const NotificationProfilesDrawer = () => {
 												label='Email title'
 												accepter={Input}
 												error={formError?.users?.title}
-												// data={formattedCurrencies}
 											/>
 										</Col>
 									</Row>
