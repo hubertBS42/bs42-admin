@@ -95,7 +95,6 @@ const CredentialsTable = () => {
 				bodyFill
 			>
 				<Table
-					// height={500}
 					autoHeight
 					data={credentials}
 					sortColumn={sortColumn}
@@ -112,11 +111,6 @@ const CredentialsTable = () => {
 					<Column flexGrow={1} fixed sortable verticalAlign='middle'>
 						<HeaderCell>User</HeaderCell>
 						<Cell dataKey='user' />
-					</Column>
-
-					<Column flexGrow={1} fixed sortable verticalAlign='middle'>
-						<HeaderCell>From email</HeaderCell>
-						<Cell dataKey='fromEmail' />
 					</Column>
 
 					<Column flexGrow={1} fixed sortable verticalAlign='middle'>

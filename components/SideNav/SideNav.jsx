@@ -7,6 +7,7 @@ import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 
 import DashboardIcon from '@rsuite/icons/legacy/Dashboard'
+import MessageIcon from '@rsuite/icons/Message'
 import DetailIcon from '@rsuite/icons/Detail'
 import PeoplesIcon from '@rsuite/icons/Peoples'
 import TagIcon from '@rsuite/icons/Tag'
@@ -59,28 +60,32 @@ const SideNav = () => {
 		activePage = '6'
 	}
 
+	if (pathname.includes('messages')) {
+		activePage = '7'
+	}
+
 	if (pathname.includes('banner-slides')) {
-		activePage = '7-1'
+		activePage = '8-1'
 	}
 
 	if (pathname.includes('currencies')) {
-		activePage = '7-2'
+		activePage = '8-2'
 	}
 
 	if (pathname.includes('notifications')) {
-		activePage = '7-3'
+		activePage = '8-3'
 	}
 
 	if (pathname.includes('outgoing-servers')) {
-		activePage = '7-3-1'
+		activePage = '8-3-1'
 	}
 
 	if (pathname.includes('credentials')) {
-		activePage = '7-3-2'
+		activePage = '8-3-2'
 	}
 
 	if (pathname.includes('notification-profiles')) {
-		activePage = '7-3-3'
+		activePage = '8-3-3'
 	}
 
 	let defaultOpenKeys = activePage.split('-')
@@ -192,39 +197,48 @@ const SideNav = () => {
 							Blogs
 						</Nav.Item>
 
-						<Nav.Menu eventKey='7' title='Settings' icon={<GearIcon />}>
+						<Nav.Item
+							as={NavLink}
+							eventKey='7'
+							icon={<MessageIcon />}
+							href='/messages'
+						>
+							Messages
+						</Nav.Item>
+
+						<Nav.Menu eventKey='8' title='Settings' icon={<GearIcon />}>
 							<Nav.Item
-								eventKey='7-1'
+								eventKey='8-1'
 								as={NavLink}
 								href='/settings/banner-slides'
 							>
 								Banner Slides
 							</Nav.Item>
 							<Nav.Item
-								eventKey='7-2'
+								eventKey='8-2'
 								as={NavLink}
 								href='/settings/currencies'
 							>
 								Currencies
 							</Nav.Item>
 
-							<Nav.Menu eventKey='7-3' title='Email'>
+							<Nav.Menu eventKey='8-3' title='Email'>
 								<Nav.Item
-									eventKey='7-3-1'
+									eventKey='8-3-1'
 									as={NavLink}
 									href='/settings/email/outgoing-servers'
 								>
 									Outgoing Servers
 								</Nav.Item>
 								<Nav.Item
-									eventKey='7-3-2'
+									eventKey='8-3-2'
 									as={NavLink}
 									href='/settings/email/credentials'
 								>
 									Credentials
 								</Nav.Item>
 								<Nav.Item
-									eventKey='7-3-3'
+									eventKey='8-3-3'
 									as={NavLink}
 									href='/settings/email/notification-profiles'
 								>

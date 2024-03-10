@@ -13,7 +13,9 @@ export const GET = async request => {
 
 		return new Response(
 			JSON.stringify({
-				slides,
+				status: 'success',
+				message: null,
+				data: slides,
 			}),
 			{
 				status: 200,

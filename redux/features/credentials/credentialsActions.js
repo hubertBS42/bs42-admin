@@ -228,3 +228,24 @@ export const deleteCredential = async credential => {
 		loadCredentials()
 	}
 }
+
+export const testCredential = async data => {
+	dispatch(setDrawerLoading(true))
+
+	const { status, message } = await fetcher('/api/sendMail1/test', {
+		method: 'POST',
+		body: JSON.stringify(data),
+		headers: {
+			'Content-type': 'application/json; charset=UTF-8',
+		},
+	})
+
+	dispatch(setDrawerLoading(false))
+
+	if (status === 'success') {
+		toast.success(message)
+		return
+	}
+
+	toast.error(message)
+}

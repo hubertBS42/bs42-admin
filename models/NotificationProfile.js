@@ -1,16 +1,20 @@
 import mongoose from 'mongoose'
+import slug from 'mongoose-slug-updater'
+
+mongoose.plugin(slug)
 
 const NotificationProfileSchema = new mongoose.Schema(
 	{
 		label: { type: String, required: true },
+		slug: { type: String, slug: 'label', unique: true },
 		admins: {
 			sender: {
 				type: mongoose.Schema.Types.ObjectId,
 				ref: 'Credential',
 			},
 			recipients: [{ type: String, trim: true }],
-			title: { type: String },
-			body: { type: String },
+			subject: { type: String },
+			message: { type: String },
 		},
 		users: {
 			sender: {
@@ -18,8 +22,8 @@ const NotificationProfileSchema = new mongoose.Schema(
 				ref: 'Credential',
 			},
 			recipients: [{ type: String, trim: true }],
-			title: { type: String },
-			body: { type: String },
+			subject: { type: String },
+			message: { type: String },
 		},
 		description: { type: String },
 		isActive: { type: Boolean, default: true },

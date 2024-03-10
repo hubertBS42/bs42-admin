@@ -143,14 +143,14 @@ const NotificationProfilesTable = () => {
 									>
 										<EditIcon />
 									</Button>
-									<Button
+									{/* <Button
 										appearance='link'
 										color='red'
 										onClick={() => dispatch(setModalOpen(rowData))}
 										style={{ padding: 0 }}
 									>
 										<TrashIcon />
-									</Button>
+									</Button> */}
 								</>
 							)}
 						</Cell>

@@ -45,34 +45,16 @@ const { StringType, ObjectType, ArrayType } = Schema.Types
 const model = Schema.Model({
 	label: StringType().isRequired('You must provide a label.'),
 	admins: ObjectType().shape({
-		sender: StringType().isRequired(
-			'You must choose a sender credential.'
-		),
-		recipients: ArrayType().minLength(
-			1,
-			'You must provide at least one email address as a recipient.'
-		),
-		title: StringType().isRequired(
-			'You must provide a title for the email.'
-		),
-		body: StringType().isRequired(
-			'You must provide the body for the email.'
-		),
+		sender: StringType(),
+		recipients: ArrayType(),
+		subject: StringType(),
+		message: StringType(),
 	}),
 	users: ObjectType().shape({
-		sender: StringType().isRequired(
-			'You must choose a sender credential.'
-		),
-		recipients: ArrayType().minLength(
-			1,
-			'You must provide at least one email address as a recipient.'
-		),
-		title: StringType().isRequired(
-			'You must provide a title for the email.'
-		),
-		body: StringType().isRequired(
-			'You must provide the body for the email.'
-		),
+		sender: StringType(),
+		recipients: ArrayType(),
+		subject: StringType(),
+		message: StringType(),
 	}),
 	description: StringType().isRequired(
 		'You must provide a description.'
@@ -85,8 +67,8 @@ const NotificationProfilesDrawer = () => {
 	const [formError, setFormError] = useState({})
 	const [formValue, setFormValue] = useState({
 		label: '',
-		admins: { sender: '', recipients: [], title: '', body: '' },
-		users: { sender: '', recipients: [], title: '', body: '' },
+		admins: { sender: null, recipients: [], subject: '', message: '' },
+		users: { sender: null, recipients: [], subject: '', message: '' },
 		description: '',
 		isActive: true,
 	})
@@ -109,26 +91,31 @@ const NotificationProfilesDrawer = () => {
 					...prev,
 					label: profile.label,
 					admins: {
-						sender: profile.admins.sender._id,
-						recipients: profile.admins.recipients,
-						title: profile.admins.title,
-						body: profile.admins.body,
+						sender: profile?.admins?.sender?._id,
+						recipients: profile?.admins?.recipients,
+						subject: profile?.admins?.subject,
+						message: profile?.admins?.message,
 					},
 					users: {
-						sender: profile.users.sender._id,
-						recipients: profile.users.recipients,
-						title: profile.users.title,
-						body: profile.users.body,
+						sender: profile?.users?.sender?._id,
+						recipients: profile?.users?.recipients,
+						subject: profile?.users?.subject,
+						message: profile?.users?.message,
 					},
-					description: profile.description,
-					isActive: profile.isActive,
+					description: profile?.description,
+					isActive: profile?.isActive,
 				}
 			})
 		} else {
 			setFormValue({
 				label: '',
-				admins: { sender: '', recipients: [], title: '', body: '' },
-				users: { sender: '', recipients: [], title: '', body: '' },
+				admins: {
+					sender: null,
+					recipients: [],
+					subject: '',
+					message: '',
+				},
+				users: { sender: null, recipients: [], subject: '', message: '' },
 				description: '',
 				isActive: true,
 			})
@@ -209,6 +196,7 @@ const NotificationProfilesDrawer = () => {
 										label='Label'
 										accepter={Input}
 										error={formError.label}
+										disabled={isEditing}
 									/>
 								</Col>
 							</Row>
@@ -253,21 +241,21 @@ const NotificationProfilesDrawer = () => {
 									<Row style={{ marginBottom: 25 }}>
 										<Col xs={24}>
 											<Field
-												name='admins.title'
-												label='Email title'
+												name='admins.subject'
+												label='Email subject'
 												accepter={Input}
-												error={formError?.admins?.title}
+												error={formError?.admins?.subject}
 											/>
 										</Col>
 									</Row>
 									<Row style={{ marginBottom: 25 }}>
 										<Col xs={24}>
 											<Field
-												name='admins.body'
-												label='Email body'
+												name='admins.message'
+												label='Email message'
 												accepter={TextEditor}
-												error={formError?.admins?.body}
-												value={profile ? profile.admins.body : ''}
+												error={formError?.admins?.message}
+												value={profile ? profile?.admins?.message : ''}
 											/>
 										</Col>
 									</Row>
@@ -297,21 +285,21 @@ const NotificationProfilesDrawer = () => {
 									<Row style={{ marginBottom: 25 }}>
 										<Col xs={24}>
 											<Field
-												name='users.title'
-												label='Email title'
+												name='users.subject'
+												label='Email subject'
 												accepter={Input}
-												error={formError?.users?.title}
+												error={formError?.users?.subject}
 											/>
 										</Col>
 									</Row>
 									<Row style={{ marginBottom: 25 }}>
 										<Col xs={24}>
 											<Field
-												name='users.body'
-												label='Email body'
+												name='users.message'
+												label='Email message'
 												accepter={TextEditor}
-												error={formError?.users?.email}
-												value={profile ? profile.users.body : ''}
+												error={formError?.users?.message}
+												value={profile ? profile?.users?.message : ''}
 											/>
 										</Col>
 									</Row>

@@ -1,7 +1,7 @@
 import Currency from '@/models/Currency'
 import { connectToDB } from '@/utils/database'
 import { fetcher } from '@/utils/functions'
-import { sendMail } from '@/utils/mailer'
+import { configMailer, fetchProfile } from '@/utils/mailer'
 import { format } from 'date-fns'
 
 export const GET = async request => {
@@ -48,18 +48,15 @@ export const GET = async request => {
 			}
 		)
 	} catch (error) {
-		sendMail({
-			sender: {
-				title: 'BS42.NET Alert',
-				email: 'alert@bs42.net',
-			},
-			subject: 'System Error',
-			toEmail: 'hubert@attelecomms.co.uk',
-			message: `The scheduled task to update the system's currency rate has failed for the following reason;
+		const profile = await fetchProfile('contact-us')
 
-				${error.message}
-				`,
+		const { transporter, mailOptions } = await configMailer({
+			variables: { errorMessage: error.message },
+			group: 'admins',
+			profile,
 		})
+
+		await transporter.sendMail(mailOptions)
 
 		return new Response(
 			JSON.stringify({

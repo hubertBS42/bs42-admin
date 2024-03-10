@@ -27,10 +27,11 @@ export const PATCH = async (request, { params }) => {
 			)
 		}
 	} catch (error) {
+		console.log(error.message)
 		return new NextResponse(
 			JSON.stringify({
 				status: 'error',
-				message: error.message,
+				message: 'Failed to update application.',
 			}),
 			{ status: 500 }
 		)

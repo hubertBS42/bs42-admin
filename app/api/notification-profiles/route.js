@@ -1,5 +1,6 @@
 import NotificationProfile from '@/models/NotificationProfile'
 import Credential from '@/models/Credential'
+import Server from '@/models/Server'
 import { connectToDB } from '@/utils/database'
 
 export const GET = async request => {
@@ -19,10 +20,18 @@ export const GET = async request => {
 			.populate({
 				path: 'admins.sender',
 				model: 'Credential',
+				populate: {
+					path: 'server',
+					model: 'Server',
+				},
 			})
 			.populate({
 				path: 'users.sender',
 				model: 'Credential',
+				populate: {
+					path: 'server',
+					model: 'Server',
+				},
 			})
 			.lean()
 

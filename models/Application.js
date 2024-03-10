@@ -1,7 +1,7 @@
 import mongoose from 'mongoose'
 import User from './User'
 import { generatePassword } from '@/utils/functions'
-import { sendMail } from '@/utils/mailer'
+import { configMailer, fetchProfile } from '@/utils/mailer'
 
 const ApplicationSchema = new mongoose.Schema(
 	{
@@ -76,27 +76,35 @@ ApplicationSchema.pre('save', async function (next) {
 				canReceiveEmails: application.canReceiveEmails,
 			}
 
-			sendMail({
-				sender: {
-					title: 'BS42.NET Support',
-					email: 'notify@bs42.net',
+			const profile = await fetchProfile('account-application-approval')
+
+			const { transporter, mailOptions } = await configMailer({
+				variables: {
+					firstName: application.firstName,
+					password: preparedData.password,
 				},
-				subject: 'Account Activation',
 				toEmail: application.email,
-				message: `Hello ${application.firstName}, your account has been approved and activated. You may now sign into your account using the following password. Make sure you change this password once you are logged in. Password: ${preparedData.password}`,
+				group: 'users',
+				profile,
 			})
+
+			await transporter.sendMail(mailOptions)
 
 			await User.create(preparedData)
 		} else {
-			sendMail({
-				sender: {
-					title: 'BS42.NET Support',
-					email: 'notify@bs42.net',
+			const profile = await fetchProfile('account-application-rejection')
+
+			const { transporter, mailOptions } = await configMailer({
+				variables: {
+					firstName: application.firstName,
+					reviewNotes: application.reviewNotes || 'N/A',
 				},
-				subject: 'Account Activation',
 				toEmail: application.email,
-				message: `Hello ${application.firstName}, your application for an account has been rejected. The following  was the reason; ${application.reviewNotes}`,
+				group: 'users',
+				profile,
 			})
+
+			await transporter.sendMail(mailOptions)
 		}
 	}
 

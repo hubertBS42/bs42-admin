@@ -67,7 +67,7 @@ const ApplicationsDrawer = () => {
 				isApproved: data?.isApproved,
 				reviewer: data?.reviewer,
 				reviewDate: data?.reviewDate,
-				reviewNotes: data?.reviewNotes,
+				reviewNotes: data?.reviewNotes || '',
 			}
 		})
 	}

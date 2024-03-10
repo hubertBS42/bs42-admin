@@ -5,7 +5,6 @@ const CredentialSchema = new mongoose.Schema(
 		label: { type: String, required: true },
 		user: { type: String, required: true },
 		password: { type: String, default: null },
-		fromEmail: { type: String, required: true },
 		server: {
 			type: mongoose.Schema.Types.ObjectId,
 			ref: 'Server',

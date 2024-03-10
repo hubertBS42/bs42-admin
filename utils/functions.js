@@ -276,3 +276,11 @@ export const filterRatesByDateRange = (rates, startDate, endDate) => {
 
 	return Object.values(filteredRates)
 }
+
+export const replacePlaceholders = (inputString, values) => {
+	return inputString.replace(/\${(.*?)}/g, (match, placeholder) => {
+		// `placeholder` contains the name inside the curly braces
+		// `match` contains the full matched string, including the curly braces
+		return values[placeholder.trim()] || match
+	})
+}
