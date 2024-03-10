@@ -31,8 +31,6 @@ export const GET = async request => {
 
 		return new Response(
 			JSON.stringify({
-				status: 'success',
-				message: null,
 				data,
 			}),
 			{
@@ -50,10 +48,3 @@ export const GET = async request => {
 		)
 	}
 }
-
-//newest
-//featured
-//a-z
-//z-a
-//priceAscending
-//priceDescending
