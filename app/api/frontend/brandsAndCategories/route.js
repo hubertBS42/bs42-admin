@@ -24,14 +24,10 @@ export const GET = async request => {
 			fetchBrandsQuery,
 		])
 
-		const data = {
-			categories,
-			brands,
-		}
-
 		return new Response(
 			JSON.stringify({
-				data,
+				categories,
+				brands,
 			}),
 			{
 				status: 200,
