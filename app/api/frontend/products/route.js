@@ -30,6 +30,10 @@ export const GET = async request => {
 			field = 'createdAt'
 			order = 'desc'
 			break
+		case 'oldest':
+			field = 'createdAt'
+			order = 'asc'
+			break
 		case 'a-z':
 			field = 'title'
 			order = 'asc'
