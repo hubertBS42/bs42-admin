@@ -12,9 +12,7 @@ export const GET = async request => {
 
 		return new Response(
 			JSON.stringify({
-				status: 'success',
-				message: null,
-				data: currency,
+				currency,
 			}),
 			{
 				status: 200,
