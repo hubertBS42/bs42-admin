@@ -232,7 +232,7 @@ export const deleteCredential = async credential => {
 export const testCredential = async data => {
 	dispatch(setDrawerLoading(true))
 
-	const { status, message } = await fetcher('/api/sendMail1/test', {
+	const { status, message } = await fetcher('/api/sendTestMail', {
 		method: 'POST',
 		body: JSON.stringify(data),
 		headers: {
