@@ -107,10 +107,10 @@ const ApplicationsTable = () => {
 						<Cell dataKey='email' />
 					</Column>
 
-					<Column flexGrow={1} sortable verticalAlign='middle'>
+					{/* <Column flexGrow={1} sortable verticalAlign='middle'>
 						<HeaderCell>Phone</HeaderCell>
 						<Cell dataKey='phone1' />
-					</Column>
+					</Column> */}
 
 					<Column flexGrow={1} sortable verticalAlign='middle'>
 						<HeaderCell>Status</HeaderCell>
