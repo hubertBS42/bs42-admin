@@ -1,7 +1,7 @@
 import Message from '@/models/Message'
 import { connectToDB } from '@/utils/database'
 import { NextResponse } from 'next/server'
-import { configMailer } from '@/utils/mailer'
+import { configMailer, fetchProfile } from '@/utils/mailer'
 
 //POST
 export const POST = async (request, { params }) => {
@@ -31,11 +31,13 @@ export const POST = async (request, { params }) => {
 		})
 
 		if (message) {
-			const { transporter, mailOptions } = await configMailer(
-				'contact-us',
-				'admins',
-				'Hubert'
-			)
+			const profile = await fetchProfile('contact-us')
+
+			const { transporter, mailOptions } = await configMailer({
+				variables: { firstName: message.sender.firstName },
+				group: 'admins',
+				profile,
+			})
 
 			await transporter.sendMail(mailOptions)
 
