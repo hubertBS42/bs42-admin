@@ -21,7 +21,6 @@ const NotificationProfileSchema = new mongoose.Schema(
 				type: mongoose.Schema.Types.ObjectId,
 				ref: 'Credential',
 			},
-			recipients: [{ type: String, trim: true }],
 			subject: { type: String },
 			message: { type: String },
 		},

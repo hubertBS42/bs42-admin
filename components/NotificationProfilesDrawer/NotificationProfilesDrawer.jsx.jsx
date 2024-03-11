@@ -6,12 +6,10 @@ import {
 	Drawer,
 	Form,
 	Input,
-	InputNumber,
 	InputPicker,
 	Panel,
 	Row,
 	Schema,
-	Stack,
 	Tabs,
 	TagInput,
 	Toggle,
@@ -36,7 +34,6 @@ import {
 } from '@/redux/features/drawer/drawerSlice'
 
 import TextArea from '../TextArea/TextArea'
-import { selectAllNotificationProfiles } from '@/redux/features/notificationProfiles/notificationProfilesSlice'
 import TextEditor from '../TextEditor/TextEditor'
 import { selectAllCredentials } from '@/redux/features/credentials/credentialsSlice'
 
@@ -52,7 +49,6 @@ const model = Schema.Model({
 	}),
 	users: ObjectType().shape({
 		sender: StringType(),
-		recipients: ArrayType(),
 		subject: StringType(),
 		message: StringType(),
 	}),
@@ -68,7 +64,7 @@ const NotificationProfilesDrawer = () => {
 	const [formValue, setFormValue] = useState({
 		label: '',
 		admins: { sender: null, recipients: [], subject: '', message: '' },
-		users: { sender: null, recipients: [], subject: '', message: '' },
+		users: { sender: null, subject: '', message: '' },
 		description: '',
 		isActive: true,
 	})
@@ -77,7 +73,6 @@ const NotificationProfilesDrawer = () => {
 	const isEditing = useSelector(getEditState)
 	const isLoading = useSelector(getDrawerLoadingState)
 	const profile = useSelector(getDrawerData)
-	const profiles = useSelector(selectAllNotificationProfiles)
 	const credentials = useSelector(selectAllCredentials)
 
 	const formattedCredentials = credentials.map(credential => {
@@ -98,7 +93,6 @@ const NotificationProfilesDrawer = () => {
 					},
 					users: {
 						sender: profile?.users?.sender?._id,
-						recipients: profile?.users?.recipients,
 						subject: profile?.users?.subject,
 						message: profile?.users?.message,
 					},
@@ -115,7 +109,7 @@ const NotificationProfilesDrawer = () => {
 					subject: '',
 					message: '',
 				},
-				users: { sender: null, recipients: [], subject: '', message: '' },
+				users: { sender: null, subject: '', message: '' },
 				description: '',
 				isActive: true,
 			})
@@ -269,16 +263,6 @@ const NotificationProfilesDrawer = () => {
 												accepter={InputPicker}
 												error={formError?.users?.sender}
 												data={formattedCredentials}
-											/>
-										</Col>
-									</Row>
-									<Row style={{ marginBottom: 25 }}>
-										<Col xs={24}>
-											<Field
-												name='users.recipients'
-												label='Email recipients'
-												accepter={TagInput}
-												error={formError?.users?.recipients}
 											/>
 										</Col>
 									</Row>
