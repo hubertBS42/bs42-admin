@@ -161,7 +161,7 @@ const Invoice = ({ data }) => {
 				<View style={{ ...styles.section }}>
 					<View style={styles.subsection}>
 						<Text style={styles.subsectionTitle}>Sold To</Text>
-						<Text>{`${data.firstName} ${data.lastName}`}</Text>
+						<Text>{`${data.customerInfo.firstName} ${data.customerInfo.lastName}`}</Text>
 						<Text>Client&apos;s Address</Text>
 						<Text>City, State Zip</Text>
 						<Text>Ghana</Text>

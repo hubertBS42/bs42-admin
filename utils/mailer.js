@@ -29,7 +29,13 @@ export const fetchProfile = async slug => {
 }
 
 export const configMailer = async data => {
-	const { toEmail = null, group, profile, variables } = data
+	const {
+		toEmail = null,
+		group,
+		profile,
+		variables,
+		attachments,
+	} = data
 	try {
 		let transporter
 		let mailOptions
@@ -55,6 +61,7 @@ export const configMailer = async data => {
 				to: toEmail ? toEmail : profile.admins.recipients,
 				subject: profile.admins.subject,
 				html: hydratedMessage,
+				attachments,
 			}
 		} else {
 			const hydratedMessage = replacePlaceholders(
@@ -77,6 +84,7 @@ export const configMailer = async data => {
 				to: toEmail ? toEmail : profile.users.recipients,
 				subject: profile.users.subject,
 				html: hydratedMessage,
+				attachments,
 			}
 		}
 
