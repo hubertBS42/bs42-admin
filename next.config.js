@@ -11,6 +11,9 @@ const nextConfig = {
 			},
 		],
 	},
+	experimental: {
+		serverComponentsExternalPackages: ['@react-pdf/renderer'],
+	},
 	async headers() {
 		return [
 			{
