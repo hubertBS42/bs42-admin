@@ -55,7 +55,7 @@ export const POST = async request => {
 				toEmail: newOrder.customerInfo.email,
 				attachments: [
 					{
-						filename: 'INV001.pdf',
+						filename: `${invoiceNumber}.pdf`,
 						content: stream,
 						contentType: 'application/pdf',
 					},
