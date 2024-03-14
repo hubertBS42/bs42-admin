@@ -14,6 +14,15 @@ const OrderSchema = new mongoose.Schema(
 			lastName: { type: String },
 			email: { type: String },
 			phone: { type: String },
+			region: { type: String },
+			town: { type: String },
+			address: { type: String },
+			digitalAddress: { type: String },
+		},
+		orderNumber: { type: String, required: true, unique: true },
+		invoice: {
+			number: { type: String, required: true, unique: true },
+			date: { type: Date, default: Date.now },
 		},
 		status: { type: String, default: 'pending' }, //pending, processing, shipped
 		rate: { type: Number },

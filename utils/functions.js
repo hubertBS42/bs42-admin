@@ -1,5 +1,7 @@
 import { usePathname } from 'next/navigation'
 import { format, isAfter, isBefore, parseISO } from 'date-fns'
+import Order from '@/models/Order'
+import { connectToDB } from './database'
 
 const capitalizeFirstLetter = word => {
 	const regex = /(\b[a-z](?!\s))/g
@@ -283,4 +285,36 @@ export const replacePlaceholders = (inputString, values) => {
 		// `match` contains the full matched string, including the curly braces
 		return values[placeholder.trim()] || match
 	})
+}
+
+// Function to generate date-based invoice numbers
+export const generateInvoiceNumber = () => {
+	const today = new Date()
+	const year = today.getFullYear()
+	const month = String(today.getMonth() + 1).padStart(2, '0') // Month is zero-indexed
+	const day = String(today.getDate()).padStart(2, '0')
+
+	// Get the last used number for the current date, from a database or storage
+	// Here, we'll just use a simple increment for demonstration
+	let lastInvoiceNumber = 1 // Initialize to 1 or retrieve from storage
+	lastInvoiceNumber++ // Increment for the next invoice
+
+	// Combine date and number to create the invoice number
+	const invoiceNumber = `INV${year}${month}${day}-${String(
+		lastInvoiceNumber
+	).padStart(3, '0')}`
+
+	return invoiceNumber
+}
+
+export const generateRandomCode = () => {
+	const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
+	let randomCode = ''
+
+	for (let i = 0; i < 8; i++) {
+		const randomIndex = Math.floor(Math.random() * characters.length)
+		randomCode += characters.charAt(randomIndex)
+	}
+
+	return randomCode
 }

@@ -1,3 +1,4 @@
+import { formatDate, roundMoney } from '@/utils/functions'
 import {
 	Document,
 	Font,
@@ -134,6 +135,9 @@ const styles = StyleSheet.create({
 })
 
 const Invoice = ({ data }) => {
+	const subtotal = roundMoney(data.totalPrice * data.rate)
+	const saleTax = subtotal * 0.15
+	const total = subtotal + saleTax
 	return (
 		<Document>
 			<Page size='A4' style={styles.page}>
@@ -158,20 +162,20 @@ const Invoice = ({ data }) => {
 					</View>
 				</View>
 
-				<View style={{ ...styles.section }}>
+				<View style={styles.section}>
 					<View style={styles.subsection}>
 						<Text style={styles.subsectionTitle}>Sold To</Text>
 						<Text>{`${data.customerInfo.firstName} ${data.customerInfo.lastName}`}</Text>
-						<Text>Client&apos;s Address</Text>
-						<Text>City, State Zip</Text>
-						<Text>Ghana</Text>
+						<Text>{data.customerInfo.address}</Text>
+						<Text>{`${data.customerInfo.town}, ${data.customerInfo.region}`}</Text>
+						<Text>{data.customerInfo.digitalAddress}</Text>
 					</View>
 
 					<View style={styles.subsection}>
 						<Text style={styles.subsectionTitle}>Invoice Summary</Text>
-						<Text>Invoice Date: Mar 01, 2024</Text>
-						<Text>Invoice Number: INV13506143</Text>
-						<Text>Due Date: Mar 01, 2024</Text>
+						<Text>Invoice Date: {formatDate(data.invoice.date)}</Text>
+						<Text>Invoice Number: {data.invoice.number}</Text>
+						<Text>Due Date: {formatDate(data.invoice.date)}</Text>
 					</View>
 				</View>
 				<View
@@ -198,50 +202,24 @@ const Invoice = ({ data }) => {
 								</View>
 							</View>
 							<View style={styles.tableBody}>
-								<View style={styles.tableRow}>
-									<View style={styles.tableColumn1}>
-										<Text>28 Port Switch</Text>
+								{data.products.map((product, i) => (
+									<View style={styles.tableRow} key={i}>
+										<View style={styles.tableColumn1}>
+											<Text>{product.title}</Text>
+										</View>
+										<View style={styles.tableColumn2}>
+											<Text>{product.quantity}</Text>
+										</View>
+										<View style={styles.tableColumn3}>
+											<Text>{roundMoney(product.price * data.rate)}</Text>
+										</View>
+										<View style={styles.tableColumn4}>
+											<Text>
+												{roundMoney(product.price * product.quantity * data.rate)}
+											</Text>
+										</View>
 									</View>
-									<View style={styles.tableColumn2}>
-										<Text>2</Text>
-									</View>
-									<View style={styles.tableColumn3}>
-										<Text>100.00</Text>
-									</View>
-									<View style={styles.tableColumn4}>
-										<Text>200.00</Text>
-									</View>
-								</View>
-
-								<View style={styles.tableRow}>
-									<View style={styles.tableColumn1}>
-										<Text>28 Port Switch</Text>
-									</View>
-									<View style={styles.tableColumn2}>
-										<Text>2</Text>
-									</View>
-									<View style={styles.tableColumn3}>
-										<Text>100.00</Text>
-									</View>
-									<View style={styles.tableColumn4}>
-										<Text>200.00</Text>
-									</View>
-								</View>
-
-								<View style={styles.tableRow}>
-									<View style={styles.tableColumn1}>
-										<Text>28 Port Switch</Text>
-									</View>
-									<View style={styles.tableColumn2}>
-										<Text>2</Text>
-									</View>
-									<View style={styles.tableColumn3}>
-										<Text>100.00</Text>
-									</View>
-									<View style={styles.tableColumn4}>
-										<Text>200.00</Text>
-									</View>
-								</View>
+								))}
 							</View>
 						</View>
 					</View>
@@ -249,15 +227,15 @@ const Invoice = ({ data }) => {
 					<View style={styles.summaryBlock}>
 						<View style={styles.summaryBlockSection}>
 							<Text>Sub Total</Text>
-							<Text style={styles.price}>GHS 200.00</Text>
+							<Text style={styles.price}>GHS {subtotal}</Text>
 						</View>
 						<View style={styles.summaryBlockSection}>
-							<Text>Sale Tax (10%)</Text>
-							<Text style={styles.price}>GHS 20.00</Text>
+							<Text>Sale Tax (15%)</Text>
+							<Text style={styles.price}>GHS {saleTax}</Text>
 						</View>
 						<View style={[styles.summaryBlockSection, styles.last]}>
 							<Text style={styles.totalText}>Total</Text>
-							<Text style={styles.price}>GHS 220.00</Text>
+							<Text style={styles.price}>GHS {total}</Text>
 						</View>
 					</View>
 				</View>

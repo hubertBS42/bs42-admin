@@ -1,4 +1,4 @@
-import Blog from '@/models/Blog'
+import Order from '@/models/Order'
 import User from '@/models/User'
 import { connectToDB } from '@/utils/database'
 
@@ -11,22 +11,17 @@ export const GET = async request => {
 
 	try {
 		await connectToDB()
-		const blogs = await Blog.find()
+		const orders = await Order.find()
 			.collation({ locale: 'en' })
 			.limit(limit * 1)
 			.skip((page - 1) * limit)
 			.sort({ [field]: sort })
-			.populate({
-				path: 'author',
-				model: 'User',
-				select: 'firstName lastName',
-			})
 			.lean()
 
 		const count = await Blog.count()
 
 		const data = {
-			blogs,
+			orders,
 			count,
 		}
 

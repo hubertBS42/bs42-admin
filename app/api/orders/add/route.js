@@ -6,6 +6,10 @@ import jwt from 'jsonwebtoken'
 import { configMailer, fetchProfile } from '@/utils/mailer'
 import Invoice from '@/components/Invoice/Invoice'
 import { renderToStream } from '@react-pdf/renderer'
+import {
+	generateInvoiceNumber,
+	generateRandomCode,
+} from '@/utils/functions'
 
 export const POST = async request => {
 	const data = await request.json()
@@ -18,7 +22,24 @@ export const POST = async request => {
 
 	try {
 		await connectToDB()
-		const newOrder = await Order.create(data)
+
+		const generateOrderNumber = async () => {
+			let orderNumber = generateRandomCode()
+			const orderNumberExists = await Order.findOne({ orderNumber })
+			if (orderNumberExists) return generateOrderNumber()
+			return orderNumber
+		}
+
+		const orderNumber = await generateOrderNumber()
+		const invoiceNumber = generateInvoiceNumber()
+
+		const newOrder = await Order.create({
+			...data,
+			orderNumber,
+			invoice: {
+				number: invoiceNumber,
+			},
+		})
 
 		if (!newOrder) throw new Error('Failed to create order')
 
@@ -59,28 +80,6 @@ export const POST = async request => {
 
 			await transporter.sendMail(mailOptions)
 		})
-
-		// const { transporter: uTransporter, mailOptions: uMailOptions } =
-		// 	await configMailer({
-		// 		variables: { firstName: newApplication.firstName },
-		// 		toEmail: newApplication.email,
-		// 		group: 'users',
-		// 		profile,
-		// 		attachments: [
-		// 			{filename: 'INV001.pdf',
-		// 			content: stream,
-		// 			contentType: 'application/pdf',}
-		// 		]
-		// 	})
-
-		// const { transporter: aTransporter, mailOptions: aMailOptions } =
-		// 	await configMailer({
-		// 		group: 'admins',
-		// 		profile,
-		// 	})
-
-		// await uTransporter.sendMail(uMailOptions)
-		// await aTransporter.sendMail(aMailOptions)
 
 		if (cartToken) {
 			jwt.verify(cartToken, 'abc123')
