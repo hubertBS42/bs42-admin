@@ -1,7 +1,5 @@
 import { usePathname } from 'next/navigation'
 import { format, isAfter, isBefore, parseISO } from 'date-fns'
-import Order from '@/models/Order'
-import { connectToDB } from './database'
 
 const capitalizeFirstLetter = word => {
 	const regex = /(\b[a-z](?!\s))/g
