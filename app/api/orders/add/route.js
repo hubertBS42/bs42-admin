@@ -20,12 +20,12 @@ export const POST = async request => {
 	try {
 		await connectToDB()
 
-		// const generateOrderNumber = async () => {
-		// 	let orderNumber = generateRandomCode()
-		// 	const orderNumberExists = await Order.findOne({ orderNumber })
-		// 	if (orderNumberExists) return generateOrderNumber()
-		// 	return orderNumber
-		// }
+		const generateOrderNumber = async () => {
+			let orderNumber = generateRandomCode()
+			const orderNumberExists = await Order.findOne({ orderNumber })
+			if (orderNumberExists) return generateOrderNumber()
+			return orderNumber
+		}
 
 		const orderNumber = await generateOrderNumber()
 		// const invoiceNumber = generateInvoiceNumber()
@@ -109,6 +109,7 @@ export const POST = async request => {
 			{ status: 201 }
 		)
 	} catch (error) {
+		console.log(error)
 		return new NextResponse(
 			JSON.stringify({
 				status: 'error',
