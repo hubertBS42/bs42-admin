@@ -298,7 +298,7 @@ export const generateInvoiceNumber = () => {
 	lastInvoiceNumber++ // Increment for the next invoice
 
 	// Combine date and number to create the invoice number
-	const invoiceNumber = `INV${year}${month}${day}-${String(
+	const invoiceNumber = `${year}${month}${day}-${String(
 		lastInvoiceNumber
 	).padStart(3, '0')}`
 

@@ -135,7 +135,7 @@ const styles = StyleSheet.create({
 })
 
 const Invoice = ({ data }) => {
-	const subtotal = roundMoney(data.totalPrice * data.rate)
+	const subtotal = data.totalPrice * data.rate
 	const saleTax = subtotal * 0.15
 	const total = subtotal + saleTax
 	return (
@@ -227,15 +227,15 @@ const Invoice = ({ data }) => {
 					<View style={styles.summaryBlock}>
 						<View style={styles.summaryBlockSection}>
 							<Text>Sub Total</Text>
-							<Text style={styles.price}>GHS {subtotal}</Text>
+							<Text style={styles.price}>GHS {roundMoney(subtotal)}</Text>
 						</View>
 						<View style={styles.summaryBlockSection}>
 							<Text>Sale Tax (15%)</Text>
-							<Text style={styles.price}>GHS {saleTax}</Text>
+							<Text style={styles.price}>GHS {roundMoney(saleTax)}</Text>
 						</View>
 						<View style={[styles.summaryBlockSection, styles.last]}>
 							<Text style={styles.totalText}>Total</Text>
-							<Text style={styles.price}>GHS {total}</Text>
+							<Text style={styles.price}>GHS {roundMoney(total)}</Text>
 						</View>
 					</View>
 				</View>
