@@ -6,10 +6,7 @@ import jwt from 'jsonwebtoken'
 import { configMailer, fetchProfile } from '@/utils/mailer'
 import Invoice from '@/components/Invoice/Invoice'
 import { renderToStream } from '@react-pdf/renderer'
-import {
-	generateInvoiceNumber,
-	generateRandomCode,
-} from '@/utils/functions'
+import { generateRandomCode } from '@/utils/functions'
 
 export const POST = async request => {
 	const data = await request.json()
@@ -23,63 +20,76 @@ export const POST = async request => {
 	try {
 		await connectToDB()
 
-		const generateOrderNumber = async () => {
-			let orderNumber = generateRandomCode()
-			const orderNumberExists = await Order.findOne({ orderNumber })
-			if (orderNumberExists) return generateOrderNumber()
-			return orderNumber
-		}
+		// const generateOrderNumber = async () => {
+		// 	let orderNumber = generateRandomCode()
+		// 	const orderNumberExists = await Order.findOne({ orderNumber })
+		// 	if (orderNumberExists) return generateOrderNumber()
+		// 	return orderNumber
+		// }
 
 		const orderNumber = await generateOrderNumber()
-		const invoiceNumber = generateInvoiceNumber()
+		// const invoiceNumber = generateInvoiceNumber()
 
+		// const newOrder = await Order.create({
+		// 	...data,
+		// 	orderNumber,
+		// 	invoice: {
+		// 		number: invoiceNumber,
+		// 	},
+		// })
 		const newOrder = await Order.create({
 			...data,
 			orderNumber,
-			invoice: {
-				number: invoiceNumber,
-			},
 		})
 
 		if (!newOrder) throw new Error('Failed to create order')
 
-		const [stream, profile] = await Promise.all([
-			renderToStream(<Invoice data={newOrder} />),
-			fetchProfile('new-order'),
-		])
+		// const [stream, profile] = await Promise.all([
+		// 	renderToStream(<Invoice data={newOrder} />),
+		// 	fetchProfile('new-order'),
+		// ])
 
-		const recipients = [
-			{
-				group: 'users',
-				variables: { firstName: newOrder.customerInfo.firstName },
-				toEmail: newOrder.customerInfo.email,
-				attachments: [
-					{
-						filename: `${invoiceNumber}.pdf`,
-						content: stream,
-						contentType: 'application/pdf',
-					},
-				],
-			},
-			{
-				group: 'admins',
-				variables: null,
-				toEmail: null,
-				attachments: null,
-			},
-		]
+		const profile = await fetchProfile('new-order')
 
-		recipients.forEach(async group => {
-			const { transporter, mailOptions } = await configMailer({
-				group: group.group,
-				variables: group.variables,
-				toEmail: group.toEmail,
-				attachments: group.attachments,
-				profile,
-			})
-
-			await transporter.sendMail(mailOptions)
+		const { transporter, mailOptions } = await configMailer({
+			group: 'admins',
+			profile,
 		})
+
+		await transporter.sendMail(mailOptions)
+
+		// const recipients = [
+		// 	{
+		// 		group: 'users',
+		// 		variables: { firstName: newOrder.customerInfo.firstName },
+		// 		toEmail: newOrder.customerInfo.email,
+		// 		attachments: [
+		// 			{
+		// 				filename: `${invoiceNumber}.pdf`,
+		// 				content: stream,
+		// 				contentType: 'application/pdf',
+		// 			},
+		// 		],
+		// 	},
+		// 	{
+		// 		group: 'admins',
+		// 		variables: null,
+		// 		toEmail: null,
+		// 		attachments: null,
+		// 	},
+		// ]
+
+		// recipients.forEach(async group => {
+		// 	const { transporter, mailOptions } = await configMailer({
+		// 		group: group.group,
+		// 		variables: group.variables,
+		// 		toEmail: group.toEmail,
+		// 		attachments: group.attachments,
+		// 		profile,
+		// 	})
+
+		// 	await transporter.sendMail(mailOptions)
+		// })
 
 		if (cartToken) {
 			jwt.verify(cartToken, 'abc123')

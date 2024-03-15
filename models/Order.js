@@ -21,7 +21,7 @@ const OrderSchema = new mongoose.Schema(
 			number: { type: String, required: true, unique: true },
 			date: { type: Date, default: Date.now },
 		},
-		status: { type: String, default: 'pending' }, //pending, processing, shipped
+		status: { type: String, default: 'pending' }, //pending, cancelled, processing, shipped, complete
 		rate: { type: Number },
 		products: [
 			{
