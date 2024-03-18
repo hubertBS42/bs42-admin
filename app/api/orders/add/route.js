@@ -3,7 +3,7 @@ import Order from '@/models/Order'
 import { connectToDB } from '@/utils/database'
 import { NextResponse } from 'next/server'
 import jwt from 'jsonwebtoken'
-import { configMailer, fetchProfile } from '@/utils/mailer'
+import { configMailer, fetchTemplate } from '@/utils/mailer'
 import Invoice from '@/components/Invoice/Invoice'
 import { renderToStream } from '@react-pdf/renderer'
 import { generateRandomCode } from '@/utils/functions'
@@ -50,11 +50,11 @@ export const POST = async request => {
 		// 	fetchProfile('new-order'),
 		// ])
 
-		const profile = await fetchProfile('new-order')
+		const template = await fetchTemplate('new-order')
 
 		const { transporter, mailOptions } = await configMailer({
 			group: 'admins',
-			profile,
+			template,
 		})
 
 		await transporter.sendMail(mailOptions)
