@@ -32,8 +32,6 @@ const OrderSchema = new mongoose.Schema(
 				title: { type: String },
 				brand: {
 					name: { type: String },
-					website: { type: String },
-					url: { type: String },
 				},
 				category: {
 					type: [String],
