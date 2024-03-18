@@ -40,6 +40,7 @@ export const POST = async request => {
 		const newOrder = await Order.create({
 			...data,
 			orderNumber,
+			invoice: null,
 		})
 
 		if (!newOrder) throw new Error('Failed to create order')

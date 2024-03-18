@@ -18,8 +18,8 @@ const OrderSchema = new mongoose.Schema(
 		},
 		orderNumber: { type: String, required: true, unique: true },
 		invoice: {
-			number: { type: String, required: true, unique: true },
-			date: { type: Date, default: Date.now },
+			number: { type: String, unique: true },
+			date: { type: Date },
 		},
 		status: { type: String, default: 'pending' }, //pending, cancelled, processing, shipped, complete
 		rate: { type: Number },

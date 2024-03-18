@@ -147,7 +147,19 @@ export const GET = async request => {
 			.populate({
 				path: 'category',
 				model: 'Category',
-				select: 'name',
+				select: 'name parent',
+				populate: {
+					path: 'parent',
+					select: 'name parent',
+					populate: {
+						path: 'parent',
+						select: 'name parent',
+						populate: {
+							path: 'parent',
+							select: 'name',
+						},
+					},
+				},
 			})
 			.select(
 				'title slug brand sellPrice resellerPrice images countInStock category unitsSold rating onSale featured discount isActive createdAt'

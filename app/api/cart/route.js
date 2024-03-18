@@ -33,12 +33,16 @@ export const GET = async request => {
 						},
 						{
 							path: 'category',
+							select: 'name parent',
 							populate: {
 								path: 'parent',
+								select: 'name parent',
 								populate: {
 									path: 'parent',
+									select: 'name parent',
 									populate: {
 										path: 'parent',
+										select: 'name',
 									},
 								},
 							},
