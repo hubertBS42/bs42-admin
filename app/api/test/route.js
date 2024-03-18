@@ -1,5 +1,5 @@
 import { connectToDB } from '@/utils/database'
-import { configMailer, fetchProfile } from '@/utils/mailer'
+import { configMailer, fetchTemplate } from '@/utils/mailer'
 
 export const GET = async request => {
 	const { searchParams } = new URL(request.url)
@@ -11,7 +11,7 @@ export const GET = async request => {
 	try {
 		await connectToDB()
 
-		const profile = await fetchProfile('contact-us')
+		const profile = await fetchTemplate('contact-us')
 
 		const { transporter, mailOptions } = await configMailer({
 			variables: { firstName: 'Hubert' },
