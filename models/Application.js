@@ -1,7 +1,7 @@
 import mongoose from 'mongoose'
 import User from './User'
 import { generatePassword } from '@/utils/functions'
-import { configMailer, fetchProfile } from '@/utils/mailer'
+import { configMailer, fetchTemplate } from '@/utils/mailer'
 
 const ApplicationSchema = new mongoose.Schema(
 	{
@@ -76,7 +76,9 @@ ApplicationSchema.pre('save', async function (next) {
 				canReceiveEmails: application.canReceiveEmails,
 			}
 
-			const profile = await fetchProfile('account-application-approval')
+			const template = await fetchTemplate(
+				'account-application-approval'
+			)
 
 			const { transporter, mailOptions } = await configMailer({
 				variables: {
@@ -85,14 +87,16 @@ ApplicationSchema.pre('save', async function (next) {
 				},
 				toEmail: application.email,
 				group: 'users',
-				profile,
+				template,
 			})
 
 			await transporter.sendMail(mailOptions)
 
 			await User.create(preparedData)
 		} else {
-			const profile = await fetchProfile('account-application-rejection')
+			const template = await fetchTemplate(
+				'account-application-rejection'
+			)
 
 			const { transporter, mailOptions } = await configMailer({
 				variables: {
@@ -101,7 +105,7 @@ ApplicationSchema.pre('save', async function (next) {
 				},
 				toEmail: application.email,
 				group: 'users',
-				profile,
+				template,
 			})
 
 			await transporter.sendMail(mailOptions)

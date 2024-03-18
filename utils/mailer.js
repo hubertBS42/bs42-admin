@@ -1,11 +1,11 @@
-import NotificationProfile from '@/models/NotificationProfile'
+import Template from '@/models/Template'
 import Server from '@/models/Server'
 import Credential from '@/models/Credential'
 import nodemailer from 'nodemailer'
 import { replacePlaceholders } from './functions'
 
-export const fetchProfile = async slug => {
-	const profile = await NotificationProfile.findOne({
+export const fetchTemplate = async slug => {
+	const template = await Template.findOne({
 		slug,
 	})
 		.populate({
@@ -25,14 +25,14 @@ export const fetchProfile = async slug => {
 			},
 		})
 
-	return profile
+	return template
 }
 
 export const configMailer = async data => {
 	const {
 		toEmail = null,
 		group,
-		profile,
+		template,
 		variables,
 		attachments,
 	} = data
@@ -42,47 +42,47 @@ export const configMailer = async data => {
 
 		if (group === 'admins') {
 			const hydratedMessage = replacePlaceholders(
-				profile.admins.message,
+				template.admins.message,
 				variables
 			)
 
 			transporter = nodemailer.createTransport({
-				host: profile.admins.sender.server.host,
-				port: profile.admins.sender.server.port,
-				secure: profile.admins.sender.server.isSecure,
+				host: template.admins.sender.server.host,
+				port: template.admins.sender.server.port,
+				secure: template.admins.sender.server.isSecure,
 				auth: {
-					user: profile.admins.sender.user,
-					pass: profile.admins.sender.password,
+					user: template.admins.sender.user,
+					pass: template.admins.sender.password,
 				},
 			})
 
 			mailOptions = {
-				from: `${profile.admins.sender.label} < ${profile.admins.sender.user} >`,
-				to: toEmail ? toEmail : profile.admins.recipients,
-				subject: profile.admins.subject,
+				from: `${template.admins.sender.label} < ${template.admins.sender.user} >`,
+				to: toEmail ? toEmail : template.admins.recipients,
+				subject: template.admins.subject,
 				html: hydratedMessage,
 				attachments,
 			}
 		} else {
 			const hydratedMessage = replacePlaceholders(
-				profile.users.message,
+				template.users.message,
 				variables
 			)
 
 			transporter = nodemailer.createTransport({
-				host: profile.users.sender.server.host,
-				port: profile.users.sender.server.port,
-				secure: profile.users.sender.server.isSecure,
+				host: template.users.sender.server.host,
+				port: template.users.sender.server.port,
+				secure: template.users.sender.server.isSecure,
 				auth: {
-					user: profile.users.sender.user,
-					pass: profile.users.sender.password,
+					user: template.users.sender.user,
+					pass: template.users.sender.password,
 				},
 			})
 
 			mailOptions = {
-				from: `${profile.users.sender.label} < ${profile.users.sender.user} >`,
-				to: toEmail ? toEmail : profile.users.recipients,
-				subject: profile.users.subject,
+				from: `${template.users.sender.label} < ${template.users.sender.user} >`,
+				to: toEmail ? toEmail : template.users.recipients,
+				subject: template.users.subject,
 				html: hydratedMessage,
 				attachments,
 			}

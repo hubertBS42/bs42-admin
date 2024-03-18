@@ -1,7 +1,7 @@
 import Currency from '@/models/Currency'
 import { connectToDB } from '@/utils/database'
 import { fetcher } from '@/utils/functions'
-import { configMailer, fetchProfile } from '@/utils/mailer'
+import { configMailer, fetchTemplate } from '@/utils/mailer'
 import { format } from 'date-fns'
 
 export const GET = async request => {
@@ -48,12 +48,12 @@ export const GET = async request => {
 			}
 		)
 	} catch (error) {
-		const profile = await fetchProfile('contact-us')
+		const template = await fetchTemplate('contact-us')
 
 		const { transporter, mailOptions } = await configMailer({
 			variables: { errorMessage: error.message },
 			group: 'admins',
-			profile,
+			template,
 		})
 
 		await transporter.sendMail(mailOptions)

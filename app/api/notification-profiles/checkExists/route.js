@@ -1,4 +1,4 @@
-import NotificationProfile from '@/models/NotificationProfile'
+import NotificationProfile from '@/models/Template'
 import { connectToDB } from '@/utils/database'
 
 export const GET = async request => {

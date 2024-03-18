@@ -3,7 +3,7 @@ import slug from 'mongoose-slug-updater'
 
 mongoose.plugin(slug)
 
-const NotificationProfileSchema = new mongoose.Schema(
+const TemplateSchema = new mongoose.Schema(
 	{
 		label: { type: String, required: true },
 		slug: { type: String, slug: 'label', unique: true },
@@ -30,8 +30,8 @@ const NotificationProfileSchema = new mongoose.Schema(
 	{ timestamps: true }
 )
 
-const NotificationProfile =
-	mongoose.models.NotificationProfile ||
-	mongoose.model('NotificationProfile', NotificationProfileSchema)
+const Template =
+	mongoose.models.Template ||
+	mongoose.model('Template', TemplateSchema)
 
-export default NotificationProfile
+export default Template

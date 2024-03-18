@@ -1,4 +1,4 @@
-import NotificationProfile from '@/models/NotificationProfile'
+import NotificationProfile from '@/models/Template'
 import Credential from '@/models/Credential'
 import { connectToDB } from '@/utils/database'
 
