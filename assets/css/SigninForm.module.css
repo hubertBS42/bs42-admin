@@ -1,0 +1,30 @@
+.mainWrapper {
+  width: 100%;
+  max-width: 1000px;
+}
+.mainWrapper .innerWrapper {
+  display: flex;
+  align-items: center;
+}
+.mainWrapper .innerWrapper .left {
+  padding: 1.5em;
+}
+.mainWrapper .innerWrapper .left img {
+  margin-bottom: 1.5em;
+}
+.mainWrapper .innerWrapper .left .heading {
+  margin-bottom: 0.5em;
+  font-weight: 500;
+  font-size: 38px;
+  text-align: center;
+}
+.mainWrapper .innerWrapper .right .imageWrapper {
+  position: relative;
+  width: 100%;
+  height: 600px;
+  overflow: hidden;
+  border-radius: 10px;
+}
+.mainWrapper .innerWrapper .right .imageWrapper img {
+  object-fit: cover;
+}/*# sourceMappingURL=SigninForm.module.css.map */

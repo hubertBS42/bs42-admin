@@ -11,7 +11,7 @@ import productsReducer from './features/products/productsSlice'
 import currenciesReducer from './features/currencies/currenciesSlice'
 import serversReducer from './features/servers/serversSlice'
 import credentialsReducer from './features/credentials/credentialsSlice'
-import notificationProfilesReducer from './features/notificationProfiles/notificationProfilesSlice'
+import templatesReducer from './features/templates/templatesSlice'
 import MessagesReducer from './features/messages/messagesSlice'
 import modalReducer from './features/modal/modalSlice'
 import drawerReducer from './features/drawer/drawerSlice'
@@ -23,7 +23,7 @@ export const store = configureStore({
 		blogs: blogsReducer,
 		slides: slidesReducer,
 		credentials: credentialsReducer,
-		notificationProfiles: notificationProfilesReducer,
+		templates: templatesReducer,
 		messages: MessagesReducer,
 		users: usersReducer,
 		resources: resourcesReducer,

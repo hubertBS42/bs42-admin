@@ -84,7 +84,7 @@ const SideNav = () => {
 		activePage = '8-3-2'
 	}
 
-	if (pathname.includes('notification-profiles')) {
+	if (pathname.includes('templates')) {
 		activePage = '8-3-3'
 	}
 
@@ -240,9 +240,9 @@ const SideNav = () => {
 								<Nav.Item
 									eventKey='8-3-3'
 									as={NavLink}
-									href='/settings/email/notification-profiles'
+									href='/settings/email/templates'
 								>
-									Notification Profiles
+									Templates
 								</Nav.Item>
 							</Nav.Menu>
 						</Nav.Menu>

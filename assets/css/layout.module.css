@@ -1,0 +1,13 @@
+.mainWrapper {
+  display: flex;
+  position: relative;
+  font-weight: 300;
+}
+.mainWrapper .right {
+  flex-grow: 1;
+  min-height: 100vh;
+  border-left: 1px solid #3c3f43;
+}
+.mainWrapper .right main {
+  padding: 1.5em;
+}/*# sourceMappingURL=layout.module.css.map */

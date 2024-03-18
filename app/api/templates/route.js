@@ -1,4 +1,4 @@
-import NotificationProfile from '@/models/Template'
+import Template from '@/models/Template'
 import Credential from '@/models/Credential'
 import Server from '@/models/Server'
 import { connectToDB } from '@/utils/database'
@@ -12,7 +12,7 @@ export const GET = async request => {
 	try {
 		await connectToDB()
 
-		const profiles = await NotificationProfile.find()
+		const templates = await Template.find()
 			.collation({ locale: 'en' })
 			.limit(limit * 1)
 			.skip((page - 1) * limit)
@@ -35,10 +35,10 @@ export const GET = async request => {
 			})
 			.lean()
 
-		const count = await NotificationProfile.count()
+		const count = await Template.count()
 
 		const data = {
-			profiles,
+			templates,
 			count,
 		}
 

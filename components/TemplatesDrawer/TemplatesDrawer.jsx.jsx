@@ -21,9 +21,9 @@ import Field from '../Field/Field'
 import { useDispatch, useSelector } from 'react-redux'
 
 import {
-	createNotificationProfile,
-	updateNotificationProfile,
-} from '@/redux/features/notificationProfiles/notificationProfilesActions'
+	createTemplate,
+	updateTemplate,
+} from '@/redux/features/templates/templatesActions'
 
 import {
 	getDrawerData,
@@ -57,7 +57,7 @@ const model = Schema.Model({
 	),
 })
 
-const NotificationProfilesDrawer = () => {
+const TemplatesDrawer = () => {
 	const dispatch = useDispatch()
 	const formRef = useRef()
 	const [formError, setFormError] = useState({})
@@ -72,32 +72,32 @@ const NotificationProfilesDrawer = () => {
 	const isOpen = useSelector(getDrawerOpenState)
 	const isEditing = useSelector(getEditState)
 	const isLoading = useSelector(getDrawerLoadingState)
-	const profile = useSelector(getDrawerData)
+	const template = useSelector(getDrawerData)
 	const credentials = useSelector(selectAllCredentials)
 
 	const formattedCredentials = credentials.map(credential => {
 		return { label: credential.label, value: credential._id }
 	})
 
-	const updateForm = profile => {
+	const updateForm = template => {
 		if (isEditing) {
 			setFormValue(prev => {
 				return {
 					...prev,
-					label: profile.label,
+					label: template.label,
 					admins: {
-						sender: profile?.admins?.sender?._id,
-						recipients: profile?.admins?.recipients,
-						subject: profile?.admins?.subject,
-						message: profile?.admins?.message,
+						sender: template?.admins?.sender?._id,
+						recipients: template?.admins?.recipients,
+						subject: template?.admins?.subject,
+						message: template?.admins?.message,
 					},
 					users: {
-						sender: profile?.users?.sender?._id,
-						subject: profile?.users?.subject,
-						message: profile?.users?.message,
+						sender: template?.users?.sender?._id,
+						subject: template?.users?.subject,
+						message: template?.users?.message,
 					},
-					description: profile?.description,
-					isActive: profile?.isActive,
+					description: template?.description,
+					isActive: template?.isActive,
 				}
 			})
 		} else {
@@ -125,10 +125,10 @@ const NotificationProfilesDrawer = () => {
 
 		if (isEditing) {
 			//update
-			await updateNotificationProfile(profile, formValue)
+			await updateTemplate(template, formValue)
 		} else {
 			//add
-			await createNotificationProfile(formValue)
+			await createTemplate(formValue)
 		}
 	}
 
@@ -136,14 +136,12 @@ const NotificationProfilesDrawer = () => {
 		<Drawer
 			open={isOpen}
 			onClose={() => dispatch(setDrawerClose())}
-			onEnter={() => updateForm(profile)}
+			onEnter={() => updateForm(template)}
 			backdrop='static'
 			size='lg'
 		>
 			<Drawer.Header style={{ paddingRight: '1.2em' }}>
-				<Drawer.Title>
-					{isEditing ? 'Edit' : 'Add'} Notification Profile
-				</Drawer.Title>
+				<Drawer.Title>{isEditing ? 'Edit' : 'Add'} Template</Drawer.Title>
 				<Drawer.Actions>
 					<Button
 						onClick={() => dispatch(setDrawerClose())}
@@ -249,7 +247,7 @@ const NotificationProfilesDrawer = () => {
 												label='Email message'
 												accepter={TextEditor}
 												error={formError?.admins?.message}
-												value={profile ? profile?.admins?.message : ''}
+												value={template ? template?.admins?.message : ''}
 											/>
 										</Col>
 									</Row>
@@ -283,7 +281,7 @@ const NotificationProfilesDrawer = () => {
 												label='Email message'
 												accepter={TextEditor}
 												error={formError?.users?.message}
-												value={profile ? profile?.users?.message : ''}
+												value={template ? template?.users?.message : ''}
 											/>
 										</Col>
 									</Row>
@@ -296,4 +294,4 @@ const NotificationProfilesDrawer = () => {
 		</Drawer>
 	)
 }
-export default NotificationProfilesDrawer
+export default TemplatesDrawer

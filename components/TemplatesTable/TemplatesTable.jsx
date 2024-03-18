@@ -10,7 +10,6 @@ import {
 } from 'rsuite'
 import TableSearch from '../TableSearch/TableSearch'
 
-import TrashIcon from '@rsuite/icons/Trash'
 import EditIcon from '@rsuite/icons/Edit'
 import PlusIcon from '@rsuite/icons/Plus'
 
@@ -19,23 +18,23 @@ import { formatDate } from '@/utils/functions'
 import { useDispatch, useSelector } from 'react-redux'
 
 import {
-	limitNotificationProfiles,
-	paginateNotificationProfiles,
-	searchNotificationProfiles,
-	sortNotificationProfiles,
-} from '@/redux/features/notificationProfiles/notificationProfilesActions'
+	limitTemplates,
+	paginateTemplates,
+	searchTemplates,
+	sortTemplates,
+} from '@/redux/features/templates/templatesActions'
 import {
-	getNotificationProfilesCount,
-	getNotificationProfilesLoadingState,
-	selectAllNotificationProfiles,
-} from '@/redux/features/notificationProfiles/notificationProfilesSlice'
+	getTemplatesCount,
+	getTemplatesLoadingState,
+	selectAllTemplates,
+} from '@/redux/features/templates/templatesSlice'
 import { setModalOpen } from '@/redux/features/modal/modalSlice'
 import { setDrawerOpen } from '@/redux/features/drawer/drawerSlice'
 import Status from '../Status/Status'
 
 const { Column, HeaderCell, Cell } = Table
 
-const NotificationProfilesTable = () => {
+const TemplatesTable = () => {
 	const dispatch = useDispatch()
 
 	const [sortType, setSortType] = useState('desc')
@@ -43,12 +42,12 @@ const NotificationProfilesTable = () => {
 	const [limit, setLimit] = useState(10)
 	const [page, setPage] = useState(1)
 
-	const profiles = useSelector(selectAllNotificationProfiles)
-	const count = useSelector(getNotificationProfilesCount)
-	const loading = useSelector(getNotificationProfilesLoadingState)
+	const templates = useSelector(selectAllTemplates)
+	const count = useSelector(getTemplatesCount)
+	const loading = useSelector(getTemplatesLoadingState)
 
 	const handleSortColumn = async (sortColumn, sortType) => {
-		sortNotificationProfiles(limit, page, sortColumn, sortType)
+		sortTemplates(limit, page, sortColumn, sortType)
 		setSortColumn(sortColumn)
 		setSortType(sortType)
 	}
@@ -56,12 +55,12 @@ const NotificationProfilesTable = () => {
 	const handleChangeLimit = async dataKey => {
 		setPage(1)
 		setLimit(dataKey)
-		limitNotificationProfiles(dataKey)
+		limitTemplates(dataKey)
 	}
 
 	const handlePageChange = async value => {
 		setPage(value)
-		paginateNotificationProfiles(limit, value, sortColumn, sortType)
+		paginateTemplates(limit, value, sortColumn, sortType)
 	}
 
 	let typingTimer
@@ -69,7 +68,7 @@ const NotificationProfilesTable = () => {
 		clearTimeout(typingTimer)
 
 		typingTimer = setTimeout(() => {
-			searchNotificationProfiles(query, limit, page)
+			searchTemplates(query, limit, page)
 		}, 1000)
 	}
 
@@ -78,7 +77,7 @@ const NotificationProfilesTable = () => {
 			<Panel
 				header={
 					<Stack justifyContent='space-between'>
-						<span>Notification Profiles List</span>
+						<span>Templates List</span>
 						<Stack spacing={10}>
 							<TableSearch handleSearch={handleSearch} />
 							<IconButton
@@ -97,7 +96,7 @@ const NotificationProfilesTable = () => {
 				<Table
 					// height={500}
 					autoHeight
-					data={profiles}
+					data={templates}
 					sortColumn={sortColumn}
 					sortType={sortType}
 					onSortColumn={handleSortColumn}
@@ -179,4 +178,4 @@ const NotificationProfilesTable = () => {
 		</div>
 	)
 }
-export default NotificationProfilesTable
+export default TemplatesTable

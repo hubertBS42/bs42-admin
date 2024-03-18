@@ -1,0 +1,12 @@
+.mainWrapper {
+  width: max-content;
+  height: 100vh;
+  position: sticky;
+  top: 0;
+}
+.mainWrapper .header {
+  padding-left: 1em;
+  height: 55px;
+  display: flex;
+  align-items: center;
+}/*# sourceMappingURL=SideNav.module.css.map */

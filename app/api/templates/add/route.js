@@ -1,4 +1,4 @@
-import NotificationProfile from '@/models/Template'
+import Template from '@/models/Template'
 import { connectToDB } from '@/utils/database'
 import { NextResponse } from 'next/server'
 
@@ -9,14 +9,14 @@ export const POST = async (request, { params }) => {
 	try {
 		await connectToDB()
 
-		const profile = await NotificationProfile.create(data)
+		const template = await Template.create(data)
 
-		if (profile) {
+		if (template) {
 			return new NextResponse(
 				JSON.stringify({
 					status: 'success',
 					message: null,
-					data: profile,
+					data: template,
 				}),
 				{ status: 201 }
 			)

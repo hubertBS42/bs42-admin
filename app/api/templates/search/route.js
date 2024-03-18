@@ -1,4 +1,4 @@
-import NotificationProfile from '@/models/Template'
+import Template from '@/models/Template'
 import Credential from '@/models/Credential'
 import { connectToDB } from '@/utils/database'
 
@@ -9,7 +9,7 @@ export const GET = async request => {
 	try {
 		await connectToDB()
 
-		const profiles = await NotificationProfile.find({
+		const templates = await Template.find({
 			$or: [
 				{ label: { $regex: query, $options: 'i' } },
 				{ description: { $regex: query, $options: 'i' } },
@@ -30,7 +30,7 @@ export const GET = async request => {
 			JSON.stringify({
 				status: 'success',
 				message: null,
-				data: profiles,
+				data: templates,
 			}),
 			{
 				status: 200,

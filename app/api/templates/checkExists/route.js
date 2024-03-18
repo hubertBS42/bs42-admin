@@ -1,4 +1,4 @@
-import NotificationProfile from '@/models/Template'
+import Template from '@/models/Template'
 import { connectToDB } from '@/utils/database'
 
 export const GET = async request => {
@@ -7,17 +7,16 @@ export const GET = async request => {
 
 	try {
 		await connectToDB()
-		const profile = await NotificationProfile.findOne({ label })
+		const template = await Template.findOne({ label })
 			.collation({ locale: 'en' })
 			.select('_id')
 			.lean()
 
-		if (profile) {
+		if (template) {
 			return new Response(
 				JSON.stringify({
 					status: 'failed',
-					message:
-						'A notification profile with that label already exists.',
+					message: 'A template with that label already exists.',
 					data: null,
 				}),
 				{

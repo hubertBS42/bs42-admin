@@ -1,0 +1,56 @@
+.rs-sidenav-item {
+  font-size: 1.1em !important;
+}
+
+.rs-form-group .rs-form-control-label {
+  font-size: 13px;
+}
+
+.rs-picker-default .rs-picker-toggle.rs-btn .rs-picker-toggle-caret,
+.rs-picker-default .rs-picker-toggle.rs-btn .rs-picker-toggle-clean {
+  top: 10px;
+}
+
+.rs-table-cell-wrap .rs-tag-group > .rs-tag {
+  margin-left: 0 !important;
+  margin-right: 0.65em !important;
+  margin-top: 0;
+  margin-bottom: 0.65em !important;
+}
+.rs-table-cell-wrap .rs-tag-group > .rs-tag:last-child {
+  margin-bottom: 0 !important;
+}
+
+.rs-picker-toggle-wrapper[data-has-child=false]::before {
+  content: none !important;
+}
+
+.mantine-RichTextEditor-root {
+  border: 0;
+}
+.mantine-RichTextEditor-root .mantine-RichTextEditor-content .ProseMirror {
+  background: #1a1d24;
+  border: 1px solid #3c3f43;
+  border-radius: 0 0 6px 6px;
+  color: #e9ebf0;
+  font-size: 14px;
+  transition: border-color 0.15s ease-in-out;
+}
+.mantine-RichTextEditor-root .mantine-RichTextEditor-content .ProseMirror:hover, .mantine-RichTextEditor-root .mantine-RichTextEditor-content .ProseMirror:focus {
+  border: 1px solid #34c3ff;
+}
+
+.rs-table {
+  font-size: 13px;
+}
+
+.rs-picker-cascader-menu-items > div {
+  width: 100% !important;
+}
+.rs-picker-cascader-menu-items > div .rs-picker-cascader-menu-column {
+  width: max-content !important;
+}
+
+.full-width .rs-form-control-wrapper {
+  width: 100% !important;
+}/*# sourceMappingURL=globals.css.map */
