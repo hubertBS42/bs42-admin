@@ -19,13 +19,17 @@ export const PATCH = async request => {
 		await connectToDB()
 
 		if (userID) {
-			cart = await Cart.findOneAndUpdate({ user: userID }, data)
+			cart = await Cart.findOneAndUpdate({ user: userID }, data, {
+				new: true,
+			})
 			if (!cart) cart = await Cart.create({ ...data, user: userID })
 		}
 
 		if (!userID && cartToken) {
 			jwt.verify(cartToken, 'abc123')
-			cart = await Cart.findOneAndUpdate({ token: cartToken }, data)
+			cart = await Cart.findOneAndUpdate({ token: cartToken }, data, {
+				new: true,
+			})
 
 			if (!cart) {
 				cart = new Cart(data)
