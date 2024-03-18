@@ -48,7 +48,7 @@ export const GET = async request => {
 			}
 		)
 	} catch (error) {
-		const template = await fetchTemplate('contact-us')
+		const template = await fetchTemplate('exchange-rate-update-failure')
 
 		const { transporter, mailOptions } = await configMailer({
 			variables: { errorMessage: error.message },
