@@ -2,6 +2,7 @@ import Message from '@/models/Message'
 import { connectToDB } from '@/utils/database'
 import { NextResponse } from 'next/server'
 import { configMailer, fetchTemplate } from '@/utils/mailer'
+import { fetcher } from '@/utils/functions'
 
 //POST
 export const POST = async (request, { params }) => {
@@ -13,9 +14,15 @@ export const POST = async (request, { params }) => {
 		email,
 		phone,
 		companyName,
+		recaptchaToken,
 	} = await request.json()
 
 	try {
+		await fetcher(
+			`https://www.google.com/recaptcha/api/siteverify?secret=${process.env.NEXT_PUBLIC_RECAPTCHA_SECRET_KEY}&response${recaptchaToken}`,
+			{ cache: 'no-store' }
+		)
+
 		await connectToDB()
 
 		const message = await Message.create({
