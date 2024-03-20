@@ -1,5 +1,4 @@
-import Blog from '@/models/Blog'
-import User from '@/models/User'
+import Order from '@/models/Order'
 import { connectToDB } from '@/utils/database'
 
 export const GET = async request => {
@@ -9,24 +8,25 @@ export const GET = async request => {
 	try {
 		await connectToDB()
 
-		const queryRegx = new RegExp(query, 'i')
-
-		const blogs = await Blog.find({
-			$or: [{ title: { $regex: queryRegx } }],
+		const orders = await Order.find({
+			$or: [
+				{ orderNumber: { $regex: query, $options: 'i' } },
+				{ status: { $regex: query, $options: 'i' } },
+				{ notes: { $regex: query, $options: 'i' } },
+				{ 'customerInfo.firstName': { $regex: query, $options: 'i' } },
+				{ 'customerInfo.lastName': { $regex: query, $options: 'i' } },
+				{ 'customerInfo.email': { $regex: query, $options: 'i' } },
+				{ 'customerInfo.phone': { $regex: query, $options: 'i' } },
+			],
 		})
 			.sort({ createdAt: 'desc' })
-			.populate({
-				path: 'author',
-				model: 'User',
-				select: 'firstName lastName',
-			})
 			.lean()
 
 		return new Response(
 			JSON.stringify({
 				status: 'success',
 				message: null,
-				data: blogs,
+				data: orders,
 			}),
 			{
 				status: 200,

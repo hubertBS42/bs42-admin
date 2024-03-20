@@ -1,4 +1,4 @@
-import Blog from '@/models/Blog'
+import Order from '@/models/Order'
 import { connectToDB } from '@/utils/database'
 import { NextResponse } from 'next/server'
 
@@ -9,18 +9,18 @@ export const PATCH = async (request, { params }) => {
 	try {
 		await connectToDB()
 
-		const blog = await Blog.findByIdAndUpdate(params.id, data, {
+		const order = await Order.findByIdAndUpdate(params.id, data, {
 			new: true,
 		})
 			.select('_id')
 			.lean()
 
-		if (blog) {
+		if (order) {
 			return new NextResponse(
 				JSON.stringify({
 					status: 'success',
-					data: blog,
-					message: 'Blog updated successfully.',
+					data: order,
+					message: 'Order updated successfully.',
 				}),
 				{ status: 200 }
 			)
@@ -41,12 +41,12 @@ export const DELETE = async (request, { params }) => {
 	try {
 		await connectToDB()
 
-		await Blog.findByIdAndDelete(params.id)
+		await Order.findByIdAndDelete(params.id)
 
 		return new NextResponse(
 			JSON.stringify({
 				status: 'success',
-				message: 'Blog was deleted successfully.',
+				message: 'Order was deleted successfully.',
 			}),
 			{ status: 200 }
 		)

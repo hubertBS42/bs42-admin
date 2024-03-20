@@ -176,7 +176,7 @@ const MessagesDrawer = () => {
 										}}
 									>
 										{message?.acknowledgedOn
-											? formatDate(message.acknowledgedOn)
+											? formatDate(message?.acknowledgedOn)
 											: 'N/A'}
 									</p>
 								</Stack>
@@ -227,7 +227,7 @@ const MessagesDrawer = () => {
 											fontSize: 13,
 										}}
 									>
-										{formatDate(message?.createdAt)}
+										{message && formatDate(message.createdAt)}
 									</p>
 								</Stack>
 							</Col>
@@ -253,7 +253,7 @@ const MessagesDrawer = () => {
 										}}
 									>
 										{message?.completedOn
-											? formatDate(message.completedOn)
+											? formatDate(message?.completedOn)
 											: 'N/A'}
 									</p>
 								</Stack>

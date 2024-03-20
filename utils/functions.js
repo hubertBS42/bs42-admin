@@ -46,7 +46,8 @@ export const generatePageTitle = () => {
 export const fetcher = (...args) =>
 	fetch(...args).then(res => res.json())
 
-export const formatDate = date => new Date(date).toDateString()
+// export const formatDate = date => new Date(date).toDateString()
+export const formatDate = date => format(date, 'yyyy-MM-dd hh:mm:ss')
 
 export const formatData = data => {
 	return data?.map(item => ({

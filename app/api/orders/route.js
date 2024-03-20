@@ -1,5 +1,4 @@
 import Order from '@/models/Order'
-import User from '@/models/User'
 import { connectToDB } from '@/utils/database'
 
 export const GET = async request => {
@@ -18,7 +17,7 @@ export const GET = async request => {
 			.sort({ [field]: sort })
 			.lean()
 
-		const count = await Blog.count()
+		const count = await Order.count()
 
 		const data = {
 			orders,
