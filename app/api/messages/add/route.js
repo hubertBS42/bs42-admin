@@ -19,7 +19,7 @@ export const POST = async (request, { params }) => {
 
 	try {
 		await fetcher(
-			`https://www.google.com/recaptcha/api/siteverify?secret=${process.env.NEXT_PUBLIC_RECAPTCHA_SECRET_KEY}&response${recaptchaToken}`,
+			`https://www.google.com/recaptcha/api/siteverify?secret=${process.env.NEXT_PUBLIC_RECAPTCHA_SECRET_KEY}&response=${recaptchaToken}`,
 			{ cache: 'no-store' }
 		)
 
