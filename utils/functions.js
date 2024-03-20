@@ -316,3 +316,23 @@ export const generateRandomCode = () => {
 
 	return randomCode
 }
+
+export const findActiveKey = (links, pathname) => {
+	let activeKey
+
+	const searchHelper = (links, pathname) => {
+		for (const link of links) {
+			if (pathname.includes(link.slug)) {
+				activeKey = link.eventKey
+			}
+
+			if (link.sublinks && link.sublinks.length > 0) {
+				searchHelper(link.sublinks, pathname)
+			}
+		}
+	}
+
+	searchHelper(links, pathname)
+
+	return activeKey
+}
