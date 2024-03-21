@@ -5,7 +5,7 @@ import styles from './page.module.scss'
 import { useEffect } from 'react'
 import OrdersTable from '@/components/OrdersTable/OrdersTable'
 import { loadOrders } from '@/redux/features/orders/ordersActions'
-// import OrdersDrawer from '@/components/OrdersDrawer/OrdersDrawer'
+import OrdersDrawer from '@/components/OrdersDrawer/OrdersDrawer'
 
 const OrdersPage = () => {
 	useEffect(() => {
@@ -14,7 +14,7 @@ const OrdersPage = () => {
 	return (
 		<div className={styles.mainWrapper}>
 			<OrdersTable />
-			{/* <ApplicationsDrawer /> */}
+			<OrdersDrawer />
 		</div>
 	)
 }

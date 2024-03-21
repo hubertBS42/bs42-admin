@@ -110,9 +110,7 @@ const OrdersTable = () => {
 						<HeaderCell>Customer</HeaderCell>
 						<Cell>
 							{rowData =>
-								rowData.customerInfo.firstName +
-								' ' +
-								rowData.customerInfo.lastName
+								rowData.contact.firstName + ' ' + rowData.contact.lastName
 							}
 						</Cell>
 					</Column>

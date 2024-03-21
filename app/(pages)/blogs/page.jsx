@@ -9,8 +9,7 @@ import {
 } from '@/redux/features/blogs/blogsActions'
 import { useEffect } from 'react'
 import BlogsDrawer from '@/components/BlogsDrawer/BlogsDrawer'
-import { loadData } from '@/redux/features/users/usersActions'
-import { selectAllUsers } from '@/redux/features/users/usersSlice'
+import { loadAllUsers } from '@/redux/features/users/usersActions'
 
 const BlogsPage = () => {
 	const handleDelete = async data => {
@@ -19,7 +18,7 @@ const BlogsPage = () => {
 
 	useEffect(() => {
 		loadBlogs()
-		loadData()
+		loadAllUsers()
 	}, [])
 
 	return (

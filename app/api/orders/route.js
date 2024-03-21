@@ -1,3 +1,4 @@
+import Currency from '@/models/Currency'
 import Order from '@/models/Order'
 import { connectToDB } from '@/utils/database'
 
@@ -10,18 +11,31 @@ export const GET = async request => {
 
 	try {
 		await connectToDB()
-		const orders = await Order.find()
+		const fetchOrdersQuery = Order.find()
 			.collation({ locale: 'en' })
 			.limit(limit * 1)
 			.skip((page - 1) * limit)
 			.sort({ [field]: sort })
 			.lean()
 
-		const count = await Order.count()
+		const fetchCurrencyQuery = Currency.findOne({
+			isActive: true,
+		}).lean()
+
+		const getOrdersCountQuery = Order.count()
+
+		const [orders, currency, count] = await Promise.all([
+			fetchOrdersQuery,
+			fetchCurrencyQuery,
+			getOrdersCountQuery,
+		])
 
 		const data = {
 			orders,
 			count,
+			currentRate: currency.isCustomRate
+				? currency.customRate
+				: currency.history[0].rate,
 		}
 
 		return new Response(

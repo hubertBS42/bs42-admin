@@ -1,5 +1,10 @@
 import { fetcher } from '@/utils/functions'
-import { setLoading, setUsers, setUsersCount } from './usersSlice'
+import {
+	setAllUsers,
+	setLoading,
+	setUsers,
+	setUsersCount,
+} from './usersSlice'
 import { toast } from 'react-toastify'
 import {
 	setDrawerClose,
@@ -38,6 +43,24 @@ export const loadData = async () => {
 	dispatch(setUsers(users))
 	dispatch(setUsersCount(count))
 	dispatch(setAllroles(roles))
+}
+
+export const loadAllUsers = async () => {
+	dispatch(setLoading(true))
+
+	const {
+		status,
+		message,
+		data: { users, count },
+	} = await fetcher('/api/users/all')
+
+	if (status === 'error') {
+		dispatch(setLoading(false))
+		return toast.error('Failed to load data.') //message site admin about error
+	}
+
+	dispatch(setAllUsers(users))
+	dispatch(setUsersCount(count))
 }
 
 export const sortUsers = async (

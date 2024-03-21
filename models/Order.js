@@ -2,15 +2,19 @@ import mongoose from 'mongoose'
 
 const OrderSchema = new mongoose.Schema(
 	{
-		customerInfo: {
-			userRef: {
-				type: mongoose.Schema.Types.ObjectId,
-				ref: 'User',
-			},
+		user: {
+			type: mongoose.Schema.Types.ObjectId,
+			ref: 'User',
+		},
+		contact: {
 			firstName: { type: String },
 			lastName: { type: String },
 			email: { type: String },
 			phone: { type: String },
+		},
+		billing: {
+			firstName: { type: String },
+			lastName: { type: String },
 			region: { type: String },
 			town: { type: String },
 			address: { type: String },
@@ -21,7 +25,7 @@ const OrderSchema = new mongoose.Schema(
 			number: { type: String },
 			date: { type: Date },
 		},
-		status: { type: String, default: 'pending' }, //pending, cancelled, processing, shipped, complete
+		status: { type: String, default: 'pending' }, //pending, cancelled, processing, shipped, completed
 		rate: { type: Number },
 		products: [
 			{
@@ -43,16 +47,12 @@ const OrderSchema = new mongoose.Schema(
 		],
 		totalPrice: { type: Number },
 		shipping: {
-			address: {
-				firstName: { type: String },
-				lastName: { type: String },
-				email: { type: String },
-				phone: { type: String },
-				region: { type: String },
-				town: { type: String },
-				address: { type: String },
-				digitalAddress: { type: String },
-			},
+			firstName: { type: String },
+			lastName: { type: String },
+			region: { type: String },
+			town: { type: String },
+			address: { type: String },
+			digitalAddress: { type: String },
 			method: { type: String },
 			status: { type: String, default: 'pending' },
 		},

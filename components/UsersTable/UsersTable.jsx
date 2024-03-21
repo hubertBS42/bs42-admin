@@ -28,7 +28,7 @@ import {
 import {
 	getUsersCount,
 	getUsersLoadingState,
-	selectAllUsers,
+	selectUsers,
 } from '@/redux/features/users/usersSlice'
 import { setModalOpen } from '@/redux/features/modal/modalSlice'
 import { setDrawerOpen } from '@/redux/features/drawer/drawerSlice'
@@ -44,7 +44,7 @@ const UsersTable = () => {
 	const [limit, setLimit] = useState(10)
 	const [page, setPage] = useState(1)
 
-	const users = useSelector(selectAllUsers)
+	const users = useSelector(selectUsers)
 	const count = useSelector(getUsersCount)
 	const loading = useSelector(getUsersLoadingState)
 

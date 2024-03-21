@@ -289,7 +289,6 @@ const UsersDrawer = () => {
 									label='First name'
 									accepter={Input}
 									error={formError.firstName}
-									autoFocus
 								/>
 							</Col>
 

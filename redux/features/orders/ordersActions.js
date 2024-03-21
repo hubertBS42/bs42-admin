@@ -1,5 +1,10 @@
 import { toast } from 'react-toastify'
-import { setOrders, setLoading, setOrdersCount } from './ordersSlice'
+import {
+	setOrders,
+	setLoading,
+	setOrdersCount,
+	setCurrentRate,
+} from './ordersSlice'
 import { store } from '@/redux/store'
 import { fetcher } from '@/utils/functions'
 import { setModalClose, setModalLoading } from '../modal/modalSlice'
@@ -16,7 +21,7 @@ export const loadOrders = async () => {
 	const {
 		status,
 		message,
-		data: { orders, count },
+		data: { orders, count, currentRate },
 	} = await fetcher('/api/orders')
 
 	if (status === 'error') {
@@ -26,6 +31,7 @@ export const loadOrders = async () => {
 
 	dispatch(setOrders(orders))
 	dispatch(setOrdersCount(count))
+	dispatch(setCurrentRate(currentRate))
 }
 
 export const sortOrders = async (
