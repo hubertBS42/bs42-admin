@@ -22,7 +22,7 @@ export const GET = async request => {
 			.populate({
 				path: 'brand',
 				model: 'Brand',
-				select: 'name',
+				select: 'name createdAt',
 			})
 			.lean()
 
@@ -38,7 +38,7 @@ export const GET = async request => {
 			.populate({
 				path: 'brand',
 				model: 'Brand',
-				select: 'name',
+				select: 'name createdAt',
 			})
 			.lean()
 
@@ -47,13 +47,13 @@ export const GET = async request => {
 		const fetchCategoriesQuery = Category.find()
 			.collation({ locale: 'en' })
 			.sort({ name: 'asc' })
-			.select('name parent isActive')
+			.select('name parent isActive createdAt')
 			.lean()
 
 		const fetchBrandsQuery = Brand.find()
 			.collation({ locale: 'en' })
 			.sort({ name: 'asc' })
-			.select('name isActive')
+			.select('name isActive createdAt')
 			.lean()
 
 		const [
