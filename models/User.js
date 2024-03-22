@@ -18,18 +18,18 @@ const UserSchema = new mongoose.Schema(
 		},
 		phone1: { type: String },
 		phone2: { type: String },
-		residentialAddress: {
+		billing: {
+			firstName: { type: String, trim: true },
+			lastName: { type: String, trim: true },
 			address: { type: String },
 			digitalAddress: { type: String },
 			town: { type: String },
 			region: { type: String },
 		},
-		shippingAddresses: [
+		shipping: [
 			{
 				firstName: { type: String },
 				lastName: { type: String },
-				email: { type: String },
-				phone: { type: String },
 				address: { type: String },
 				digitalAddress: { type: String },
 				town: { type: String },
@@ -52,12 +52,10 @@ const UserSchema = new mongoose.Schema(
 			name: { type: String, default: null },
 			phone: { type: String, default: null },
 			website: { type: String, default: null },
-			address: {
-				address: { type: String, default: null },
-				digitalAddress: { type: String, default: null },
-				town: { type: String, default: null },
-				region: { type: String, default: null },
-			},
+			address: { type: String, default: null },
+			digitalAddress: { type: String, default: null },
+			town: { type: String, default: null },
+			region: { type: String, default: null },
 		},
 		notes: { type: String },
 		isActive: { type: Boolean, default: true },

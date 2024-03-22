@@ -40,7 +40,7 @@ import { formatData, generatePassword } from '@/utils/functions'
 import DeliveryAddresses from '../DeliveryAddresses/DeliveryAddresses'
 import GeneratePasswordField from '../GeneratePasswordField/GeneratePasswordField'
 
-const { StringType, ArrayType } = Schema.Types
+const { StringType, ArrayType, ObjectType } = Schema.Types
 
 const model = Schema.Model({
 	firstName: StringType().isRequired(
@@ -50,17 +50,23 @@ const model = Schema.Model({
 	email: StringType().isRequired('You must provide an email address.'),
 	phone1: StringType(),
 	phone2: StringType(),
-	rStreeName: StringType(),
-	rDigitalAddress: StringType(),
-	rArea: StringType(),
-	rRegion: StringType(),
-	cName: StringType(),
-	cPhone: StringType(),
-	website: StringType(),
-	cStreetName: StringType(),
-	cDigitalAddress: StringType(),
-	cArea: StringType(),
-	cRegion: StringType(),
+	billing: ObjectType().shape({
+		firstName: StringType(),
+		lastName: StringType(),
+		region: StringType(),
+		town: StringType(),
+		address: StringType(),
+		digitalAddress: StringType(),
+	}),
+	company: ObjectType().shape({
+		name: StringType(),
+		phone: StringType(),
+		website: StringType(),
+		region: StringType(),
+		town: StringType(),
+		address: StringType(),
+		digitalAddress: StringType(),
+	}),
 	notes: StringType(),
 	profileImg: ArrayType(),
 	role: StringType().isRequired(
@@ -79,18 +85,24 @@ const UsersDrawer = () => {
 		email: '',
 		phone1: '',
 		phone2: '',
-		rAddress: '',
-		rDigitalAddress: '',
-		rTown: '',
-		rRegion: '',
-		cName: '',
-		cPhone: '',
-		website: '',
-		cAddress: '',
-		cDigitalAddress: '',
-		cTown: '',
-		cRegion: '',
-		shippingAddresses: [],
+		billing: {
+			firstName: '',
+			lastName: '',
+			region: '',
+			town: '',
+			address: '',
+			digitalAddress: '',
+		},
+		company: {
+			name: '',
+			phone: '',
+			website: '',
+			region: '',
+			town: '',
+			address: '',
+			digitalAddress: '',
+		},
+		shipping: [],
 		profileImg: [],
 		password: '',
 		role: '',
@@ -120,17 +132,24 @@ const UsersDrawer = () => {
 					phone1: user.phone1 || '',
 					phone2: user.phone2 || '',
 					address: user?.residentialAddress?.address || '',
-					rDigitalAddress: user?.residentialAddress?.digitalAddress || '',
-					rTown: user?.residentialAddress?.town || '',
-					rRegion: user?.residentialAddress?.region || '',
-					cName: user?.company?.name || '',
-					cPhone: user?.company?.phone || '',
-					website: user?.company?.website || '',
-					cAddress: user?.company?.address.address || '',
-					cDigitalAddress: user?.company?.address.digitalAddress || '',
-					cTown: user?.company?.address.town || '',
-					cRegion: user?.company?.address.region || '',
-					shippingAddresses: user?.shippingAddresses,
+					billing: {
+						firstName: user?.billing?.firstName || '',
+						lastName: user?.billing?.lastName || '',
+						region: user?.billing?.region || '',
+						town: user?.billing?.town || '',
+						address: user?.billing?.address || '',
+						digitalAddress: user?.billing?.digitalAddress || '',
+					},
+					company: {
+						name: user?.company?.name || '',
+						phone: user?.company?.phone || '',
+						website: user?.company?.website || '',
+						region: user?.company?.region || '',
+						town: user?.company?.town || '',
+						address: user?.company?.address || '',
+						digitalAddress: user?.company?.digitalAddress || '',
+					},
+					shipping: user?.shipping,
 					password: '',
 					role: user.role._id,
 					profileImg: user.profileImg ? [user.profileImg] : [],
@@ -147,18 +166,24 @@ const UsersDrawer = () => {
 				email: '',
 				phone1: '',
 				phone2: '',
-				rAddress: '',
-				rDigitalAddress: '',
-				rTown: '',
-				rRegion: '',
-				shippingAddresses: [],
-				cName: '',
-				cPhone: '',
-				website: '',
-				cAddress: '',
-				cDigitalAddress: '',
-				cTown: '',
-				cRegion: '',
+				billing: {
+					firstName: '',
+					lastName: '',
+					region: '',
+					town: '',
+					address: '',
+					digitalAddress: '',
+				},
+				company: {
+					name: '',
+					phone: '',
+					website: '',
+					region: '',
+					town: '',
+					address: '',
+					digitalAddress: '',
+				},
+				shipping: [],
 				profileImg: [],
 				password: '',
 				role: '',
@@ -250,6 +275,7 @@ const UsersDrawer = () => {
 					formValue={formValue}
 					model={model}
 					disabled={isLoading}
+					nestedField
 				>
 					<Stack
 						spacing={30}
@@ -303,12 +329,21 @@ const UsersDrawer = () => {
 						</Row>
 
 						<Row style={{ marginBottom: '1.4em' }}>
-							<Col xs={24}>
+							<Col xs={12}>
 								<Field
 									name='email'
 									label='Email'
 									accepter={Input}
 									error={formError.email}
+								/>
+							</Col>
+							<Col xs={12}>
+								<Field
+									name='password'
+									label='Password'
+									accepter={GeneratePasswordField}
+									rule={passwordRule}
+									handlePassword={handlePassword}
 								/>
 							</Col>
 						</Row>
@@ -317,7 +352,7 @@ const UsersDrawer = () => {
 							<Col xs={12}>
 								<Field
 									name='phone1'
-									label='Primary phone number'
+									label='Primary phone'
 									accepter={Input}
 									error={formError.phone1}
 								/>
@@ -326,7 +361,7 @@ const UsersDrawer = () => {
 							<Col xs={12}>
 								<Field
 									name='phone2'
-									label='Secondary phone number'
+									label='Secondary phone'
 									accepter={Input}
 									error={formError.phone2}
 								/>
@@ -339,20 +374,8 @@ const UsersDrawer = () => {
 									name='role'
 									label='Role'
 									accepter={SelectPicker}
-									error={formError.rRegion}
+									error={formError.role}
 									data={roles}
-								/>
-							</Col>
-						</Row>
-
-						<Row style={{ marginBottom: '1.4em' }}>
-							<Col xs={24}>
-								<Field
-									name='password'
-									label='Password'
-									accepter={GeneratePasswordField}
-									rule={passwordRule}
-									handlePassword={handlePassword}
 								/>
 							</Col>
 						</Row>
@@ -398,23 +421,20 @@ const UsersDrawer = () => {
 						style={{ marginBottom: '1.8em' }}
 					>
 						<Row style={{ marginBottom: '1.4em' }}>
-							<Col xs={23}>
+							<Col xs={12}>
 								<Field
-									name='cName'
+									name='company.name'
 									label='Name'
 									accepter={Input}
-									error={formError.cName}
+									error={formError?.company?.name}
 								/>
 							</Col>
-						</Row>
-
-						<Row style={{ marginBottom: '1.4em' }}>
-							<Col xs={24}>
+							<Col xs={12}>
 								<Field
-									name='cPhone'
-									label='Phone Number'
+									name='company.phone'
+									label='Phone'
 									accepter={Input}
-									error={formError.cPhone}
+									error={formError?.company?.phone}
 								/>
 							</Col>
 						</Row>
@@ -422,113 +442,121 @@ const UsersDrawer = () => {
 						<Row style={{ marginBottom: '1.4em' }}>
 							<Col xs={24}>
 								<Field
-									name='website'
+									name='company.website'
 									label='Website'
 									accepter={Input}
-									error={formError.website}
+									error={formError?.company?.website}
 								/>
 							</Col>
 						</Row>
 
 						<Row style={{ marginBottom: '1.4em' }}>
-							<Col xs={24}>
+							<Col xs={12}>
 								<Field
-									name='cAddress'
-									label='Address'
-									accepter={Input}
-									error={formError.cAddress}
-								/>
-							</Col>
-						</Row>
-
-						<Row style={{ marginBottom: '1.4em' }}>
-							<Col xs={24}>
-								<Field
-									name='cDigitalAddress'
-									label='Digital Address'
-									accepter={Input}
-									error={formError.cDigitalAddress}
-								/>
-							</Col>
-						</Row>
-
-						<Row style={{ marginBottom: '1.4em' }}>
-							<Col xs={24}>
-								<Field
-									name='cTown'
-									label='Town'
-									accepter={Input}
-									error={formError.cTown}
-								/>
-							</Col>
-						</Row>
-
-						<Row style={{ marginBottom: '1.4em' }}>
-							<Col xs={24}>
-								<Field
-									name='cRegion'
+									name='company.region'
 									label='Region'
 									accepter={SelectPicker}
-									error={formError.cRegion}
+									error={formError?.company?.region}
 									data={formattedRegions}
+								/>
+							</Col>
+							<Col xs={12}>
+								<Field
+									name='company.town'
+									label='Town'
+									accepter={Input}
+									error={formError?.company?.town}
+								/>
+							</Col>
+						</Row>
+
+						<Row>
+							<Col xs={12}>
+								<Field
+									name='company.address'
+									label='Address'
+									accepter={Input}
+									error={formError?.company?.address}
+								/>
+							</Col>
+							<Col xs={12}>
+								<Field
+									name='company.digitalAddress'
+									label='Digital address'
+									accepter={Input}
+									error={formError?.company?.digitalAddress}
 								/>
 							</Col>
 						</Row>
 					</Panel>
 
 					<Panel
-						header='Residential Address'
+						header='Billing address'
 						bordered
 						style={{ marginBottom: '1.8em' }}
 					>
 						<Row style={{ marginBottom: '1.4em' }}>
-							<Col xs={24}>
+							<Col xs={12}>
 								<Field
-									name='rAddress'
-									label='Address'
+									name='billing.firstName'
+									label='First name'
 									accepter={Input}
-									error={formError.rAddress}
+									error={formError?.billing?.firstName}
+								/>
+							</Col>
+
+							<Col xs={12}>
+								<Field
+									name='billing.lastName'
+									label='Last name'
+									accepter={Input}
+									error={formError?.billing?.lastName}
 								/>
 							</Col>
 						</Row>
 
 						<Row style={{ marginBottom: '1.4em' }}>
-							<Col xs={24}>
+							<Col xs={12}>
 								<Field
-									name='rDigitalAddress'
-									label='Digital address'
-									accepter={Input}
-									error={formError.rDigitalAddress}
-								/>
-							</Col>
-						</Row>
-
-						<Row style={{ marginBottom: '1.4em' }}>
-							<Col xs={24}>
-								<Field
-									name='rTown'
-									label='Town'
-									accepter={Input}
-									error={formError.rTown}
-								/>
-							</Col>
-						</Row>
-
-						<Row style={{ marginBottom: '1.4em' }}>
-							<Col xs={24}>
-								<Field
-									name='rRegion'
+									name='billing.region'
 									label='Region'
 									accepter={SelectPicker}
-									error={formError.rRegion}
+									error={formError?.billing?.region}
 									data={formattedRegions}
+								/>
+							</Col>
+							<Col xs={12}>
+								<Field
+									name='billing.town'
+									label='Town'
+									accepter={Input}
+									error={formError?.billing?.town}
+								/>
+							</Col>
+						</Row>
+
+						<Row>
+							<Col xs={12}>
+								<Field
+									name='billing.address'
+									label='Address'
+									accepter={Input}
+									error={formError?.billing?.address}
+								/>
+							</Col>
+							<Col xs={12}>
+								<Field
+									name='billing.digitalAddress'
+									label='Digital address'
+									accepter={Input}
+									error={formError?.billing?.digitalAddress}
 								/>
 							</Col>
 						</Row>
 					</Panel>
 
 					<DeliveryAddresses
-						addresses={formValue.shippingAddresses}
+						addresses={formValue.shipping}
 						setFormValue={setFormValue}
 						regions={formattedRegions}
 					/>

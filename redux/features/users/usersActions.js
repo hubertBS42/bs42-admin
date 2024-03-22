@@ -181,34 +181,10 @@ export const createUser = async data => {
 		uploadedProfileImg = uploadedProfileImg[0]
 	}
 
-	const {
-		profileImg,
-		rAddress,
-		rDigitalAddress,
-		rTown,
-		rRegion,
-		...rest
-	} = data
+	const { profileImg, ...rest } = data
 
 	const preparedData = {
 		...rest,
-		residentialAddress: {
-			address: data.rAddress,
-			digitalAddress: data.rDigitalAddress,
-			town: data.rTown,
-			region: data.rRegion,
-		},
-		company: {
-			name: data.cName,
-			phone: data.cPhone,
-			website: data.website,
-			address: {
-				address: data.cAddress,
-				digitalAddress: data.cDigitalAddress,
-				town: data.cTown,
-				region: data.cRegion,
-			},
-		},
 		profileImg: uploadedProfileImg,
 	}
 
@@ -256,34 +232,10 @@ export const updateUser = async (user, data, imageToBeDeleted) => {
 		uploadedProfileImg = uploadedProfileImg[0]
 	}
 
-	const {
-		profileImg,
-		rAddress,
-		rDigitalAddress,
-		rTown,
-		rRegion,
-		...rest
-	} = data
+	const { profileImg, ...rest } = data
 
 	let preparedData = {
 		...rest,
-		residentialAddress: {
-			address: data.rAddress,
-			digitalAddress: data.rDigitalAddress,
-			town: data.rTown,
-			region: data.rRegion,
-		},
-		company: {
-			name: data.cName,
-			phone: data.cPhone,
-			website: data.website,
-			address: {
-				address: data.cAddress,
-				digitalAddress: data.cDigitalAddress,
-				town: data.cTown,
-				region: data.cRegion,
-			},
-		},
 		password: data.password,
 	}
 

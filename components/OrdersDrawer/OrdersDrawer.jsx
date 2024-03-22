@@ -3,16 +3,15 @@ import { useRef, useState } from 'react'
 import {
 	Button,
 	Col,
-	Divider,
 	Drawer,
 	Form,
 	Input,
 	InputPicker,
 	Panel,
-	PanelGroup,
 	Row,
 	Schema,
 	SelectPicker,
+	Stack,
 } from 'rsuite'
 
 import CloseIcon from '@rsuite/icons/Close'
@@ -37,6 +36,7 @@ import {
 
 import { getCurrentRate } from '@/redux/features/orders/ordersSlice'
 import { useUsers } from '@/hooks/useUsers'
+import OrderStatusField from '../OrderStatusField/OrderStatusField'
 
 const { StringType, ObjectType } = Schema.Types
 
@@ -80,6 +80,7 @@ const OrdersDrawer = () => {
 	const formRef = useRef()
 	const [formError, setFormError] = useState({})
 	const [formValue, setFormValue] = useState({
+		test: '',
 		user: '',
 		contact: {
 			firstName: '',
@@ -199,13 +200,92 @@ const OrdersDrawer = () => {
 			return
 		}
 
-		if (isEditing) {
-			//update
-			await updateOrder(order, formValue)
-		} else {
-			//create
-			await createOrder(formValue)
-		}
+		console.log(formValue)
+
+		// if (isEditing) {
+		// 	//update
+		// 	await updateOrder(order, formValue)
+		// } else {
+		// 	//create
+		// 	await createOrder(formValue)
+		// }
+	}
+
+	const handleSelect = data => {
+		const shipping = data.shipping.find(address => address.isActive)
+
+		setFormValue(prev => {
+			return {
+				...prev,
+				user: data._id,
+				contact: {
+					firstName: data.firstName,
+					lastName: data.lastName,
+					email: data.email,
+					phone: data.phone1,
+				},
+				billing: { ...data.billing },
+				shipping: shipping
+					? { ...shipping }
+					: {
+							firstName: '',
+							lastName: '',
+							region: '',
+							town: '',
+							address: '',
+							digitalAddress: '',
+					  },
+			}
+		})
+	}
+
+	const handleClean = () => {
+		setFormValue({
+			user: '',
+			contact: {
+				firstName: '',
+				lastName: '',
+				email: '',
+				phone: '',
+			},
+			billing: {
+				firstName: '',
+				lastName: '',
+				region: '',
+				town: '',
+				address: '',
+				digitalAddress: '',
+			},
+			status: 'pending',
+			rate,
+			products: [],
+			totalPrice: 0,
+			shipping: {
+				firstName: '',
+				lastName: '',
+				region: '',
+				town: '',
+				address: '',
+				digitalAddress: '',
+				method: '',
+				status: 'pending',
+			},
+			payment: {
+				method: '',
+				status: 'pending',
+			},
+			trackingInfo: {
+				carrier: '',
+				trackingNumber: '',
+			},
+			coupons: [],
+			notes: '',
+			returnInfo: {
+				requested: false,
+				reason: '',
+				status: 'pending',
+			},
+		})
 	}
 
 	return (
@@ -249,7 +329,7 @@ const OrdersDrawer = () => {
 					disabled={isLoading}
 					nestedField
 				>
-					<Row style={{ marginBottom: 10 }}>
+					{/* <Row style={{ marginBottom: 10 }}>
 						<Col xs={24}>
 							<Field
 								name='status'
@@ -271,42 +351,61 @@ const OrdersDrawer = () => {
 								searchable={false}
 							/>
 						</Col>
-					</Row>
-
-					<Row style={{ marginBottom: 10 }}>
-						<Col xs={24}>
-							<Field
-								name='customerInfo.userRef'
-								accepter={InputPicker}
-								placeholder='Search user'
-								data={users}
-								onSearch={searchUsers}
-								onSelect={(value, item) => console.log(item)}
-								renderMenu={menu => {
-									if (loading) {
-										return (
-											<p
-												style={{
-													padding: 10,
-													color: '#999',
-													textAlign: 'center',
-												}}
-											>
-												<SpinnerIcon spin /> Loading...
-											</p>
-										)
-									}
-									return menu
-								}}
-							/>
-						</Col>
-					</Row>
+					</Row> */}
 
 					<Panel
 						header={
-							<span style={{ fontSize: 20, fontWeight: 500 }}>
-								Customer Details
-							</span>
+							<Stack justifyContent='space-between' alignItems='center'>
+								<span style={{ fontSize: 20, fontWeight: 500 }}>
+									Order Details
+								</span>
+								<Stack spacing={10}>
+									<InputPicker
+										placeholder='Select customer'
+										data={users}
+										onSearch={searchUsers}
+										onSelect={(value, item) => handleSelect(item)}
+										renderMenu={menu => {
+											if (loading) {
+												return (
+													<p
+														style={{
+															padding: 10,
+															color: '#999',
+															textAlign: 'center',
+														}}
+													>
+														<SpinnerIcon spin /> Loading...
+													</p>
+												)
+											}
+											return menu
+										}}
+										size='md'
+										onClean={handleClean}
+									/>
+
+									<OrderStatusField
+										name='status'
+										accepter={SelectPicker}
+										label='Order status'
+										data={[
+											{ label: 'Pending', value: 'pending' },
+											{ label: 'Processing', value: 'processing' },
+											{ label: 'Shipped', value: 'shipped' },
+											{ label: 'Completed', value: 'completed' },
+											{ label: 'Cancelled', value: 'cancelled' },
+										]}
+										disabledItemValues={['pending']}
+										disabled={
+											order?.status === 'cancelled' ||
+											order?.status === 'completed'
+										}
+										cleanable={false}
+										searchable={false}
+									/>
+								</Stack>
+							</Stack>
 						}
 						bordered
 						style={{ marginBottom: '1.8em' }}
@@ -316,7 +415,7 @@ const OrdersDrawer = () => {
 								<span style={{ fontSize: 17 }}>Contact Information</span>
 							}
 							bordered
-							style={{ marginBottom: '1.8em' }}
+							style={{ marginBottom: '1.5em' }}
 						>
 							<Row style={{ marginBottom: '1em' }}>
 								<Col xs={12}>
@@ -364,7 +463,7 @@ const OrdersDrawer = () => {
 								<span style={{ fontSize: 17 }}>Billing Information</span>
 							}
 							bordered
-							style={{ marginBottom: '1.8em' }}
+							style={{ marginBottom: '1.5em' }}
 						>
 							<Row style={{ marginBottom: '1em' }}>
 								<Col xs={12}>
@@ -431,12 +530,30 @@ const OrdersDrawer = () => {
 								<span style={{ fontSize: 17 }}>Shipping Information</span>
 							}
 							bordered
-							style={{ marginBottom: '1.8em' }}
 						>
 							<Row style={{ marginBottom: '1em' }}>
 								<Col xs={12}>
 									<Field
 										name='shipping.firstName'
+										label='First name'
+										accepter={Input}
+										error={formError?.shipping?.firstName}
+									/>
+								</Col>
+
+								<Col xs={12}>
+									<Field
+										name='shipping.lastName'
+										label='Last name'
+										accepter={Input}
+										error={formError?.shipping?.lastName}
+									/>
+								</Col>
+							</Row>
+							<Row style={{ marginBottom: '1em' }}>
+								<Col xs={12}>
+									<Field
+										name='shipping.region'
 										label='Region'
 										accepter={Input}
 										error={formError?.shipping?.region}

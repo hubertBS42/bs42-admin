@@ -19,13 +19,11 @@ const DeliveryAddresses = ({ addresses, setFormValue, regions }) => {
 		setFormValue(prev => {
 			return {
 				...prev,
-				shippingAddresses: [
+				shipping: [
 					{
 						index,
 						firstName: '',
 						lastName: '',
-						email: '',
-						phone: '',
 						address: '',
 						digitalAddress: '',
 						town: '',
@@ -43,7 +41,7 @@ const DeliveryAddresses = ({ addresses, setFormValue, regions }) => {
 			address => address.index !== index
 		)
 		setFormValue(prev => {
-			return { ...prev, shippingAddresses: filtered }
+			return { ...prev, shipping: filtered }
 		})
 	}
 
@@ -59,7 +57,7 @@ const DeliveryAddresses = ({ addresses, setFormValue, regions }) => {
 		})
 
 		setFormValue(prev => {
-			return { ...prev, shippingAddresses: newData }
+			return { ...prev, shipping: newData }
 		})
 	}
 
@@ -116,45 +114,19 @@ const DeliveryAddresses = ({ addresses, setFormValue, regions }) => {
 
 							<Row style={{ marginBottom: '1.2em' }}>
 								<Col xs={12}>
-									<label style={{ fontSize: 13 }}>Email</label>
-									<Input
-										name='email'
+									<label style={{ fontSize: 13 }}>Region</label>
+									<SelectPicker
+										name='region'
 										onChange={(val, e) =>
-											handleChange(val, address.index, 'email')
+											handleChange(val, address.index, 'region')
 										}
-										defaultValue={address.email}
+										value={address.region}
+										data={regions}
+										block
 										style={{ marginTop: '.3em' }}
 									/>
 								</Col>
 								<Col xs={12}>
-									<label style={{ fontSize: 13 }}>Phone</label>
-									<Input
-										name='phone'
-										onChange={(val, e) =>
-											handleChange(val, address.index, 'phone')
-										}
-										defaultValue={address.phone}
-										style={{ marginTop: '.3em' }}
-									/>
-								</Col>
-							</Row>
-
-							<Row style={{ marginBottom: '1.2em' }}>
-								<Col xs={24}>
-									<label style={{ fontSize: 13 }}>Address</label>
-									<Input
-										name='address'
-										onChange={(val, e) =>
-											handleChange(val, address.index, 'address')
-										}
-										defaultValue={address.address}
-										style={{ marginTop: '.3em' }}
-									/>
-								</Col>
-							</Row>
-
-							<Row style={{ marginBottom: '1.2em' }}>
-								<Col xs={24}>
 									<label style={{ fontSize: 13 }}>Town</label>
 									<Input
 										name='town'
@@ -168,23 +140,18 @@ const DeliveryAddresses = ({ addresses, setFormValue, regions }) => {
 							</Row>
 
 							<Row style={{ marginBottom: '1.2em' }}>
-								<Col xs={24}>
-									<label style={{ fontSize: 13 }}>Region</label>
-									<SelectPicker
-										name='region'
+								<Col xs={12}>
+									<label style={{ fontSize: 13 }}>Address</label>
+									<Input
+										name='address'
 										onChange={(val, e) =>
-											handleChange(val, address.index, 'region')
+											handleChange(val, address.index, 'address')
 										}
-										value={address.region}
-										data={regions}
-										block
+										defaultValue={address.address}
 										style={{ marginTop: '.3em' }}
 									/>
 								</Col>
-							</Row>
-
-							<Row style={{ marginBottom: '1.2em' }}>
-								<Col xs={24}>
+								<Col xs={12}>
 									<label style={{ fontSize: 13 }}>Digital address</label>
 									<Input
 										name='digitalAddress'

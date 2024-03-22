@@ -76,6 +76,8 @@ ApplicationSchema.pre('save', async function (next) {
 				canReceiveEmails: application.canReceiveEmails,
 			}
 
+			await User.create(preparedData)
+
 			const template = await fetchTemplate(
 				'account-application-approval'
 			)
@@ -91,8 +93,6 @@ ApplicationSchema.pre('save', async function (next) {
 			})
 
 			await transporter.sendMail(mailOptions)
-
-			await User.create(preparedData)
 		} else {
 			const template = await fetchTemplate(
 				'account-application-rejection'
