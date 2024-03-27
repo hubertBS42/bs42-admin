@@ -6,7 +6,7 @@ export const GET = async request => {
 	try {
 		await connectToDB()
 
-		const currency = await Currency.find({ isActive: true }).lean()
+		const currency = await Currency.findOne({ isActive: true }).lean()
 
 		const rate = currency.isCustomRate
 			? currency.customRate
@@ -21,6 +21,7 @@ export const GET = async request => {
 			}
 		)
 	} catch (error) {
+		console.log(error)
 		return new Response(
 			JSON.stringify({
 				status: 'error',

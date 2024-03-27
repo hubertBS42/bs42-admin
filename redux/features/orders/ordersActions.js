@@ -34,6 +34,21 @@ export const loadOrders = async () => {
 	dispatch(setCurrentRate(currentRate))
 }
 
+export const loadCurrentRate = async () => {
+	dispatch(setLoading(true))
+
+	const { status, message, rate } = await fetcher(
+		'/api/currencies/current-rate'
+	)
+
+	if (status === 'error') {
+		dispatch(setLoading(false))
+		return toast.error('Failed to load data.') //message site admin about error
+	}
+
+	dispatch(setCurrentRate(rate))
+}
+
 export const sortOrders = async (
 	limit,
 	page,

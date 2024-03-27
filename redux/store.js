@@ -3,6 +3,7 @@ import categoriesReducer from './features/categories/categoriesSlice'
 import brandsReducer from './features/brands/brandsSlice'
 import blogsReducer from './features/blogs/blogsSlice'
 import slidesReducer from './features/slides/slidesSlice'
+import cartReducer from './features/cart/cartSlice'
 import usersReducer from './features/users/usersSlice'
 import resourcesReducer from './features/resources/resourcesSlice'
 import rolesReducer from './features/roles/rolesSlice'
@@ -23,6 +24,7 @@ export const store = configureStore({
 		brands: brandsReducer,
 		blogs: blogsReducer,
 		slides: slidesReducer,
+		cart: cartReducer,
 		credentials: credentialsReducer,
 		templates: templatesReducer,
 		messages: MessagesReducer,

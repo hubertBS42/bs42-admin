@@ -1,5 +1,6 @@
 import Product from '@/models/Product'
 import Brand from '@/models/Brand'
+import Category from '@/models/Category'
 import { connectToDB } from '@/utils/database'
 
 export const GET = async request => {
@@ -18,8 +19,16 @@ export const GET = async request => {
 			.populate({
 				path: 'brand',
 				model: 'Brand',
-				select: 'name',
+				select: 'name slug',
 			})
+			.populate({
+				path: 'category',
+				model: 'Category',
+				select: 'name slug',
+			})
+			.select(
+				'title slug brand images category sellPrice isActive createdAt countInStock'
+			)
 			.lean()
 
 		return new Response(

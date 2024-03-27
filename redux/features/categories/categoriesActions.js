@@ -43,6 +43,21 @@ export const loadCategories = async () => {
 	dispatch(setAllCategories(allCategories))
 }
 
+export const loadAllCategories = async () => {
+	dispatch(setLoading(true))
+
+	const { status, message, data } = await fetcher(
+		'/api/products/categories/all'
+	)
+
+	if (status === 'error') {
+		dispatch(setLoading(false))
+		return toast.error('Failed to load data.') //message site admin about error
+	}
+
+	dispatch(setAllCategories(data))
+}
+
 export const sortCategories = async (
 	limit,
 	page,

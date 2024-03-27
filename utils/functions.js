@@ -337,3 +337,89 @@ export const findActiveKey = (links, pathname) => {
 
 	return activeKey
 }
+
+const findCategoryByIdWithAncestors = (
+	categories,
+	id,
+	ancestors = []
+) => {
+	for (const category of categories) {
+		if (category.id === id) {
+			return [...ancestors, category]
+		}
+
+		if (category.children && category.children.length > 0) {
+			const result = findCategoryByIdWithAncestors(
+				category.children,
+				id,
+				[...ancestors, category]
+			)
+			if (result.length > ancestors.length) {
+				// If the category is found in children, return the result
+				return result
+			}
+		}
+	}
+
+	// If the category is not found
+	return []
+}
+
+export const groupProductsByTopLevelCategory = (
+	products,
+	categories
+) => {
+	const groupedProducts = []
+
+	// Loop through each product
+	for (const product of products) {
+		// Find the top-level category for the product
+		const topLevelCategory = findCategoryByIdWithAncestors(
+			categories,
+			product.category._id
+		)[0]
+
+		// 	// Use the top-level category ID as the key for grouping
+		// 	const key = topLevelCategory[0].name
+
+		// 	// Add the product to the corresponding group
+		// 	if (!groupedProducts[key]) {
+		// 		groupedProducts[key] = []
+		// 	}
+		// 	groupedProducts[key].push(product)
+		// }
+
+		// return groupedProducts
+
+		// Check if the category is already in the groupedProducts array
+		const existingGroup = groupedProducts.find(
+			group => group.category === topLevelCategory.name
+		)
+
+		// If the category is not in the array, add it with an array of products
+		if (!existingGroup) {
+			groupedProducts.push({
+				category: topLevelCategory.name,
+				products: [product],
+			})
+		} else {
+			// If the category is already in the array, add the product to its products array
+			existingGroup.products.push({
+				...product,
+			})
+		}
+	}
+
+	return groupedProducts
+}
+
+export const lineClamp = (str, maxLength) => {
+	// Check if the length of the string is greater than the maximum length
+	if (str.length > maxLength) {
+		// Truncate the string to the maximum length and add an ellipsis
+		return str.substring(0, maxLength) + '...'
+	} else {
+		// Return the original string
+		return str
+	}
+}

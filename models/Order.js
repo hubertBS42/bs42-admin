@@ -2,6 +2,7 @@ import mongoose from 'mongoose'
 
 const OrderSchema = new mongoose.Schema(
 	{
+		orderNumber: { type: String, required: true, unique: true },
 		user: {
 			type: mongoose.Schema.Types.ObjectId,
 			ref: 'User',
@@ -20,10 +21,20 @@ const OrderSchema = new mongoose.Schema(
 			address: { type: String },
 			digitalAddress: { type: String },
 		},
-		orderNumber: { type: String, required: true, unique: true },
+		shipping: {
+			firstName: { type: String },
+			lastName: { type: String },
+			region: { type: String },
+			town: { type: String },
+			address: { type: String },
+			digitalAddress: { type: String },
+			method: { type: String },
+			status: { type: String, default: 'pending' },
+		},
 		invoice: {
 			number: { type: String },
 			date: { type: Date },
+			dueDate: { type: Date },
 		},
 		status: { type: String, default: 'pending' }, //pending, cancelled, processing, shipped, completed
 		rate: { type: Number },
@@ -46,16 +57,7 @@ const OrderSchema = new mongoose.Schema(
 			},
 		],
 		totalPrice: { type: Number },
-		shipping: {
-			firstName: { type: String },
-			lastName: { type: String },
-			region: { type: String },
-			town: { type: String },
-			address: { type: String },
-			digitalAddress: { type: String },
-			method: { type: String },
-			status: { type: String, default: 'pending' },
-		},
+
 		payment: {
 			method: { type: String },
 			status: { type: String, default: 'pending' },
