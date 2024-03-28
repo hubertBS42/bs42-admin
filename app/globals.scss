@@ -80,3 +80,17 @@
 // 	box-sizing: border-box; /* Optional: Ensure padding is included in height calculation */
 // 	overflow: auto; /* Optional: Add scrollbar if content exceeds height */
 // }
+
+.custom-number .rs-plaintext,
+.custom-number .rs-input-group-sm > .rs-input {
+	font-size: 12px !important;
+}
+
+.custom-number .rs-btn-icon.rs-btn-sm > .rs-icon {
+	font-size: 10px !important;
+}
+
+.custom-number .rs-plaintext {
+	padding-right: 0px !important;
+	// padding-left: 3px !important;
+}

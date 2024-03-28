@@ -10,7 +10,18 @@ const cartSlice = createSlice({
 	initialState,
 	reducers: {
 		setItems: (state, action) => {
-			state.cartItems = action.payload
+			const oldItems = action.payload.filter(item =>
+				item.hasOwnProperty('quantity')
+			)
+
+			const newItems = action.payload
+				.filter(item => !item.hasOwnProperty('quantity'))
+				.map(item => {
+					return { product: item, quantity: 1 }
+				})
+
+			state.cartItems = [...oldItems, ...newItems]
+
 			state.isLoading = false
 		},
 		modifyItem: (state, action) => {

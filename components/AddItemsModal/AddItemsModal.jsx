@@ -1,9 +1,8 @@
 'use client'
 import { useProducts } from '@/hooks/useProducts'
 import {
-	addItem,
-	removeItem,
 	selectAllCartItems,
+	setItems,
 } from '@/redux/features/cart/cartSlice'
 import { selectAllCategories } from '@/redux/features/categories/categoriesSlice'
 import { getCurrentRate } from '@/redux/features/orders/ordersSlice'
@@ -16,6 +15,7 @@ import {
 import SpinnerIcon from '@rsuite/icons/legacy/Spinner'
 import SearchIcon from '@rsuite/icons/Search'
 import Image from 'next/image'
+import { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 import {
@@ -32,10 +32,12 @@ import {
 	Whisper,
 } from 'rsuite'
 
-const AddItemsModal = ({ open, handleClose, rate }) => {
+const AddItemsModal = ({ open, handleClose }) => {
 	const dispatch = useDispatch()
 	const categories = useSelector(selectAllCategories)
-	const items = useSelector(selectAllCartItems)
+	const rate = useSelector(getCurrentRate)
+	const cartItems = useSelector(selectAllCartItems)
+	const [selectedProducts, setSelectedProducts] = useState([])
 
 	const groupedCategories = groupCategories(categories)
 	const [results, loading, searchProducts] = useProducts(
@@ -43,12 +45,31 @@ const AddItemsModal = ({ open, handleClose, rate }) => {
 		groupedCategories
 	)
 
+	const loadItems = items => {
+		setSelectedProducts(items)
+	}
+
 	const handleChecked = (checked, data) => {
 		if (checked) {
-			dispatch(addItem(data))
+			setSelectedProducts(prev => {
+				return [...prev, data]
+			})
 		} else {
-			dispatch(removeItem(data))
+			const filtered = selectedProducts
+				.map(item => {
+					if (item.hasOwnProperty('quantity')) {
+						return item.product
+					}
+					return item
+				})
+				.filter(item => item._id !== data._id)
+			setSelectedProducts(filtered)
 		}
+	}
+
+	const handleAdd = () => {
+		dispatch(setItems(selectedProducts))
+		handleClose()
 	}
 
 	return (
@@ -58,6 +79,7 @@ const AddItemsModal = ({ open, handleClose, rate }) => {
 			onClose={handleClose}
 			backdrop='static'
 			size='md'
+			onEnter={() => loadItems(cartItems)}
 		>
 			<Modal.Header>
 				<Modal.Title>Add items</Modal.Title>
@@ -92,8 +114,8 @@ const AddItemsModal = ({ open, handleClose, rate }) => {
 												onChange={(value, checked) =>
 													handleChecked(checked, product)
 												}
-												checked={items
-													.map(item => item.product._id)
+												checked={selectedProducts
+													.map(item => item?.product?._id || item._id)
 													.includes(product._id)}
 											/>
 
@@ -135,25 +157,32 @@ const AddItemsModal = ({ open, handleClose, rate }) => {
 			<Modal.Footer>
 				<Stack justifyContent='space-between'>
 					<Stack alignItems='center' spacing={7}>
-						{items.map(item => (
+						{selectedProducts.map(item => (
 							<Whisper
 								placement='top'
 								trigger='hover'
-								speaker={<Tooltip>{item.product.title}</Tooltip>}
-								key={item.product._id}
+								speaker={
+									<Tooltip>{item?.product?.title || item.title}</Tooltip>
+								}
+								key={item?.product?._id || item._id}
 							>
 								<Tag
 									closable
-									onClose={() => handleChecked(false, item.product)}
+									onClose={() => handleChecked(false, item?.product || item)}
 								>
-									{lineClamp(item.product.title, 20)}
+									{lineClamp(item?.product?.title || item.title, 20)}
 								</Tag>
 							</Whisper>
 						))}
 					</Stack>
 
-					<Stack>
-						<Button onClick={handleClose} appearance='primary' size='sm'>
+					<Stack spacing={10}>
+						<Button
+							onClick={handleAdd}
+							appearance='primary'
+							size='sm'
+							disabled={selectedProducts.length === 0}
+						>
 							Done
 						</Button>
 						<Button onClick={handleClose} appearance='subtle' size='sm'>
