@@ -42,32 +42,18 @@ const NewOrderForm = ({ handleModalOpen }) => {
 	const handleCalculations = () => {
 		const discountValue = (Number(discount) / 100) * cartPriceTotal
 		const discountDifference = cartPriceTotal - discountValue
-		const grandTotal = discountDifference + Number(shipping)
-		console.log(grandTotal * rate)
-		setSubtotal(discountDifference)
+		const grandTotal = discountDifference * rate + Number(shipping)
+		setSubtotal(discountDifference * rate)
 		setTotal(grandTotal)
 	}
 
-	// const calculateSubtotal = () => {
-	// 	const discountValue = (Number(discount) / 100) * cartPriceTotal
-	// 	const difference = cartPriceTotal - discountValue
-	// 	setSubtotal(difference)
-	// }
-
-	// const calculateTotal = () => {
-	// 	const sum = subtotal + Number(shipping)
-	// 	setTotal(sum)
-	// }
-
 	useEffect(() => {
-		// calculateSubtotal()
-		// calculateTotal()
 		handleCalculations()
 	}, [cartItemsTotal])
 
 	return (
 		<Grid fluid>
-			<Row gutter={16}>
+			<Row>
 				<Col xs={16}>
 					<PanelGroup bordered>
 						<Panel
@@ -223,7 +209,7 @@ const NewOrderForm = ({ handleModalOpen }) => {
 											<span>Subtotal (GHS)</span>
 										</Col>
 										<Col xs={15}>
-											<span>{roundMoney(subtotal * rate)}</span>
+											<span>{roundMoney(subtotal)}</span>
 										</Col>
 									</Row>
 
@@ -265,7 +251,7 @@ const NewOrderForm = ({ handleModalOpen }) => {
 											<span>Total (GHS)</span>
 										</Col>
 										<Col xs={15}>
-											<span>{roundMoney(total * rate)}</span>
+											<span>{roundMoney(total)}</span>
 										</Col>
 									</Row>
 								</Col>
