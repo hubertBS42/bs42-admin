@@ -156,7 +156,7 @@ const AddItemsModal = ({ open, handleClose }) => {
 			</Modal.Body>
 			<Modal.Footer>
 				<Stack justifyContent='space-between'>
-					<Stack alignItems='center' spacing={7}>
+					<Stack alignItems='center' spacing={7} wrap>
 						{selectedProducts.map(item => (
 							<Whisper
 								placement='top'
