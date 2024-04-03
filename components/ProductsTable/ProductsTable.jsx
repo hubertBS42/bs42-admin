@@ -122,7 +122,7 @@ const ProductsTable = () => {
 							{rowData => (
 								<Cascader
 									plaintext
-									value={rowData?.category}
+									value={rowData?.category?._id || rowData.category}
 									data={categories}
 								/>
 							)}

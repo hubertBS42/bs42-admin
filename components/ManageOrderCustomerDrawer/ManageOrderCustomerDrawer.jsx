@@ -18,21 +18,18 @@ import { useDispatch, useSelector } from 'react-redux'
 
 import {
 	getDrawerData,
-	getDrawerLoadingState,
 	getDrawerOpenState,
+	getEditState,
 	setDrawerClose,
 } from '@/redux/features/drawer/drawerSlice'
-import { capitalizeFirstLetter } from '@/utils/functions'
 
 const { StringType, ObjectType } = Schema.Types
 
 const model = Schema.Model({
-	contact: ObjectType().shape({
-		firstName: StringType().isRequired('This field is required.'),
-		lastName: StringType().isRequired('This field is required.'),
-		phone: StringType().isRequired('This field is required.'),
-		email: StringType().isRequired('This field is required.'),
-	}),
+	firstName: StringType().isRequired('This field is required.'),
+	lastName: StringType().isRequired('This field is required.'),
+	phone1: StringType().isRequired('This field is required.'),
+	email: StringType().isRequired('This field is required.'),
 	billing: ObjectType().shape({
 		firstName: StringType().isRequired('This field is required.'),
 		lastName: StringType().isRequired('This field is required.'),
@@ -51,17 +48,18 @@ const model = Schema.Model({
 	}),
 })
 
-const AddCustomerDrawer = ({ open, closeDrawer }) => {
+const ManageOrderCustomerDrawer = ({ setCustomer }) => {
 	const dispatch = useDispatch()
 	const formRef = useRef()
 	const [formError, setFormError] = useState({})
 	const [formValue, setFormValue] = useState({
-		contact: {
-			firstName: '',
-			lastName: '',
-			email: '',
-			phone: '',
-		},
+		user: '',
+		firstName: '',
+		lastName: '',
+		email: '',
+		phone1: '',
+		label: '',
+		profileImg: null,
 		billing: {
 			firstName: '',
 			lastName: '',
@@ -77,23 +75,117 @@ const AddCustomerDrawer = ({ open, closeDrawer }) => {
 			town: '',
 			region: '',
 			digitalAddress: '',
+			isActive: true,
 		},
 	})
+
+	const isOpen = useSelector(getDrawerOpenState)
+	const isEditing = useSelector(getEditState)
+	const customer = useSelector(getDrawerData)
+
+	const updateForm = customer => {
+		if (isEditing) {
+			const activeShipping = customer.shipping.find(
+				address => address.isActive
+			)
+			setFormValue(prev => {
+				return {
+					...prev,
+					user: customer?._id || '',
+					firstName: customer.firstName,
+					lastName: customer.lastName,
+					email: customer.email,
+					phone1: customer.phone1,
+					label: customer.label,
+					profileImg: customer?.profileImg || null,
+					billing: {
+						firstName: customer?.billing?.firstName || '',
+						lastName: customer?.billing?.lastName || '',
+						address: customer?.billing?.address || '',
+						town: customer?.billing?.town || '',
+						region: customer?.billing?.region || '',
+						digitalAddress: customer?.billing?.digitalAddress || '',
+					},
+					shipping: {
+						firstName: activeShipping?.firstName || '',
+						lastName: activeShipping?.lastName || '',
+						address: activeShipping?.address || '',
+						town: activeShipping?.town || '',
+						region: activeShipping?.region || '',
+						digitalAddress: activeShipping?.digitalAddress || '',
+						isActive: true,
+					},
+				}
+			})
+		} else {
+			setFormValue({
+				user: '',
+				firstName: '',
+				lastName: '',
+				email: '',
+				phone1: '',
+				label: '',
+				profileImg: null,
+				billing: {
+					firstName: '',
+					lastName: '',
+					address: '',
+					town: '',
+					region: '',
+					digitalAddress: '',
+				},
+				shipping: {
+					firstName: '',
+					lastName: '',
+					address: '',
+					town: '',
+					region: '',
+					digitalAddress: '',
+					isActive: true,
+				},
+			})
+		}
+
+		return
+	}
 
 	const handleSubmit = async () => {
 		if (!formRef.current.check()) {
 			return
 		}
 
-		closeDrawer()
+		if (isEditing) {
+			setCustomer({
+				...formValue,
+				shipping: [formValue.shipping],
+			})
+		} else {
+			setCustomer({
+				...formValue,
+				shipping: [formValue.shipping],
+				label: `${formValue.firstName} ${formValue.lastName}`,
+			})
+		}
+
+		dispatch(setDrawerClose())
 	}
 
 	return (
-		<Drawer open={open} onClose={closeDrawer} backdrop='static'>
+		<Drawer
+			open={isOpen}
+			onClose={() => dispatch(setDrawerClose())}
+			onEnter={() => updateForm(customer)}
+			backdrop='static'
+		>
 			<Drawer.Header style={{ paddingRight: '1.2em' }}>
-				<Drawer.Title>Add customer</Drawer.Title>
+				<Drawer.Title>
+					{isEditing ? 'Update' : 'Add'} customer
+				</Drawer.Title>
 				<Drawer.Actions>
-					<Button onClick={closeDrawer} startIcon={<CloseIcon />}>
+					<Button
+						onClick={() => dispatch(setDrawerClose())}
+						startIcon={<CloseIcon />}
+					>
 						Cancel
 					</Button>
 					<Button
@@ -101,7 +193,7 @@ const AddCustomerDrawer = ({ open, closeDrawer }) => {
 						appearance='primary'
 						startIcon={<CheckIcon />}
 					>
-						Add
+						Save
 					</Button>
 				</Drawer.Actions>
 			</Drawer.Header>
@@ -119,18 +211,20 @@ const AddCustomerDrawer = ({ open, closeDrawer }) => {
 							<Row style={{ marginBottom: '1.4em' }}>
 								<Col xs={12}>
 									<Field
-										name='contact.firstName'
+										name='firstName'
 										label='First name'
 										accepter={Input}
-										error={formError?.contact?.firstName}
+										error={formError?.firstName}
+										readOnly={isEditing}
 									/>
 								</Col>
 								<Col xs={12}>
 									<Field
-										name='contact.lastName'
+										name='lastName'
 										label='Last name'
 										accepter={Input}
-										error={formError?.contact?.lastName}
+										error={formError?.lastName}
+										readOnly={isEditing}
 									/>
 								</Col>
 							</Row>
@@ -138,18 +232,20 @@ const AddCustomerDrawer = ({ open, closeDrawer }) => {
 							<Row style={{ marginBottom: '1.4em' }}>
 								<Col xs={12}>
 									<Field
-										name='contact.email'
+										name='email'
 										label='Email'
 										accepter={Input}
-										error={formError?.contact?.email}
+										error={formError?.email}
+										readOnly={isEditing}
 									/>
 								</Col>
 								<Col xs={12}>
 									<Field
-										name='contact.phone'
+										name='phone1'
 										label='Phone'
 										accepter={Input}
-										error={formError?.contact?.phone}
+										error={formError?.phone1}
+										readOnly={isEditing}
 									/>
 								</Col>
 							</Row>
@@ -283,4 +379,4 @@ const AddCustomerDrawer = ({ open, closeDrawer }) => {
 		</Drawer>
 	)
 }
-export default AddCustomerDrawer
+export default ManageOrderCustomerDrawer

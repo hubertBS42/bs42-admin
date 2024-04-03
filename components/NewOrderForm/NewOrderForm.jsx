@@ -10,20 +10,16 @@ import { roundMoney } from '@/utils/functions'
 import Image from 'next/image'
 import { useDispatch, useSelector } from 'react-redux'
 import {
-	AutoComplete,
 	Button,
 	Col,
 	Grid,
 	InlineEdit,
 	Input,
-	InputGroup,
 	InputNumber,
 	InputPicker,
 	Panel,
 	PanelGroup,
-	Placeholder,
 	Row,
-	SelectPicker,
 	Stack,
 } from 'rsuite'
 
@@ -34,8 +30,7 @@ import { getCurrentRate } from '@/redux/features/orders/ordersSlice'
 import { useEffect, useState } from 'react'
 import { useUsers } from '@/hooks/useUsers'
 import { setDrawerOpen } from '@/redux/features/drawer/drawerSlice'
-import AddressDrawer from '../AddressDrawer/AddressDrawer'
-import AddCustomerDrawer from '../AddCustomerDrawer/AddCustomerDrawer'
+import ManageOrderCustomerDrawer from '../ManageOrderCustomerDrawer/ManageOrderCustomerDrawer'
 
 const NewOrderForm = ({ handleModalOpen }) => {
 	const [users, loading, searchUsers] = useUsers()
@@ -66,7 +61,6 @@ const NewOrderForm = ({ handleModalOpen }) => {
 		},
 	})
 	const [customer, setCustomer] = useState(null)
-	const [drawerOpen, setDrawerOpen] = useState(false)
 
 	let activeShipping = null
 
@@ -84,20 +78,13 @@ const NewOrderForm = ({ handleModalOpen }) => {
 		setTotal(grandTotal)
 	}
 
-	const handleDrawerOpen = () => setDrawerOpen(true)
-	const handleDrawerClosed = () => setDrawerOpen(false)
-
 	useEffect(() => {
 		handleCalculations()
 	}, [cartItemsTotal])
 
 	return (
 		<>
-			<AddressDrawer setCustomer={setCustomer} />
-			<AddCustomerDrawer
-				open={drawerOpen}
-				closeDrawer={handleDrawerClosed}
-			/>
+			<ManageOrderCustomerDrawer setCustomer={setCustomer} />
 			<Grid fluid>
 				<Row>
 					<Col xs={16}>
@@ -310,7 +297,7 @@ const NewOrderForm = ({ handleModalOpen }) => {
 											appearance='link'
 											size='sm'
 											style={{ padding: 0 }}
-											onClick={handleDrawerOpen}
+											onClick={() => dispatch(setDrawerOpen({ mode: 'add' }))}
 										>
 											Create customer
 										</Button>
@@ -349,14 +336,31 @@ const NewOrderForm = ({ handleModalOpen }) => {
 									header={
 										<Stack justifyContent='space-between'>
 											<span>Customer</span>
-											<Button
-												appearance='link'
-												size='sm'
-												style={{ padding: 0 }}
-												onClick={() => setCustomer(null)}
-											>
-												Cancel
-											</Button>
+											<Stack spacing={10}>
+												<Button
+													appearance='link'
+													size='sm'
+													style={{ padding: 0 }}
+													onClick={() =>
+														dispatch(
+															setDrawerOpen({
+																mode: 'edit',
+																data: customer,
+															})
+														)
+													}
+												>
+													Edit
+												</Button>
+												<Button
+													appearance='link'
+													size='sm'
+													style={{ padding: 0 }}
+													onClick={() => setCustomer(null)}
+												>
+													Cancel
+												</Button>
+											</Stack>
 										</Stack>
 									}
 								>
@@ -389,51 +393,12 @@ const NewOrderForm = ({ handleModalOpen }) => {
 										</Stack>
 									</Stack>
 								</Panel>
-								<Panel
-									header={
-										<Stack justifyContent='space-between'>
-											<span>Shipping Address</span>
-											<Button
-												appearance='link'
-												size='sm'
-												style={{ padding: 0 }}
-												onClick={() =>
-													dispatch(
-														setDrawerOpen({
-															mode: 'edit',
-															data: {
-																...activeShipping,
-																type: 'shipping',
-															},
-														})
-													)
-												}
-											>
-												Edit
-											</Button>
-										</Stack>
-									}
-								>
-									<Stack
-										direction='column'
-										alignItems='flex-start'
-										style={{ color: '#D4D4D4', fontSize: 13 }}
-									>
-										<div>
-											{activeShipping?.firstName} {activeShipping?.lastName}
-										</div>
-										<div>{activeShipping?.address}</div>
-										<div>
-											{activeShipping?.town}, {activeShipping?.region}
-										</div>
-										<div>{activeShipping?.digitalAddress}</div>
-									</Stack>
-								</Panel>
+
 								<Panel
 									header={
 										<Stack justifyContent='space-between'>
 											<span>Billing Address</span>
-											<Button
+											{/* <Button
 												appearance='link'
 												size='sm'
 												style={{ padding: 0 }}
@@ -450,7 +415,7 @@ const NewOrderForm = ({ handleModalOpen }) => {
 												}
 											>
 												Edit
-											</Button>
+											</Button> */}
 										</Stack>
 									}
 								>
@@ -467,6 +432,47 @@ const NewOrderForm = ({ handleModalOpen }) => {
 											{customer?.billing.town}, {customer?.billing.region}
 										</div>
 										<div>{customer?.billing.digitalAddress}</div>
+									</Stack>
+								</Panel>
+
+								<Panel
+									header={
+										<Stack justifyContent='space-between'>
+											<span>Shipping Address</span>
+											{/* <Button
+												appearance='link'
+												size='sm'
+												style={{ padding: 0 }}
+												onClick={() =>
+													dispatch(
+														setDrawerOpen({
+															mode: 'edit',
+															data: {
+																...activeShipping,
+																type: 'shipping',
+															},
+														})
+													)
+												}
+											>
+												Edit
+											</Button> */}
+										</Stack>
+									}
+								>
+									<Stack
+										direction='column'
+										alignItems='flex-start'
+										style={{ color: '#D4D4D4', fontSize: 13 }}
+									>
+										<div>
+											{activeShipping?.firstName} {activeShipping?.lastName}
+										</div>
+										<div>{activeShipping?.address}</div>
+										<div>
+											{activeShipping?.town}, {activeShipping?.region}
+										</div>
+										<div>{activeShipping?.digitalAddress}</div>
 									</Stack>
 								</Panel>
 							</PanelGroup>

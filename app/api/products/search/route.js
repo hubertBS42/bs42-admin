@@ -21,13 +21,14 @@ export const GET = async request => {
 				model: 'Brand',
 				select: 'name slug',
 			})
-			// .populate({
-			// 	path: 'category',
-			// 	model: 'Category',
-			// 	select: 'name slug',
-			// }).select(
-			// 	'title slug brand images category sellPrice isActive createdAt countInStock'
-			// )
+			.populate({
+				path: 'category',
+				model: 'Category',
+				select: 'name slug',
+			})
+			.select(
+				'title slug brand images category sellPrice isActive createdAt countInStock'
+			)
 
 			.lean()
 
