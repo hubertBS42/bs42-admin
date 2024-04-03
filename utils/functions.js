@@ -1,7 +1,7 @@
 import { usePathname } from 'next/navigation'
 import { format, isAfter, isBefore, parseISO } from 'date-fns'
 
-const capitalizeFirstLetter = word => {
+export const capitalizeFirstLetter = word => {
 	const regex = /(\b[a-z](?!\s))/g
 
 	return word.replace(regex, x => {

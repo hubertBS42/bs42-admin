@@ -18,6 +18,7 @@ const CreateOrderPage = () => {
 	return (
 		<>
 			<AddItemsModal open={modalOpen} handleClose={handleModalClose} />
+
 			<NewOrderForm handleModalOpen={handleModalOpen} />
 		</>
 	)
