@@ -419,20 +419,25 @@ const NewOrderForm = ({ handleModalOpen }) => {
 										</Stack>
 									}
 								>
-									<Stack
-										direction='column'
-										alignItems='flex-start'
-										style={{ color: '#D4D4D4', fontSize: 13 }}
-									>
-										<div>
-											{customer?.billing.firstName} {customer?.billing.lastName}
-										</div>
-										<div>{customer?.billing.address}</div>
-										<div>
-											{customer?.billing.town}, {customer?.billing.region}
-										</div>
-										<div>{customer?.billing.digitalAddress}</div>
-									</Stack>
+									{customer.billing ? (
+										<Stack
+											direction='column'
+											alignItems='flex-start'
+											style={{ color: '#D4D4D4', fontSize: 13 }}
+										>
+											<div>
+												{customer?.billing?.firstName}{' '}
+												{customer?.billing?.lastName}
+											</div>
+											<div>{customer?.billing?.address}</div>
+											<div>
+												{customer?.billing?.town}, {customer?.billing?.region}
+											</div>
+											<div>{customer?.billing?.digitalAddress}</div>
+										</Stack>
+									) : (
+										<p style={{ color: '#D4D4D4', fontSize: 13 }}>Not set</p>
+									)}
 								</Panel>
 
 								<Panel

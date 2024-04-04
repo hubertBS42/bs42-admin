@@ -186,6 +186,7 @@ export const createUser = async data => {
 	const preparedData = {
 		...rest,
 		profileImg: uploadedProfileImg,
+		shipping: rest.billingActive ? rest.shipping : null,
 	}
 
 	const { status, message } = await fetcher('/api/users/add', {
@@ -237,6 +238,7 @@ export const updateUser = async (user, data, imageToBeDeleted) => {
 	let preparedData = {
 		...rest,
 		password: data.password,
+		shipping: rest.billingActive ? rest.shipping : null,
 	}
 
 	if (data.password === '') {

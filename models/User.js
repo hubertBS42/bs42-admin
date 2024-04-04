@@ -18,6 +18,7 @@ const UserSchema = new mongoose.Schema(
 		},
 		phone1: { type: String },
 		phone2: { type: String },
+		billingActive: { type: Boolean, default: false },
 		billing: {
 			firstName: { type: String, trim: true },
 			lastName: { type: String, trim: true },

@@ -40,39 +40,8 @@ import { formatData, generatePassword } from '@/utils/functions'
 import DeliveryAddresses from '../DeliveryAddresses/DeliveryAddresses'
 import GeneratePasswordField from '../GeneratePasswordField/GeneratePasswordField'
 
-const { StringType, ArrayType, ObjectType } = Schema.Types
-
-const model = Schema.Model({
-	firstName: StringType().isRequired(
-		"You must provide user's first name."
-	),
-	lastName: StringType(),
-	email: StringType().isRequired('You must provide an email address.'),
-	phone1: StringType(),
-	phone2: StringType(),
-	billing: ObjectType().shape({
-		firstName: StringType(),
-		lastName: StringType(),
-		region: StringType(),
-		town: StringType(),
-		address: StringType(),
-		digitalAddress: StringType(),
-	}),
-	company: ObjectType().shape({
-		name: StringType(),
-		phone: StringType(),
-		website: StringType(),
-		region: StringType(),
-		town: StringType(),
-		address: StringType(),
-		digitalAddress: StringType(),
-	}),
-	notes: StringType(),
-	profileImg: ArrayType(),
-	role: StringType().isRequired(
-		'You must assign a role to this user.'
-	),
-})
+const { StringType, ArrayType, ObjectType, BooleanType } =
+	Schema.Types
 
 const UsersDrawer = () => {
 	const dispatch = useDispatch()
@@ -85,6 +54,7 @@ const UsersDrawer = () => {
 		email: '',
 		phone1: '',
 		phone2: '',
+		billingActive: false,
 		billing: {
 			firstName: '',
 			lastName: '',
@@ -112,6 +82,56 @@ const UsersDrawer = () => {
 		canReceiveEmails: true,
 	})
 
+	const model = Schema.Model({
+		firstName: StringType().isRequired(
+			"You must provide user's first name."
+		),
+		lastName: StringType().isRequired(
+			"You must provide user's last name."
+		),
+		email: StringType().isRequired(
+			'You must provide an email address.'
+		),
+		phone1: StringType().isRequired(
+			'You must provide a valid phone number.'
+		),
+		phone2: StringType(),
+		billing: ObjectType().shape({
+			firstName: formValue.billingActive
+				? StringType().isRequired('You must provide a first name.')
+				: StringType(),
+			lastName: formValue.billingActive
+				? StringType().isRequired('You must provide a last name.')
+				: StringType(),
+			region: formValue.billingActive
+				? StringType().isRequired('You must provide a region.')
+				: StringType(),
+			town: formValue.billingActive
+				? StringType().isRequired('You must provide a town.')
+				: StringType(),
+			address: formValue.billingActive
+				? StringType().isRequired('You must provide an address.')
+				: StringType(),
+			digitalAddress: formValue.billingActive
+				? StringType().isRequired('You must provide a digital address.')
+				: StringType(),
+		}),
+		company: ObjectType().shape({
+			name: StringType(),
+			phone: StringType(),
+			website: StringType(),
+			region: StringType(),
+			town: StringType(),
+			address: StringType(),
+			digitalAddress: StringType(),
+		}),
+		notes: StringType(),
+		profileImg: ArrayType(),
+		role: StringType().isRequired(
+			'You must assign a role to this user.'
+		),
+	})
+
 	const isOpen = useSelector(getDrawerOpenState)
 	const isEditing = useSelector(getEditState)
 	const isLoading = useSelector(getDrawerLoadingState)
@@ -132,6 +152,7 @@ const UsersDrawer = () => {
 					phone1: user.phone1 || '',
 					phone2: user.phone2 || '',
 					address: user?.residentialAddress?.address || '',
+					billingActive: user.billingActive,
 					billing: {
 						firstName: user?.billing?.firstName || '',
 						lastName: user?.billing?.lastName || '',
@@ -166,6 +187,7 @@ const UsersDrawer = () => {
 				email: '',
 				phone1: '',
 				phone2: '',
+				billingActive: false,
 				billing: {
 					firstName: '',
 					lastName: '',
@@ -276,6 +298,7 @@ const UsersDrawer = () => {
 					model={model}
 					disabled={isLoading}
 					nestedField
+					checkTrigger={'none'}
 				>
 					<Stack
 						spacing={30}
@@ -491,68 +514,77 @@ const UsersDrawer = () => {
 					</Panel>
 
 					<Panel
-						header='Billing address'
+						header={
+							<Stack justifyContent='space-between'>
+								<span>Billing address</span>
+								<CustomToggle accepter={Toggle} name='billingActive' />
+							</Stack>
+						}
 						bordered
 						style={{ marginBottom: '1.8em' }}
 					>
-						<Row style={{ marginBottom: '1.4em' }}>
-							<Col xs={12}>
-								<Field
-									name='billing.firstName'
-									label='First name'
-									accepter={Input}
-									error={formError?.billing?.firstName}
-								/>
-							</Col>
+						{formValue.billingActive && (
+							<>
+								<Row style={{ marginBottom: '1.4em' }}>
+									<Col xs={12}>
+										<Field
+											name='billing.firstName'
+											label='First name'
+											accepter={Input}
+											error={formError?.billing?.firstName}
+										/>
+									</Col>
 
-							<Col xs={12}>
-								<Field
-									name='billing.lastName'
-									label='Last name'
-									accepter={Input}
-									error={formError?.billing?.lastName}
-								/>
-							</Col>
-						</Row>
+									<Col xs={12}>
+										<Field
+											name='billing.lastName'
+											label='Last name'
+											accepter={Input}
+											error={formError?.billing?.lastName}
+										/>
+									</Col>
+								</Row>
 
-						<Row style={{ marginBottom: '1.4em' }}>
-							<Col xs={12}>
-								<Field
-									name='billing.region'
-									label='Region'
-									accepter={SelectPicker}
-									error={formError?.billing?.region}
-									data={formattedRegions}
-								/>
-							</Col>
-							<Col xs={12}>
-								<Field
-									name='billing.town'
-									label='Town'
-									accepter={Input}
-									error={formError?.billing?.town}
-								/>
-							</Col>
-						</Row>
+								<Row style={{ marginBottom: '1.4em' }}>
+									<Col xs={12}>
+										<Field
+											name='billing.region'
+											label='Region'
+											accepter={SelectPicker}
+											error={formError?.billing?.region}
+											data={formattedRegions}
+										/>
+									</Col>
+									<Col xs={12}>
+										<Field
+											name='billing.town'
+											label='Town'
+											accepter={Input}
+											error={formError?.billing?.town}
+										/>
+									</Col>
+								</Row>
 
-						<Row>
-							<Col xs={12}>
-								<Field
-									name='billing.address'
-									label='Address'
-									accepter={Input}
-									error={formError?.billing?.address}
-								/>
-							</Col>
-							<Col xs={12}>
-								<Field
-									name='billing.digitalAddress'
-									label='Digital address'
-									accepter={Input}
-									error={formError?.billing?.digitalAddress}
-								/>
-							</Col>
-						</Row>
+								<Row>
+									<Col xs={12}>
+										<Field
+											name='billing.address'
+											label='Address'
+											accepter={Input}
+											error={formError?.billing?.address}
+										/>
+									</Col>
+									<Col xs={12}>
+										<Field
+											name='billing.digitalAddress'
+											label='Digital address'
+											accepter={Input}
+											error={formError?.billing?.digitalAddress}
+										/>
+									</Col>
+								</Row>
+							</>
+						)}
 					</Panel>
 
 					<DeliveryAddresses
