@@ -26,9 +26,9 @@ export const GET = async request => {
 				model: 'Category',
 				select: 'name slug',
 			})
-			.select(
-				'title slug brand images category sellPrice isActive createdAt countInStock'
-			)
+			// .select(
+			// 	'title slug brand images category sellPrice isActive createdAt countInStock condition'
+			// )
 
 			.lean()
 
