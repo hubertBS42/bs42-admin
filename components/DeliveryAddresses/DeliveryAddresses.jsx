@@ -1,6 +1,7 @@
 'use client'
 
 import {
+	Checkbox,
 	Col,
 	IconButton,
 	Input,
@@ -12,9 +13,12 @@ import {
 import PlusIcon from '@rsuite/icons/Plus'
 import TrashIcon from '@rsuite/icons/Trash'
 import { nanoid } from '@reduxjs/toolkit'
+import { useState } from 'react'
 
 const DeliveryAddresses = ({ addresses, setFormValue, regions }) => {
+	const [disabled, setDisabled] = useState(false)
 	const handleAdd = () => {
+		setDisabled(true)
 		const index = nanoid()
 		setFormValue(prev => {
 			return {
@@ -28,7 +32,7 @@ const DeliveryAddresses = ({ addresses, setFormValue, regions }) => {
 						digitalAddress: '',
 						town: '',
 						region: '',
-						isActive: false,
+						isPrimary: false,
 					},
 					...addresses,
 				],
@@ -37,6 +41,11 @@ const DeliveryAddresses = ({ addresses, setFormValue, regions }) => {
 	}
 
 	const handleDelete = index => {
+		const position = addresses.findIndex(
+			address => address.index === index
+		)
+		if (position === 0) setDisabled(false)
+
 		const filtered = addresses.filter(
 			address => address.index !== index
 		)
@@ -72,6 +81,7 @@ const DeliveryAddresses = ({ addresses, setFormValue, regions }) => {
 						size='xs'
 						appearance='primary'
 						onClick={handleAdd}
+						disabled={disabled}
 					/>
 				</Stack>
 			}
@@ -164,7 +174,15 @@ const DeliveryAddresses = ({ addresses, setFormValue, regions }) => {
 								</Col>
 							</Row>
 
-							<Stack justifyContent='flex-end'>
+							<Stack justifyContent='space-between'>
+								<Checkbox
+									name='isPrimary'
+									onChange={(val, checked) =>
+										handleChange(checked, address.index, 'isPrimary')
+									}
+								>
+									Primary address
+								</Checkbox>
 								<IconButton
 									icon={<TrashIcon />}
 									appearance='link'

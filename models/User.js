@@ -36,7 +36,7 @@ const UserSchema = new mongoose.Schema(
 				town: { type: String },
 				region: { type: String },
 				index: { type: String },
-				isActive: { type: Boolean, default: false },
+				isPrimary: { type: Boolean, default: false },
 			},
 		],
 		profileImg: {

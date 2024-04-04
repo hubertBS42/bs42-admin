@@ -298,7 +298,6 @@ const UsersDrawer = () => {
 					model={model}
 					disabled={isLoading}
 					nestedField
-					checkTrigger={'none'}
 				>
 					<Stack
 						spacing={30}
