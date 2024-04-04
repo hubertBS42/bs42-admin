@@ -87,7 +87,7 @@ UserSchema.statics.authUser = async function (email, password) {
 			},
 		})
 		.select(
-			'firstName lastName email phone1 phone2 shippingAddresses password isActive isApproved role profileImg'
+			'firstName lastName email phone1 phone2 shippingAddresses password isActive role profileImg'
 		)
 		.lean()
 
@@ -99,10 +99,6 @@ UserSchema.statics.authUser = async function (email, password) {
 
 	if (!validPassword) {
 		throw new Error('Incorrect login details.')
-	}
-
-	if (user.isApproved === false) {
-		throw new Error('This account has not been approved yet.')
 	}
 
 	if (!user.isActive) {

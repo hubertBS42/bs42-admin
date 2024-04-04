@@ -181,7 +181,7 @@ export const createUser = async data => {
 		uploadedProfileImg = uploadedProfileImg[0]
 	}
 
-	const { profileImg, shipping, ...rest } = data
+	const { profileImg, ...rest } = data
 
 	const preparedData = {
 		...rest,

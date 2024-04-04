@@ -32,7 +32,7 @@ const DeliveryAddresses = ({ addresses, setFormValue, regions }) => {
 						digitalAddress: '',
 						town: '',
 						region: '',
-						isPrimary: false,
+						isPrimary: addresses.length >= 1 ? false : true,
 					},
 					...addresses,
 				],
@@ -51,6 +51,25 @@ const DeliveryAddresses = ({ addresses, setFormValue, regions }) => {
 		)
 		setFormValue(prev => {
 			return { ...prev, shipping: filtered }
+		})
+	}
+
+	const handlePrimaryAddressChange = index => {
+		const newData = addresses.map(address => {
+			if (address.index === index) {
+				return {
+					...address,
+					isPrimary: true,
+				}
+			}
+			return {
+				...address,
+				isPrimary: false,
+			}
+		})
+
+		setFormValue(prev => {
+			return { ...prev, shipping: newData }
 		})
 	}
 
@@ -175,21 +194,23 @@ const DeliveryAddresses = ({ addresses, setFormValue, regions }) => {
 							</Row>
 
 							<Stack justifyContent='space-between'>
-								<Checkbox
-									name='isPrimary'
-									onChange={(val, checked) =>
-										handleChange(checked, address.index, 'isPrimary')
-									}
-								>
-									Primary address
-								</Checkbox>
-								<IconButton
-									icon={<TrashIcon />}
-									appearance='link'
-									color='red'
-									circle
-									onClick={() => handleDelete(address.index)}
-								/>
+								{!address.isPrimary && addresses.length > 1 && (
+									<Checkbox
+										onChange={() => handlePrimaryAddressChange(address.index)}
+										checked={address.isPrimary}
+									>
+										Primary address
+									</Checkbox>
+								)}
+								{!address.isPrimary && (
+									<IconButton
+										icon={<TrashIcon />}
+										appearance='link'
+										color='red'
+										circle
+										onClick={() => handleDelete(address.index)}
+									/>
+								)}
 							</Stack>
 						</Panel>
 					))}

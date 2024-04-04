@@ -6,7 +6,7 @@ import { loadAllCategories } from '@/redux/features/categories/categoriesActions
 import { loadCurrentRate } from '@/redux/features/orders/ordersActions'
 import NewOrderForm from '@/components/NewOrderForm/NewOrderForm'
 
-const CreateOrderPage = () => {
+const NewOrderPage = () => {
 	const [modalOpen, setModalOpen] = useState(false)
 	const handleModalClose = () => setModalOpen(false)
 	const handleModalOpen = () => setModalOpen(true)
@@ -18,9 +18,8 @@ const CreateOrderPage = () => {
 	return (
 		<>
 			<AddItemsModal open={modalOpen} handleClose={handleModalClose} />
-
 			<NewOrderForm handleModalOpen={handleModalOpen} />
 		</>
 	)
 }
-export default CreateOrderPage
+export default NewOrderPage

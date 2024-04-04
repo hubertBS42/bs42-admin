@@ -60,6 +60,7 @@ const ManageOrderCustomerDrawer = ({ setCustomer }) => {
 		phone1: '',
 		label: '',
 		profileImg: null,
+		billingActive: true,
 		billing: {
 			firstName: '',
 			lastName: '',
@@ -75,7 +76,7 @@ const ManageOrderCustomerDrawer = ({ setCustomer }) => {
 			town: '',
 			region: '',
 			digitalAddress: '',
-			isActive: true,
+			isPrimary: true,
 		},
 	})
 
@@ -85,8 +86,8 @@ const ManageOrderCustomerDrawer = ({ setCustomer }) => {
 
 	const updateForm = customer => {
 		if (isEditing) {
-			const activeShipping = customer.shipping.find(
-				address => address.isActive
+			const primaryShipping = customer.shipping.find(
+				address => address.isPrimary
 			)
 			setFormValue(prev => {
 				return {
@@ -98,6 +99,7 @@ const ManageOrderCustomerDrawer = ({ setCustomer }) => {
 					phone1: customer.phone1,
 					label: customer.label,
 					profileImg: customer?.profileImg || null,
+					billingActive: true,
 					billing: {
 						firstName: customer?.billing?.firstName || '',
 						lastName: customer?.billing?.lastName || '',
@@ -107,13 +109,13 @@ const ManageOrderCustomerDrawer = ({ setCustomer }) => {
 						digitalAddress: customer?.billing?.digitalAddress || '',
 					},
 					shipping: {
-						firstName: activeShipping?.firstName || '',
-						lastName: activeShipping?.lastName || '',
-						address: activeShipping?.address || '',
-						town: activeShipping?.town || '',
-						region: activeShipping?.region || '',
-						digitalAddress: activeShipping?.digitalAddress || '',
-						isActive: true,
+						firstName: primaryShipping?.firstName || '',
+						lastName: primaryShipping?.lastName || '',
+						address: primaryShipping?.address || '',
+						town: primaryShipping?.town || '',
+						region: primaryShipping?.region || '',
+						digitalAddress: primaryShipping?.digitalAddress || '',
+						isPrimary: true,
 					},
 				}
 			})
@@ -126,6 +128,7 @@ const ManageOrderCustomerDrawer = ({ setCustomer }) => {
 				phone1: '',
 				label: '',
 				profileImg: null,
+				billingActive: true,
 				billing: {
 					firstName: '',
 					lastName: '',
@@ -141,7 +144,7 @@ const ManageOrderCustomerDrawer = ({ setCustomer }) => {
 					town: '',
 					region: '',
 					digitalAddress: '',
-					isActive: true,
+					isPrimary: true,
 				},
 			})
 		}

@@ -20,7 +20,7 @@ export const generatePageTitle = () => {
 	}
 	const choppedUp = pathname.split('/')
 
-	if (choppedUp.includes('add')) {
+	if (choppedUp.includes('new')) {
 		const firstWord = capitalizeFirstLetter(choppedUp.pop())
 
 		const capitalized = capitalizeFirstLetter(choppedUp.pop())

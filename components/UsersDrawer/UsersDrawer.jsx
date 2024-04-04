@@ -78,7 +78,6 @@ const UsersDrawer = () => {
 		role: '',
 		notes: '',
 		isActive: true,
-		isApproved: false,
 		canReceiveEmails: true,
 	})
 
@@ -176,7 +175,6 @@ const UsersDrawer = () => {
 					profileImg: user.profileImg ? [user.profileImg] : [],
 					notes: user.notes,
 					isActive: user.isActive,
-					isApproved: user.isApproved || false,
 					canReceiveEmails: user.canReceiveEmails,
 				}
 			})
@@ -211,7 +209,6 @@ const UsersDrawer = () => {
 				role: '',
 				notes: '',
 				isActive: true,
-				isApproved: false,
 				canReceiveEmails: true,
 			})
 		}
@@ -233,6 +230,7 @@ const UsersDrawer = () => {
 		if (isEditing) {
 			//update
 			await updateUser(user, formValue, imageToBeDeleted)
+			console.log(formValue)
 			setImageToBeDeleted([])
 		} else {
 			//create
@@ -299,34 +297,26 @@ const UsersDrawer = () => {
 					disabled={isLoading}
 					nestedField
 				>
-					<Stack
-						spacing={30}
-						justifyContent='flex-end'
-						style={{
-							marginBottom: '1.5em',
-						}}
-					>
-						<CustomToggle
-							accepter={Toggle}
-							name='isActive'
-							label='Active'
-						/>
-
-						<CustomToggle
-							accepter={Toggle}
-							name='isApproved'
-							label='Approved'
-						/>
-
-						<CustomToggle
-							accepter={Toggle}
-							name='canReceiveEmails'
-							label='Emails'
-						/>
-					</Stack>
-
 					<Panel
-						header='General Information'
+						header={
+							<Stack justifyContent='space-between'>
+								<span>General Information</span>
+
+								<Stack spacing={30}>
+									<CustomToggle
+										accepter={Toggle}
+										name='isActive'
+										label='Active'
+									/>
+
+									<CustomToggle
+										accepter={Toggle}
+										name='canReceiveEmails'
+										label='Emails'
+									/>
+								</Stack>
+							</Stack>
+						}
 						bordered
 						style={{ marginBottom: '1.8em' }}
 					>

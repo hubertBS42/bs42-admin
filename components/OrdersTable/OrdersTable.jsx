@@ -30,6 +30,7 @@ import {
 } from '@/redux/features/orders/ordersSlice'
 import { setDrawerOpen } from '@/redux/features/drawer/drawerSlice'
 import OrderStatus from '../OrderStatus/OrderStatus'
+import Link from 'next/link'
 
 const { Column, HeaderCell, Cell } = Table
 
@@ -84,7 +85,8 @@ const OrdersTable = () => {
 								circle
 								size='sm'
 								appearance='primary'
-								onClick={() => dispatch(setDrawerOpen({ mode: 'add' }))}
+								as={Link}
+								href='/orders/new'
 							/>
 						</Stack>
 					</Stack>

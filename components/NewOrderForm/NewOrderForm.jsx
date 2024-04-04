@@ -62,11 +62,11 @@ const NewOrderForm = ({ handleModalOpen }) => {
 	})
 	const [customer, setCustomer] = useState(null)
 
-	let activeShipping = null
+	let primaryShipping = null
 
 	if (customer) {
-		activeShipping = customer?.shipping.find(
-			address => address.isActive
+		primaryShipping = customer?.shipping.find(
+			address => address.isPrimary
 		)
 	}
 
@@ -419,7 +419,7 @@ const NewOrderForm = ({ handleModalOpen }) => {
 										</Stack>
 									}
 								>
-									{customer.billing ? (
+									{customer.billingActive ? (
 										<Stack
 											direction='column'
 											alignItems='flex-start'
@@ -436,7 +436,9 @@ const NewOrderForm = ({ handleModalOpen }) => {
 											<div>{customer?.billing?.digitalAddress}</div>
 										</Stack>
 									) : (
-										<p style={{ color: '#D4D4D4', fontSize: 13 }}>Not set</p>
+										<p style={{ color: '#D4D4D4', fontSize: 13 }}>
+											A billing address has not been set.
+										</p>
 									)}
 								</Panel>
 
@@ -465,20 +467,26 @@ const NewOrderForm = ({ handleModalOpen }) => {
 										</Stack>
 									}
 								>
-									<Stack
-										direction='column'
-										alignItems='flex-start'
-										style={{ color: '#D4D4D4', fontSize: 13 }}
-									>
-										<div>
-											{activeShipping?.firstName} {activeShipping?.lastName}
-										</div>
-										<div>{activeShipping?.address}</div>
-										<div>
-											{activeShipping?.town}, {activeShipping?.region}
-										</div>
-										<div>{activeShipping?.digitalAddress}</div>
-									</Stack>
+									{primaryShipping ? (
+										<Stack
+											direction='column'
+											alignItems='flex-start'
+											style={{ color: '#D4D4D4', fontSize: 13 }}
+										>
+											<div>
+												{primaryShipping?.firstName} {primaryShipping?.lastName}
+											</div>
+											<div>{primaryShipping?.address}</div>
+											<div>
+												{primaryShipping?.town}, {primaryShipping?.region}
+											</div>
+											<div>{primaryShipping?.digitalAddress}</div>
+										</Stack>
+									) : (
+										<p style={{ color: '#D4D4D4', fontSize: 13 }}>
+											A shipping address has not been set.
+										</p>
+									)}
 								</Panel>
 							</PanelGroup>
 						)}

@@ -66,6 +66,9 @@ ApplicationSchema.pre('save', async function (next) {
 				company: {
 					name: application.company.name,
 				},
+				billingActive: false,
+				billing: null,
+				shipping: [],
 				password: generatePassword({
 					useSymbols: true,
 					useNumbers: true,
