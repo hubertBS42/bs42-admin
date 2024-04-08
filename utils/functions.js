@@ -423,3 +423,13 @@ export const lineClamp = (str, maxLength) => {
 		return str
 	}
 }
+
+export const grabShippingErrors = formError => {
+	let shippingErrors = []
+
+	if (formError.shipping.hasError) {
+		console.log('has errors')
+	} else {
+		console.log('no errors')
+	}
+}

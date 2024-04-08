@@ -5,18 +5,20 @@ import {
 	Col,
 	IconButton,
 	Input,
+	InputPicker,
 	Panel,
 	Row,
-	SelectPicker,
 	Stack,
 } from 'rsuite'
 import PlusIcon from '@rsuite/icons/Plus'
 import TrashIcon from '@rsuite/icons/Trash'
 import { nanoid } from '@reduxjs/toolkit'
 import { useState } from 'react'
+import { useLocation } from '@/hooks/useLocation'
 
-const DeliveryAddresses = ({ addresses, setFormValue, regions }) => {
+const DeliveryAddresses = ({ addresses, setFormValue }) => {
 	const [disabled, setDisabled] = useState(false)
+	const [regions, towns, handleRegion, clearTowns] = useLocation()
 	const handleAdd = () => {
 		setDisabled(true)
 		const index = nanoid()
@@ -144,7 +146,7 @@ const DeliveryAddresses = ({ addresses, setFormValue, regions }) => {
 							<Row style={{ marginBottom: '1.2em' }}>
 								<Col xs={12}>
 									<label style={{ fontSize: 13 }}>Region</label>
-									<SelectPicker
+									<InputPicker
 										name='region'
 										onChange={(val, e) =>
 											handleChange(val, address.index, 'region')

@@ -4,17 +4,22 @@ import {
 	Col,
 	Drawer,
 	Form,
+	IconButton,
 	Input,
+	InputPicker,
 	Panel,
 	Row,
 	Schema,
 	SelectPicker,
 	Stack,
+	Text,
 	Toggle,
 	Uploader,
 } from 'rsuite'
 import CloseIcon from '@rsuite/icons/Close'
 import CheckIcon from '@rsuite/icons/Check'
+import PlusIcon from '@rsuite/icons/Plus'
+
 import CustomToggle from '../CustomToggle/CustomToggle'
 import Field from '../Field/Field'
 import { useDispatch, useSelector } from 'react-redux'
@@ -34,20 +39,24 @@ import {
 
 import ImagesUploader from '../ImagesUploader/ImagesUploader'
 import TextArea from '../TextArea/TextArea'
-import { regions } from '@/utils/data'
 import { selectAllRoles } from '@/redux/features/roles/rolesSlice'
 import { formatData, generatePassword } from '@/utils/functions'
 import DeliveryAddresses from '../DeliveryAddresses/DeliveryAddresses'
 import GeneratePasswordField from '../GeneratePasswordField/GeneratePasswordField'
+import { useLocation } from '@/hooks/useLocation'
+import ShippingAddressPanel from '../ShippingAddressPanel/ShippingAddressPanel'
+import { nanoid } from '@reduxjs/toolkit'
 
 const { StringType, ArrayType, ObjectType, BooleanType } =
 	Schema.Types
 
 const UsersDrawer = () => {
 	const dispatch = useDispatch()
+
 	const formRef = useRef()
 	const [formError, setFormError] = useState({})
 	const [imageToBeDeleted, setImageToBeDeleted] = useState([])
+	const [disabledShippingAdd, setDisabledShippingAdd] = useState(false)
 	const [formValue, setFormValue] = useState({
 		firstName: '',
 		lastName: '',
@@ -120,10 +129,28 @@ const UsersDrawer = () => {
 			phone: StringType(),
 			website: StringType(),
 			region: StringType(),
-			town: StringType(),
+			town: formValue.company.region
+				? StringType().isRequired('You must provide a town.')
+				: StringType(),
 			address: StringType(),
 			digitalAddress: StringType(),
 		}),
+		shipping: ArrayType().of(
+			ObjectType().shape({
+				firstName: StringType().isRequired(
+					'You must provide a first name.'
+				),
+				lastName: StringType().isRequired(
+					'You must provide a last name.'
+				),
+				region: StringType().isRequired('You must provide a region.'),
+				town: StringType().isRequired('You must provide a town.'),
+				address: StringType().isRequired('You must provide an address.'),
+				digitalAddress: StringType().isRequired(
+					'You must provide a digital address.'
+				),
+			})
+		),
 		notes: StringType(),
 		profileImg: ArrayType(),
 		role: StringType().isRequired(
@@ -135,9 +162,21 @@ const UsersDrawer = () => {
 	const isEditing = useSelector(getEditState)
 	const isLoading = useSelector(getDrawerLoadingState)
 	const user = useSelector(getDrawerData)
-	const formattedRegions = regions.map(region => {
-		return { label: region.name, value: region.name }
-	})
+
+	const [
+		companyRegions,
+		companyTowns,
+		handleCompanyRegion,
+		clearCompanyTowns,
+	] = useLocation()
+
+	const [
+		billingRegions,
+		billingTowns,
+		handleBillingRegion,
+		clearBillingTowns,
+	] = useLocation()
+
 	const roles = formatData(useSelector(selectAllRoles))
 
 	const updateForm = user => {
@@ -230,7 +269,6 @@ const UsersDrawer = () => {
 		if (isEditing) {
 			//update
 			await updateUser(user, formValue, imageToBeDeleted)
-			console.log(formValue)
 			setImageToBeDeleted([])
 		} else {
 			//create
@@ -255,6 +293,29 @@ const UsersDrawer = () => {
 
 		setFormValue(prev => {
 			return { ...prev, password: randPassword }
+		})
+	}
+
+	const handleAddShippingAddress = () => {
+		setDisabledShippingAdd(true)
+		const index = nanoid()
+		setFormValue(prev => {
+			return {
+				...prev,
+				shipping: [
+					...formValue.shipping,
+					{
+						index,
+						firstName: '',
+						lastName: '',
+						address: '',
+						digitalAddress: '',
+						town: '',
+						region: '',
+						isPrimary: formValue.shipping.length >= 1 ? false : true,
+					},
+				],
+			}
 		})
 	}
 
@@ -467,17 +528,31 @@ const UsersDrawer = () => {
 								<Field
 									name='company.region'
 									label='Region'
-									accepter={SelectPicker}
+									accepter={InputPicker}
 									error={formError?.company?.region}
-									data={formattedRegions}
+									data={companyRegions}
+									onSelect={value => handleCompanyRegion(value)}
+									onChange={() => {
+										setFormValue(prev => {
+											return {
+												...prev,
+												company: { ...formValue.company, town: '' },
+											}
+										})
+									}}
+									onClean={() => {
+										clearCompanyTowns()
+									}}
 								/>
 							</Col>
 							<Col xs={12}>
 								<Field
 									name='company.town'
 									label='Town'
-									accepter={Input}
+									accepter={InputPicker}
 									error={formError?.company?.town}
+									data={companyTowns}
+									disabled={companyTowns.length === 0}
 								/>
 							</Col>
 						</Row>
@@ -539,17 +614,31 @@ const UsersDrawer = () => {
 										<Field
 											name='billing.region'
 											label='Region'
-											accepter={SelectPicker}
+											accepter={InputPicker}
 											error={formError?.billing?.region}
-											data={formattedRegions}
+											data={billingRegions}
+											onSelect={value => handleBillingRegion(value)}
+											onChange={() => {
+												setFormValue(prev => {
+													return {
+														...prev,
+														billing: { ...formValue.billing, town: '' },
+													}
+												})
+											}}
+											onClean={() => {
+												clearBillingTowns()
+											}}
 										/>
 									</Col>
 									<Col xs={12}>
 										<Field
 											name='billing.town'
 											label='Town'
-											accepter={Input}
+											accepter={InputPicker}
 											error={formError?.billing?.town}
+											data={billingTowns}
+											disabled={billingTowns.length === 0}
 										/>
 									</Col>
 								</Row>
@@ -576,11 +665,62 @@ const UsersDrawer = () => {
 						)}
 					</Panel>
 
-					<DeliveryAddresses
+					<Panel
+						header={
+							<Stack justifyContent='space-between'>
+								<span>Shipping Addresses</span>
+								<IconButton
+									icon={<PlusIcon />}
+									circle
+									size='xs'
+									appearance='primary'
+									onClick={handleAddShippingAddress}
+									disabled={disabledShippingAdd}
+								/>
+							</Stack>
+						}
+						bordered
+					>
+						{formValue.shipping.length > 0 ? (
+							<div
+								style={{
+									display: 'flex',
+									flexDirection: 'column',
+									rowGap: '1.5em',
+								}}
+							>
+								{formValue.shipping.map((address, i) => (
+									<ShippingAddressPanel
+										key={address.index}
+										address={address}
+										setFormValue={setFormValue}
+										formValue={formValue}
+										setDisabled={setDisabledShippingAdd}
+										i={i}
+										errors={
+											formError?.shipping?.hasError
+												? formError.shipping.array
+												: []
+										}
+									/>
+								))}
+							</div>
+						) : (
+							<Text
+								align='center'
+								muted
+								size='sm'
+								style={{ marginTop: '1em', marginBottom: '2em' }}
+							>
+								There are no shipping addresses for this user.
+							</Text>
+						)}
+					</Panel>
+
+					{/* <DeliveryAddresses
 						addresses={formValue.shipping}
 						setFormValue={setFormValue}
-						regions={formattedRegions}
-					/>
+					/> */}
 				</Form>
 			</Drawer.Body>
 		</Drawer>
