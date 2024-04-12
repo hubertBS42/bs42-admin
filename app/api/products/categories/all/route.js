@@ -10,7 +10,22 @@ export const GET = async request => {
 		const categories = await Category.find()
 			.collation({ locale: 'en' })
 			.sort({ name: 'asc' })
-			.select('name slug parent images isActive')
+			.populate({
+				path: 'parent',
+				select: 'name parent',
+				populate: {
+					path: 'parent',
+					select: 'name parent',
+					populate: {
+						path: 'parent',
+						select: 'name parent',
+						populate: {
+							path: 'parent',
+							select: 'name',
+						},
+					},
+				},
+			})
 			.lean()
 
 		return new Response(
