@@ -6,6 +6,7 @@ import {
 	Drawer,
 	Form,
 	Input,
+	InputPicker,
 	Panel,
 	Row,
 	Schema,
@@ -22,44 +23,80 @@ import {
 	getEditState,
 	setDrawerClose,
 } from '@/redux/features/drawer/drawerSlice'
+import { useLocation } from '@/hooks/useLocation'
 
 const { StringType, ObjectType } = Schema.Types
 
-const model = Schema.Model({
-	firstName: StringType().isRequired('This field is required.'),
-	lastName: StringType().isRequired('This field is required.'),
-	phone1: StringType().isRequired('This field is required.'),
-	email: StringType().isRequired('This field is required.'),
-	billing: ObjectType().shape({
-		firstName: StringType().isRequired('This field is required.'),
-		lastName: StringType().isRequired('This field is required.'),
-		address: StringType().isRequired('This field is required.'),
-		town: StringType().isRequired('This field is required.'),
-		region: StringType().isRequired('This field is required.'),
-		digitalAddress: StringType().isRequired('This field is required.'),
-	}),
-	shipping: ObjectType().shape({
-		firstName: StringType().isRequired('This field is required.'),
-		lastName: StringType().isRequired('This field is required.'),
-		address: StringType().isRequired('This field is required.'),
-		town: StringType().isRequired('This field is required.'),
-		region: StringType().isRequired('This field is required.'),
-		digitalAddress: StringType().isRequired('This field is required.'),
-	}),
-})
-
-const ManageOrderCustomerDrawer = ({ setCustomer }) => {
+const ManageOrderCustomerDrawer = ({
+	setCustomer,
+	shipmentMethod,
+}) => {
+	const model = Schema.Model({
+		contact: ObjectType().shape({
+			firstName: StringType().isRequired('This field is required.'),
+			lastName: StringType().isRequired('This field is required.'),
+			phone: StringType().isRequired('This field is required.'),
+			email: StringType().isRequired('This field is required.'),
+		}),
+		billing: ObjectType().shape({
+			firstName: StringType().isRequired('This field is required.'),
+			lastName: StringType().isRequired('This field is required.'),
+			address: StringType().isRequired('This field is required.'),
+			town: StringType().isRequired('This field is required.'),
+			region: StringType().isRequired('This field is required.'),
+			digitalAddress: StringType().isRequired('This field is required.'),
+		}),
+		shipping: ObjectType().shape({
+			firstName:
+				shipmentMethod === 'delivery'
+					? StringType().isRequired('This field is required.')
+					: StringType(),
+			lastName:
+				shipmentMethod === 'delivery'
+					? StringType().isRequired('This field is required.')
+					: StringType(),
+			address:
+				shipmentMethod === 'delivery'
+					? StringType().isRequired('This field is required.')
+					: StringType(),
+			town:
+				shipmentMethod === 'delivery'
+					? StringType().isRequired('This field is required.')
+					: StringType(),
+			region:
+				shipmentMethod === 'delivery'
+					? StringType().isRequired('This field is required.')
+					: StringType(),
+			digitalAddress:
+				shipmentMethod === 'delivery'
+					? StringType().isRequired('This field is required.')
+					: StringType(),
+		}),
+	})
 	const dispatch = useDispatch()
+	const [
+		billingRegions,
+		billingTowns,
+		handleBillingRegion,
+		clearBillingTowns,
+	] = useLocation()
+
+	const [
+		shippingRegions,
+		shippingTowns,
+		handleShippingRegion,
+		clearShippingTowns,
+	] = useLocation()
 	const formRef = useRef()
 	const [formError, setFormError] = useState({})
 	const [formValue, setFormValue] = useState({
 		user: '',
-		firstName: '',
-		lastName: '',
-		email: '',
-		phone1: '',
-		label: '',
-		profileImg: null,
+		contact: {
+			firstName: '',
+			lastName: '',
+			email: '',
+			phone: '',
+		},
 		billingActive: true,
 		billing: {
 			firstName: '',
@@ -76,7 +113,6 @@ const ManageOrderCustomerDrawer = ({ setCustomer }) => {
 			town: '',
 			region: '',
 			digitalAddress: '',
-			isPrimary: true,
 		},
 	})
 
@@ -86,18 +122,16 @@ const ManageOrderCustomerDrawer = ({ setCustomer }) => {
 
 	const updateForm = customer => {
 		if (isEditing) {
-			const primaryShipping = customer.shipping.find(
-				address => address.isPrimary
-			)
 			setFormValue(prev => {
 				return {
 					...prev,
-					user: customer?._id || '',
-					firstName: customer.firstName,
-					lastName: customer.lastName,
-					email: customer.email,
-					phone1: customer.phone1,
-					label: customer.label,
+					user: customer.user,
+					contact: {
+						firstName: customer.contact.firstName,
+						lastName: customer.contact.lastName,
+						email: customer.contact.email,
+						phone: customer.contact.phone,
+					},
 					profileImg: customer?.profileImg || null,
 					billingActive: true,
 					billing: {
@@ -109,25 +143,24 @@ const ManageOrderCustomerDrawer = ({ setCustomer }) => {
 						digitalAddress: customer?.billing?.digitalAddress || '',
 					},
 					shipping: {
-						firstName: primaryShipping?.firstName || '',
-						lastName: primaryShipping?.lastName || '',
-						address: primaryShipping?.address || '',
-						town: primaryShipping?.town || '',
-						region: primaryShipping?.region || '',
-						digitalAddress: primaryShipping?.digitalAddress || '',
-						isPrimary: true,
+						firstName: customer?.shipping?.firstName || '',
+						lastName: customer?.shipping?.lastName || '',
+						address: customer?.shipping?.address || '',
+						town: customer?.shipping?.town || '',
+						region: customer?.shipping?.region || '',
+						digitalAddress: customer?.shipping?.digitalAddress || '',
 					},
 				}
 			})
 		} else {
 			setFormValue({
 				user: '',
-				firstName: '',
-				lastName: '',
-				email: '',
-				phone1: '',
-				label: '',
-				profileImg: null,
+				contact: {
+					firstName: '',
+					lastName: '',
+					email: '',
+					phone: '',
+				},
 				billingActive: true,
 				billing: {
 					firstName: '',
@@ -144,7 +177,6 @@ const ManageOrderCustomerDrawer = ({ setCustomer }) => {
 					town: '',
 					region: '',
 					digitalAddress: '',
-					isPrimary: true,
 				},
 			})
 		}
@@ -157,18 +189,11 @@ const ManageOrderCustomerDrawer = ({ setCustomer }) => {
 			return
 		}
 
-		if (isEditing) {
-			setCustomer({
-				...formValue,
-				shipping: [formValue.shipping],
-			})
-		} else {
-			setCustomer({
-				...formValue,
-				shipping: [formValue.shipping],
-				label: `${formValue.firstName} ${formValue.lastName}`,
-			})
-		}
+		setCustomer({
+			...formValue,
+			shipping:
+				shipmentMethod === 'delivery' ? formValue.shipping : null,
+		})
 
 		dispatch(setDrawerClose())
 	}
@@ -214,19 +239,19 @@ const ManageOrderCustomerDrawer = ({ setCustomer }) => {
 							<Row style={{ marginBottom: '1.4em' }}>
 								<Col xs={12}>
 									<Field
-										name='firstName'
+										name='contact.firstName'
 										label='First name'
 										accepter={Input}
-										error={formError?.firstName}
+										error={formError?.contact?.firstName}
 										readOnly={isEditing}
 									/>
 								</Col>
 								<Col xs={12}>
 									<Field
-										name='lastName'
+										name='contact.lastName'
 										label='Last name'
 										accepter={Input}
-										error={formError?.lastName}
+										error={formError?.contact?.lastName}
 										readOnly={isEditing}
 									/>
 								</Col>
@@ -235,19 +260,19 @@ const ManageOrderCustomerDrawer = ({ setCustomer }) => {
 							<Row style={{ marginBottom: '1.4em' }}>
 								<Col xs={12}>
 									<Field
-										name='email'
+										name='contact.email'
 										label='Email'
 										accepter={Input}
-										error={formError?.email}
+										error={formError?.contact?.email}
 										readOnly={isEditing}
 									/>
 								</Col>
 								<Col xs={12}>
 									<Field
-										name='phone1'
+										name='contact.phone'
 										label='Phone'
 										accepter={Input}
-										error={formError?.phone1}
+										error={formError?.contact?.phone}
 										readOnly={isEditing}
 									/>
 								</Col>
@@ -279,16 +304,31 @@ const ManageOrderCustomerDrawer = ({ setCustomer }) => {
 									<Field
 										name='billing.region'
 										label='Region'
-										accepter={Input}
+										accepter={InputPicker}
 										error={formError?.billing?.region}
+										data={billingRegions}
+										onSelect={value => handleBillingRegion(value)}
+										onChange={() => {
+											setFormValue(prev => {
+												return {
+													...prev,
+													billing: { ...formValue.billing, town: '' },
+												}
+											})
+										}}
+										onClean={() => {
+											clearBillingTowns()
+										}}
 									/>
 								</Col>
 								<Col xs={12}>
 									<Field
 										name='billing.town'
 										label='Town'
-										accepter={Input}
+										accepter={InputPicker}
 										error={formError?.billing?.town}
+										data={billingTowns}
+										disabled={billingTowns.length === 0}
 									/>
 								</Col>
 							</Row>
@@ -315,67 +355,84 @@ const ManageOrderCustomerDrawer = ({ setCustomer }) => {
 								</Col>
 							</Row>
 						</Panel>
-						<Panel header='Shipping' bordered>
-							<Row style={{ marginBottom: '1.4em' }}>
-								<Col xs={12}>
-									<Field
-										name='shipping.firstName'
-										label='First name'
-										accepter={Input}
-										error={formError?.shipping?.firstName}
-									/>
-								</Col>
-								<Col xs={12}>
-									<Field
-										name='shipping.lastName'
-										label='Last name'
-										accepter={Input}
-										error={formError?.shipping?.lastName}
-									/>
-								</Col>
-							</Row>
+						{shipmentMethod === 'delivery' && (
+							<Panel header='Shipping' bordered>
+								<Row style={{ marginBottom: '1.4em' }}>
+									<Col xs={12}>
+										<Field
+											name='shipping.firstName'
+											label='First name'
+											accepter={Input}
+											error={formError?.shipping?.firstName}
+										/>
+									</Col>
+									<Col xs={12}>
+										<Field
+											name='shipping.lastName'
+											label='Last name'
+											accepter={Input}
+											error={formError?.shipping?.lastName}
+										/>
+									</Col>
+								</Row>
 
-							<Row style={{ marginBottom: '1.4em' }}>
-								<Col xs={12}>
-									<Field
-										name='shipping.region'
-										label='Region'
-										accepter={Input}
-										error={formError?.shipping?.region}
-									/>
-								</Col>
-								<Col xs={12}>
-									<Field
-										name='shipping.town'
-										label='Town'
-										accepter={Input}
-										error={formError?.shipping?.town}
-									/>
-								</Col>
-							</Row>
+								<Row style={{ marginBottom: '1.4em' }}>
+									<Col xs={12}>
+										<Field
+											name='shipping.region'
+											label='Region'
+											accepter={InputPicker}
+											error={formError?.shipping?.region}
+											data={shippingRegions}
+											onSelect={value => handleShippingRegion(value)}
+											onChange={() => {
+												setFormValue(prev => {
+													return {
+														...prev,
+														shipping: { ...formValue.shipping, town: '' },
+													}
+												})
+											}}
+											onClean={() => {
+												clearShippingTowns()
+											}}
+										/>
+									</Col>
+									<Col xs={12}>
+										<Field
+											name='shipping.town'
+											label='Town'
+											accepter={InputPicker}
+											error={formError?.shipping?.town}
+											data={shippingTowns}
+											disabled={shippingTowns.length === 0}
+										/>
+									</Col>
+								</Row>
 
-							<Row style={{ marginBottom: '1.4em' }}>
-								<Col xs={24}>
-									<Field
-										name='shipping.address'
-										label='Address'
-										accepter={Input}
-										error={formError?.shipping?.address}
-									/>
-								</Col>
-							</Row>
+								<Row style={{ marginBottom: '1.4em' }}>
+									<Col xs={24}>
+										<Field
+											name='shipping.address'
+											label='Address'
+											accepter={Input}
+											error={formError?.shipping?.address}
+										/>
+									</Col>
+								</Row>
 
-							<Row style={{ marginBottom: '1.4em' }}>
-								<Col xs={24}>
-									<Field
-										name='shipping.digitalAddress'
-										label='Digital address'
-										accepter={Input}
-										error={formError?.shipping?.digitalAddress}
-									/>
-								</Col>
-							</Row>
-						</Panel>
+								<Row style={{ marginBottom: '1.4em' }}>
+									<Col xs={24}>
+										<Field
+											name='shipping.digitalAddress'
+											label='Digital address'
+											accepter={Input}
+											error={formError?.shipping?.digitalAddress}
+										/>
+									</Col>
+								</Row>
+							</Panel>
+						)}
 					</Stack>
 				</Form>
 			</Drawer.Body>

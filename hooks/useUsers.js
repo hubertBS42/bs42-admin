@@ -24,17 +24,17 @@ export const useUsers = (defaultUsers = []) => {
 				)
 
 				if (status === 'success') {
-					const formatted = data.map(user => {
-						return {
-							...user,
-							label:
-								user.lastName === ''
-									? user.firstName
-									: user.firstName + ' ' + user.lastName,
-							value: user._id,
-						}
-					})
-					setUsers(formatted)
+					// const formatted = data.map(user => {
+					// 	return {
+					// 		...user,
+					// 		label:
+					// 			user.lastName === ''
+					// 				? user.firstName
+					// 				: user.firstName + ' ' + user.lastName,
+					// 		value: user._id,
+					// 	}
+					// })
+					setUsers(data)
 				} else {
 					console.log('Could not fetch users.')
 				}

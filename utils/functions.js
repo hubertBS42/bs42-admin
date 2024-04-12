@@ -424,12 +424,9 @@ export const lineClamp = (str, maxLength) => {
 	}
 }
 
-export const grabShippingErrors = formError => {
-	let shippingErrors = []
+export const genFullName = (firstName, lastName) => {
+	const fullName =
+		lastName === '' ? firstName : firstName + ' ' + lastName
 
-	if (formError.shipping.hasError) {
-		console.log('has errors')
-	} else {
-		console.log('no errors')
-	}
+	return fullName
 }

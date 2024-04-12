@@ -9,6 +9,22 @@ export const GET = async (request, { params }) => {
 
 		const category = await Category.findById(params.id)
 			.collation({ locale: 'en' })
+			.populate({
+				path: 'parent',
+				select: 'name parent',
+				populate: {
+					path: 'parent',
+					select: 'name parent',
+					populate: {
+						path: 'parent',
+						select: 'name parent',
+						populate: {
+							path: 'parent',
+							select: 'name',
+						},
+					},
+				},
+			})
 			.lean()
 
 		if (!category) {

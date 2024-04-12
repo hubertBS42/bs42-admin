@@ -29,6 +29,7 @@ const OrderSchema = new mongoose.Schema(
 			address: { type: String },
 			digitalAddress: { type: String },
 			method: { type: String },
+			cost: { type: Number, default: 0 },
 			status: { type: String, default: 'pending' },
 		},
 		invoice: {
@@ -36,8 +37,12 @@ const OrderSchema = new mongoose.Schema(
 			date: { type: Date },
 			dueDate: { type: Date },
 		},
-		status: { type: String, default: 'pending' }, //pending, cancelled, processing, shipped, completed
+		status: { type: String, default: 'placed' }, //placed, pending, confirmed, rejected, ready/shipped, delivering, pickedUp/delivered
 		rate: { type: Number },
+		discount: {
+			percentage: { type: Number, default: 0 },
+			reason: { type: String, default: null },
+		},
 		products: [
 			{
 				productRef: {
@@ -56,8 +61,8 @@ const OrderSchema = new mongoose.Schema(
 				price: { type: Number },
 			},
 		],
-		totalPrice: { type: Number },
-
+		total: { type: Number },
+		subtotal: { type: Number },
 		payment: {
 			method: { type: String },
 			status: { type: String, default: 'pending' },

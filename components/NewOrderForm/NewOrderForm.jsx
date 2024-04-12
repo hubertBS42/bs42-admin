@@ -6,21 +6,29 @@ import {
 	totalCartItemSelector,
 	totalPriceSelector,
 } from '@/redux/features/cart/cartSlice'
-import { roundMoney } from '@/utils/functions'
+import { genFullName, roundMoney } from '@/utils/functions'
 import Image from 'next/image'
 import { useDispatch, useSelector } from 'react-redux'
 import {
 	Button,
+	ButtonGroup,
+	ButtonToolbar,
 	Col,
 	Grid,
-	InlineEdit,
 	Input,
 	InputNumber,
 	InputPicker,
 	Panel,
 	PanelGroup,
+	Popover,
+	Radio,
+	RadioGroup,
 	Row,
+	SelectPicker,
 	Stack,
+	Steps,
+	Text,
+	Whisper,
 } from 'rsuite'
 
 import SpinnerIcon from '@rsuite/icons/legacy/Spinner'
@@ -31,6 +39,8 @@ import { useEffect, useState } from 'react'
 import { useUsers } from '@/hooks/useUsers'
 import { setDrawerOpen } from '@/redux/features/drawer/drawerSlice'
 import ManageOrderCustomerDrawer from '../ManageOrderCustomerDrawer/ManageOrderCustomerDrawer'
+import AddDiscountPopover from '../AddDiscountPopover/AddDiscountPopover'
+import AddShippingPopover from '../AddShippingPopper/AddShippingPopover'
 
 const NewOrderForm = ({ handleModalOpen }) => {
 	const [users, loading, searchUsers] = useUsers()
@@ -40,52 +50,240 @@ const NewOrderForm = ({ handleModalOpen }) => {
 	const cartPriceTotal = useSelector(totalPriceSelector)
 	const cartItemsTotal = useSelector(totalCartItemSelector)
 
-	const [discount, setDiscount] = useState(0)
-	const [shipping, setShipping] = useState(0)
-	const [subtotal, setSubtotal] = useState(0)
+	// const [orderStatus, setOrderStatus] = useState('processing')
+
+	const [customer, setCustomer] = useState(null)
+	const [isLoading, setIsLoading] = useState(false)
 	const [total, setTotal] = useState(0)
-	const [orderValues, setOrderValues] = useState({
-		user: '',
-		label: '',
-		profileImg: null,
-		contact: null,
-		billing: null,
-		shipping: null,
-		status: 'pending',
-		rate: 0,
-		products: [],
-		totalPrice: 0,
+	const [subtotal, setSubtotal] = useState(0)
+	const [enableSubmit, setEnableSubmit] = useState(false)
+	const [orderDetails, setOrderDetails] = useState({
+		shipping: {
+			method: 'pickup',
+			status: 'pending',
+			cost: 0,
+		},
 		payment: {
-			method: '',
+			method: 'cash',
 			status: 'pending',
 		},
+		subtotal: 0,
+		total: 0,
+		discount: {
+			percentage: 0,
+			reason: '',
+		},
+		notes: '',
 	})
-	const [customer, setCustomer] = useState(null)
 
-	let primaryShipping = null
+	const handleCalculations = () => {
+		const discountValue =
+			(Number(orderDetails.discount.percentage) / 100) * cartPriceTotal
+		const discountDifference = cartPriceTotal - discountValue
 
-	if (customer) {
-		primaryShipping = customer?.shipping.find(
-			address => address.isPrimary
+		setOrderDetails(prev => ({
+			...prev,
+			subtotal: discountDifference,
+			total: discountDifference + Number(orderDetails.shipping.cost),
+		}))
+		setSubtotal(discountDifference * rate)
+		setTotal(
+			discountDifference * rate +
+				Number(orderDetails.shipping.cost) * rate
 		)
 	}
 
-	const handleCalculations = () => {
-		const discountValue = (Number(discount) / 100) * cartPriceTotal
-		const discountDifference = cartPriceTotal - discountValue
-		const grandTotal = discountDifference * rate + Number(shipping)
-		setSubtotal(discountDifference * rate)
-		setTotal(grandTotal)
+	const handleEnableSubmit = () => {
+		let shippingCost
+		let shippingAddress
+
+		if (orderDetails.shipping.method === 'delivery') {
+			if (orderDetails.shipping.cost > 0) {
+				shippingCost = true
+			} else {
+				shippingCost = false
+			}
+
+			if (customer?.shipping) {
+				shippingAddress = true
+			} else {
+				shippingAddress = false
+			}
+		} else {
+			shippingCost = false
+			shippingAddress = false
+		}
+
+		const providedFields = [
+			{
+				field: 'products',
+				required: true,
+				provided: cartItemsTotal === 0 ? false : true,
+			},
+			{
+				field: 'customer',
+				required: true,
+				provided: !customer ? false : true,
+			},
+			{
+				field: 'shippingCost',
+				required:
+					orderDetails.shipping.method === 'delivery' ? true : false,
+				provided: shippingCost,
+			},
+			{
+				field: 'shippingAddress',
+				required:
+					orderDetails.shipping.method === 'delivery' ? true : false,
+				provided: shippingAddress,
+			},
+			{
+				field: 'billingAddress',
+				required: true,
+				provided: customer?.billingActive ? true : false,
+			},
+		]
+
+		const missing = element => element.required && !element.provided
+
+		const result = providedFields.some(missing)
+
+		setEnableSubmit(result)
+	}
+
+	// const orderStatusSteps = [
+	// 	{ label: 'Processing', value: 'processing' },
+	// 	{ label: 'Shipped', value: 'shipped' },
+	// 	{ label: 'Completed', value: 'completed' },
+	// ]
+
+	// const renderSteps = (current, steps) => {
+	// 	return (
+	// 		<Steps current={steps.findIndex(step => step.value === current)}>
+	// 			{steps.map(step => (
+	// 				<Steps.Item title={step.label} key={step.label} />
+	// 			))}
+	// 		</Steps>
+	// 	)
+	// }
+
+	const handleSubmit = () => {
+		const { shipping, billingActive, profileImg, ...rest } =
+			orderDetails
+
+		const preparedData = {
+			...customer,
+			shipping: {
+				firstName:
+					orderDetails.shipping.method === 'pickup'
+						? ''
+						: customer.shipping.firstName,
+				lastName:
+					orderDetails.shipping.method === 'pickup'
+						? ''
+						: customer.shipping.lastName,
+				region:
+					orderDetails.shipping.method === 'pickup'
+						? ''
+						: customer.shipping.region,
+				town:
+					orderDetails.shipping.method === 'pickup'
+						? ''
+						: customer.shipping.town,
+				address:
+					orderDetails.shipping.method === 'pickup'
+						? ''
+						: customer.shipping.address,
+				digitalAddress:
+					orderDetails.shipping.method === 'pickup'
+						? ''
+						: customer.shipping.digitalAddress,
+				town:
+					orderDetails.shipping.method === 'pickup'
+						? ''
+						: customer.shipping.town,
+				method: orderDetails.shipping.method,
+				cost:
+					orderDetails.shipping.method === 'delivery'
+						? orderDetails.shipping.cost
+						: 0,
+				status: orderDetails.shipping.status,
+			},
+			products: items?.map(item => ({
+				productRef: item.product._id || null,
+				title: item.product.title,
+				brand: {
+					name: item.product.brand.name,
+				},
+				category: [
+					item?.product?.category?.name,
+					item?.product?.category?.parent?.name,
+					item?.product?.category?.parent?.parent?.name,
+				],
+				images: item.product.images,
+				quantity: item.quantity,
+				price: item.product.sellPrice,
+			})),
+			rate,
+			status: 'confirmed',
+			...rest,
+		}
+
+		console.log(preparedData)
 	}
 
 	useEffect(() => {
 		handleCalculations()
-	}, [cartItemsTotal])
+		handleEnableSubmit()
+	}, [
+		cartItemsTotal,
+		orderDetails.discount.percentage,
+		orderDetails.shipping.cost,
+		customer,
+	])
 
 	return (
 		<>
-			<ManageOrderCustomerDrawer setCustomer={setCustomer} />
+			<ManageOrderCustomerDrawer
+				setCustomer={setCustomer}
+				shipmentMethod={orderDetails.shipping.method}
+			/>
+			<Stack justifyContent='flex-end' style={{ marginBottom: 16 }}>
+				<ButtonToolbar>
+					<Button
+						appearance='primary'
+						onClick={handleSubmit}
+						disabled={enableSubmit}
+					>
+						Create order
+					</Button>
+					<Button>Cancel</Button>
+				</ButtonToolbar>
+			</Stack>
 			<Grid fluid>
+				{/* <Row style={{ marginBottom: 10 }}>
+					<Col xs={24}>
+						<Panel
+							header={
+								<Stack justifyContent='space-between'>
+									<span>Order status</span>
+									<SelectPicker
+										data={orderStatusSteps}
+										searchable={false}
+										cleanable={false}
+										style={{ width: 224 }}
+										defaultValue='processing'
+										// disabledItemValues={['processing']}
+										onSelect={setOrderStatus}
+									/>
+								</Stack>
+							}
+							bordered
+						>
+							{renderSteps(orderStatus, orderStatusSteps)}
+						</Panel>
+					</Col>
+				</Row> */}
 				<Row>
 					<Col xs={16}>
 						<PanelGroup bordered>
@@ -184,9 +382,9 @@ const NewOrderForm = ({ handleModalOpen }) => {
 										spacing={20}
 										style={{ margin: '50px 0' }}
 									>
-										<p style={{ textAlign: 'center', color: '#D4D4D4' }}>
+										<Text muted align='center'>
 											Items have not been added to this order.
-										</p>
+										</Text>
 										<Button
 											appearance='primary'
 											size='xs'
@@ -199,10 +397,15 @@ const NewOrderForm = ({ handleModalOpen }) => {
 
 								<Row style={{ marginTop: 30 }}>
 									<Col xs={14}>
-										<label style={{ display: 'flex', marginBottom: 5 }}>
-											Notes:
-										</label>
-										<Input as='textarea' placeholder='Add a note...' />
+										<Text style={{ marginBottom: 5 }}>Notes:</Text>
+										<Input
+											as='textarea'
+											placeholder='Add a note...'
+											value={orderDetails.notes}
+											onChange={notes =>
+												setOrderDetails(prev => ({ ...prev, notes }))
+											}
+										/>
 									</Col>
 
 									<Col xs={10} style={{ fontSize: 12, color: '#D4D4D4' }}>
@@ -212,47 +415,39 @@ const NewOrderForm = ({ handleModalOpen }) => {
 												marginBottom: 12,
 											}}
 										>
-											<Col xs={9} style={{ paddingTop: 6 }}>
-												<span>Discount (%)</span>
+											<Col xs={9}>
+												<AddDiscountPopover
+													orderDetails={orderDetails}
+													setOrderDetails={setOrderDetails}
+													cartItemsTotal={cartItemsTotal}
+												/>
 											</Col>
 											<Col xs={15}>
-												<InlineEdit
-													placeholder='--'
-													style={{ width: 75 }}
-													size='sm'
-													className='custom-number'
-													onChange={setDiscount}
-													onSave={handleCalculations}
-												>
-													<InputNumber />
-												</InlineEdit>
+												<Text>% {orderDetails.discount.percentage}</Text>
 											</Col>
 										</Row>
 
 										<Row style={{ textAlign: 'right', marginBottom: 12 }}>
 											<Col xs={9}>
-												<span>Subtotal (GHS)</span>
+												<Text>Subtotal</Text>
 											</Col>
 											<Col xs={15}>
-												<span>{roundMoney(subtotal)}</span>
+												<Text>GHS {roundMoney(subtotal)}</Text>
 											</Col>
 										</Row>
 
 										<Row style={{ textAlign: 'right', marginBottom: 12 }}>
 											<Col xs={9}>
-												<span>Shipping (GHS)</span>
+												<AddShippingPopover
+													orderDetails={orderDetails}
+													setOrderDetails={setOrderDetails}
+													rate={rate}
+												/>
 											</Col>
 											<Col xs={15}>
-												<InlineEdit
-													placeholder='--'
-													size='sm'
-													className='custom-number'
-													style={{ width: 75 }}
-													onChange={setShipping}
-													onSave={handleCalculations}
-												>
-													<InputNumber />
-												</InlineEdit>
+												<Text>
+													GHS {roundMoney(orderDetails.shipping.cost * rate)}
+												</Text>
 											</Col>
 										</Row>
 
@@ -273,17 +468,96 @@ const NewOrderForm = ({ handleModalOpen }) => {
 
 										<Row style={{ textAlign: 'right' }}>
 											<Col xs={9}>
-												<span>Total (GHS)</span>
+												<Text>Total</Text>
 											</Col>
 											<Col xs={15}>
-												<span>{roundMoney(total)}</span>
+												<Text>GHS {roundMoney(total)}</Text>
 											</Col>
 										</Row>
 									</Col>
 								</Row>
 							</Panel>
-							<Panel header='Payment method'></Panel>
-							<Panel header='Shipment method'></Panel>
+							<Panel
+								header={
+									<Stack justifyContent='space-between'>
+										<span>Payment method</span>
+										<SelectPicker
+											data={[
+												{ label: 'Pending', value: 'pending' },
+												{ label: 'Paid', value: 'paid' },
+											]}
+											label='Status'
+											searchable={false}
+											cleanable={false}
+											style={{ width: 224 }}
+											defaultValue={orderDetails.payment.status}
+											onSelect={status =>
+												setOrderDetails(prev => ({
+													...prev,
+													payment: { ...orderDetails.payment, status },
+												}))
+											}
+										/>
+									</Stack>
+								}
+							>
+								<RadioGroup
+									value={orderDetails.payment.method}
+									onChange={method =>
+										setOrderDetails(prev => ({
+											...prev,
+											payment: { ...orderDetails.payment, method },
+										}))
+									}
+								>
+									<Radio value='cash'>Cash</Radio>
+									<Radio value='mobile money' disabled>
+										Mobile money
+									</Radio>
+								</RadioGroup>
+							</Panel>
+
+							<Panel
+								header={
+									<Stack justifyContent='space-between'>
+										<span>Shipment method</span>
+										<SelectPicker
+											data={[
+												{ label: 'Pending', value: 'pending' },
+												{ label: 'Completed', value: 'completed' },
+											]}
+											label='Status'
+											searchable={false}
+											cleanable={false}
+											style={{ width: 224 }}
+											defaultValue={orderDetails.shipping.status}
+											onSelect={status =>
+												setOrderDetails(prev => ({
+													...prev,
+													shipping: { ...orderDetails.shipping, status },
+												}))
+											}
+										/>
+									</Stack>
+								}
+							>
+								<RadioGroup
+									value={orderDetails.shipping.method}
+									onChange={method =>
+										setOrderDetails(prev => ({
+											...prev,
+											shipping: {
+												...orderDetails.shipping,
+												method,
+												cost: method === 'pickup' && 0,
+											},
+										}))
+									}
+								>
+									<Radio value='pickup'>Pickup</Radio>
+									<Radio value='delivery'>Delivery</Radio>
+								</RadioGroup>
+							</Panel>
 						</PanelGroup>
 					</Col>
 					<Col xs={8}>
@@ -308,9 +582,37 @@ const NewOrderForm = ({ handleModalOpen }) => {
 									onSearch={searchUsers}
 									placeholder='Find customer'
 									data={users.map(user => {
-										return { label: user.label, value: JSON.stringify(user) }
+										return {
+											label: genFullName(user.firstName, user.lastName),
+											value: JSON.stringify(user),
+										}
 									})}
-									onSelect={value => setCustomer(JSON.parse(value))}
+									onSelect={value => {
+										const data = JSON.parse(value)
+										const preparedData = {
+											user: data._id,
+											contact: {
+												firstName: data.firstName,
+												lastName: data.lastName,
+												email: data.email,
+												phone: data.phone1,
+											},
+											billingActive: data.billingActive,
+											billing: {
+												firstName: data?.billing?.firstName,
+												lastName: data?.billing?.lastName,
+												region: data?.billing?.region,
+												town: data?.billing?.town,
+												address: data?.billing?.address,
+												digitalAddress: data?.billing?.digitalAddress,
+											},
+											shipping: data?.shipping.find(
+												address => address.isPrimary
+											),
+											profileImg: data?.profileImg || null,
+										}
+										setCustomer(preparedData)
+									}}
 									block
 									renderMenu={menu => {
 										if (loading) {
@@ -341,14 +643,14 @@ const NewOrderForm = ({ handleModalOpen }) => {
 													appearance='link'
 													size='sm'
 													style={{ padding: 0 }}
-													onClick={() =>
+													onClick={() => {
 														dispatch(
 															setDrawerOpen({
 																mode: 'edit',
 																data: customer,
 															})
 														)
-													}
+													}}
 												>
 													Edit
 												</Button>
@@ -377,48 +679,32 @@ const NewOrderForm = ({ handleModalOpen }) => {
 										>
 											<Image
 												src={customer?.profileImg?.url || '/images/profile.png'}
-												alt={customer.label}
+												alt={genFullName(
+													customer.contact.firstName,
+													customer.contact.lastName
+												)}
 												fill
 												sizes='(max-width: 768px) 80px, (max-width: 1200px) 80px, 80px'
 											/>
 										</div>
 										<Stack direction='column' alignItems='flex-start'>
-											<span style={{ color: '#6CD6FF' }}>{customer.label}</span>
-											<span style={{ color: '#D4D4D4', fontSize: 13 }}>
-												{customer.email}
+											<span style={{ color: '#6CD6FF' }}>
+												{genFullName(
+													customer.contact.firstName,
+													customer.contact.lastName
+												)}
 											</span>
 											<span style={{ color: '#D4D4D4', fontSize: 13 }}>
-												{customer.phone1}
+												{customer.contact.email}
+											</span>
+											<span style={{ color: '#D4D4D4', fontSize: 13 }}>
+												{customer.contact.phone}
 											</span>
 										</Stack>
 									</Stack>
 								</Panel>
 
-								<Panel
-									header={
-										<Stack justifyContent='space-between'>
-											<span>Billing Address</span>
-											{/* <Button
-												appearance='link'
-												size='sm'
-												style={{ padding: 0 }}
-												onClick={() =>
-													dispatch(
-														setDrawerOpen({
-															mode: 'edit',
-															data: {
-																...customer?.billing,
-																type: 'billing',
-															},
-														})
-													)
-												}
-											>
-												Edit
-											</Button> */}
-										</Stack>
-									}
-								>
+								<Panel header='Billing address'>
 									{customer.billingActive ? (
 										<Stack
 											direction='column'
@@ -442,52 +728,31 @@ const NewOrderForm = ({ handleModalOpen }) => {
 									)}
 								</Panel>
 
-								<Panel
-									header={
-										<Stack justifyContent='space-between'>
-											<span>Shipping Address</span>
-											{/* <Button
-												appearance='link'
-												size='sm'
-												style={{ padding: 0 }}
-												onClick={() =>
-													dispatch(
-														setDrawerOpen({
-															mode: 'edit',
-															data: {
-																...activeShipping,
-																type: 'shipping',
-															},
-														})
-													)
-												}
+								{orderDetails.shipping.method === 'delivery' && (
+									<Panel header='Shipping address'>
+										{customer.shipping ? (
+											<Stack
+												direction='column'
+												alignItems='flex-start'
+												style={{ color: '#D4D4D4', fontSize: 13 }}
 											>
-												Edit
-											</Button> */}
-										</Stack>
-									}
-								>
-									{primaryShipping ? (
-										<Stack
-											direction='column'
-											alignItems='flex-start'
-											style={{ color: '#D4D4D4', fontSize: 13 }}
-										>
-											<div>
-												{primaryShipping?.firstName} {primaryShipping?.lastName}
-											</div>
-											<div>{primaryShipping?.address}</div>
-											<div>
-												{primaryShipping?.town}, {primaryShipping?.region}
-											</div>
-											<div>{primaryShipping?.digitalAddress}</div>
-										</Stack>
-									) : (
-										<p style={{ color: '#D4D4D4', fontSize: 13 }}>
-											A shipping address has not been set.
-										</p>
-									)}
-								</Panel>
+												<div>
+													{customer.shipping?.firstName}{' '}
+													{customer.shipping?.lastName}
+												</div>
+												<div>{customer.shipping?.address}</div>
+												<div>
+													{customer.shipping?.town}, {customer.shipping?.region}
+												</div>
+												<div>{customer.shipping?.digitalAddress}</div>
+											</Stack>
+										) : (
+											<p style={{ color: '#D4D4D4', fontSize: 13 }}>
+												A shipping address has not been set.
+											</p>
+										)}
+									</Panel>
+								)}
 							</PanelGroup>
 						)}
 					</Col>

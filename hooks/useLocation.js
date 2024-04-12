@@ -7,7 +7,6 @@ export const useLocation = () => {
 
 	const handleRegion = value => {
 		const region = geoData.find(region => region.name === value)
-		console.log(region)
 		const formattedTowns = region.towns.map(town => ({
 			label: town,
 			value: town,
