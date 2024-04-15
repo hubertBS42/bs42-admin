@@ -201,11 +201,13 @@ const extractIds = categories => {
 
 export const groupCategories = (categories, parent = null) => {
 	return categories
-		.filter(category => category.parent === parent)
+		.filter(category => {
+			if (parent === null) return category.parent === parent
+			return category.parent?._id === parent
+		})
 		.map(category => ({
 			id: category._id,
 			name: category.name,
-			description: category.description,
 			parent: category.parent,
 			slug: category.slug,
 			images: category.images,
@@ -370,6 +372,8 @@ export const groupProductsByTopLevelCategory = (
 	categories
 ) => {
 	const groupedProducts = []
+
+	// console.log(categories)
 
 	// Loop through each product
 	for (const product of products) {

@@ -41,7 +41,7 @@ const OrderSchema = new mongoose.Schema(
 		rate: { type: Number },
 		discount: {
 			percentage: { type: Number, default: 0 },
-			reason: { type: String, default: null },
+			reason: { type: String },
 		},
 		products: [
 			{
@@ -90,6 +90,53 @@ const OrderSchema = new mongoose.Schema(
 	},
 	{ timestamps: true }
 )
+
+OrderSchema.pre('save', async function (next) {
+	const order = this
+
+	if (order.isModified('status')) {
+		if (order.status === 'confirmed') {
+			const lastOrder = await this.constructor
+				.findOne({})
+				.sort({ createdAt: { $exists: true } })
+				.lean()
+
+			console.log(lastOrder)
+
+			// const template = await fetchTemplate(
+			// 	'account-application-approval'
+			// )
+
+			// const { transporter, mailOptions } = await configMailer({
+			// 	variables: {
+			// 		firstName: application.firstName,
+			// 		password: preparedData.password,
+			// 	},
+			// 	toEmail: application.email,
+			// 	group: 'users',
+			// 	template,
+			// })
+
+			// await transporter.sendMail(mailOptions)
+		} else {
+			// const template = await fetchTemplate(
+			// 	'account-application-rejection'
+			// )
+			// const { transporter, mailOptions } = await configMailer({
+			// 	variables: {
+			// 		firstName: application.firstName,
+			// 		reviewNotes: application.reviewNotes || 'N/A',
+			// 	},
+			// 	toEmail: application.email,
+			// 	group: 'users',
+			// 	template,
+			// })
+			// await transporter.sendMail(mailOptions)
+		}
+	}
+
+	next()
+})
 
 export default mongoose.models.Order ||
 	mongoose.model('Order', OrderSchema)

@@ -149,8 +149,6 @@ export const searchOrders = async (query, limit, page) => {
 }
 
 export const createOrder = async data => {
-	dispatch(setDrawerLoading(true))
-
 	const { status, message } = await fetcher('/api/orders/add', {
 		method: 'POST',
 		body: JSON.stringify(data),
@@ -158,11 +156,9 @@ export const createOrder = async data => {
 			'Content-type': 'application/json; charset=UTF-8',
 		},
 	})
-	dispatch(setDrawerClose())
 
 	if (status === 'success') {
 		toast.success('Order created.')
-		loadOrders()
 		return
 	}
 

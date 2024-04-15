@@ -10,6 +10,7 @@ export const GET = async request => {
 		const categories = await Category.find()
 			.collation({ locale: 'en' })
 			.sort({ name: 'asc' })
+			// .select('name slug parent images isActive')
 			.populate({
 				path: 'parent',
 				select: 'name parent',
@@ -18,11 +19,7 @@ export const GET = async request => {
 					select: 'name parent',
 					populate: {
 						path: 'parent',
-						select: 'name parent',
-						populate: {
-							path: 'parent',
-							select: 'name',
-						},
+						select: 'name',
 					},
 				},
 			})

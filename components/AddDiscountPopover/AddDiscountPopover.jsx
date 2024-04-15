@@ -14,6 +14,7 @@ const AddDiscountPopover = ({
 	setOrderDetails,
 	orderDetails,
 	cartItemsTotal,
+	isLoading,
 }) => {
 	const triggerRef = useRef()
 	const open = () => triggerRef.current.open()
@@ -90,7 +91,7 @@ const AddDiscountPopover = ({
 				appearance='link'
 				style={{ padding: 0, fontSize: 13 }}
 				onClick={open}
-				disabled={cartItemsTotal === 0}
+				disabled={cartItemsTotal === 0 || isLoading}
 			>
 				Add discount
 			</Button>

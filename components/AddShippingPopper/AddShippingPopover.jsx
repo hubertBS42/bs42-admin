@@ -13,6 +13,7 @@ const AddShippingPopover = ({
 	setOrderDetails,
 	orderDetails,
 	rate,
+	isLoading,
 }) => {
 	const triggerRef = useRef()
 	const open = () => triggerRef.current.open()
@@ -70,7 +71,7 @@ const AddShippingPopover = ({
 				appearance='link'
 				style={{ padding: 0, fontSize: 13 }}
 				onClick={open}
-				disabled={orderDetails.shipping.method === 'pickup'}
+				disabled={orderDetails.shipping.method === 'pickup' || isLoading}
 			>
 				Add shipping
 			</Button>

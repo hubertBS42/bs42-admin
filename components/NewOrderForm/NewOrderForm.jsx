@@ -41,11 +41,16 @@ import { setDrawerOpen } from '@/redux/features/drawer/drawerSlice'
 import ManageOrderCustomerDrawer from '../ManageOrderCustomerDrawer/ManageOrderCustomerDrawer'
 import AddDiscountPopover from '../AddDiscountPopover/AddDiscountPopover'
 import AddShippingPopover from '../AddShippingPopper/AddShippingPopover'
+import { selectAllCategories } from '@/redux/features/categories/categoriesSlice'
+import { createOrder } from '@/redux/features/orders/ordersActions'
+import { useRouter } from 'next/navigation'
 
 const NewOrderForm = ({ handleModalOpen }) => {
 	const [users, loading, searchUsers] = useUsers()
+	const router = useRouter()
 	const dispatch = useDispatch()
 	const items = useSelector(selectAllCartItems)
+	const categories = useSelector(selectAllCategories)
 	const rate = useSelector(getCurrentRate)
 	const cartPriceTotal = useSelector(totalPriceSelector)
 	const cartItemsTotal = useSelector(totalCartItemSelector)
@@ -151,6 +156,15 @@ const NewOrderForm = ({ handleModalOpen }) => {
 		setEnableSubmit(result)
 	}
 
+	const fetchCategories = id => {
+		const category = categories.find(category => category._id === id)
+		return [
+			category?.name,
+			category?.parent?.name,
+			category?.parent?.parent?.name,
+		]
+	}
+
 	// const orderStatusSteps = [
 	// 	{ label: 'Processing', value: 'processing' },
 	// 	{ label: 'Shipped', value: 'shipped' },
@@ -167,9 +181,11 @@ const NewOrderForm = ({ handleModalOpen }) => {
 	// 	)
 	// }
 
-	const handleSubmit = () => {
+	const handleSubmit = async () => {
 		const { shipping, billingActive, profileImg, ...rest } =
 			orderDetails
+
+		setIsLoading(true)
 
 		const preparedData = {
 			...customer,
@@ -215,11 +231,7 @@ const NewOrderForm = ({ handleModalOpen }) => {
 				brand: {
 					name: item.product.brand.name,
 				},
-				category: [
-					item?.product?.category?.name,
-					item?.product?.category?.parent?.name,
-					item?.product?.category?.parent?.parent?.name,
-				],
+				category: fetchCategories(item.product.category._id),
 				images: item.product.images,
 				quantity: item.quantity,
 				price: item.product.sellPrice,
@@ -229,7 +241,8 @@ const NewOrderForm = ({ handleModalOpen }) => {
 			...rest,
 		}
 
-		console.log(preparedData)
+		await createOrder(preparedData)
+		router.push('/orders')
 	}
 
 	useEffect(() => {
@@ -254,10 +267,11 @@ const NewOrderForm = ({ handleModalOpen }) => {
 						appearance='primary'
 						onClick={handleSubmit}
 						disabled={enableSubmit}
+						loading={isLoading}
 					>
 						Create order
 					</Button>
-					<Button>Cancel</Button>
+					<Button disabled={isLoading}>Cancel</Button>
 				</ButtonToolbar>
 			</Stack>
 			<Grid fluid>
@@ -296,6 +310,7 @@ const NewOrderForm = ({ handleModalOpen }) => {
 											size='sm'
 											style={{ padding: 0 }}
 											onClick={handleModalOpen}
+											disabled={isLoading}
 										>
 											Add item
 										</Button>
@@ -355,6 +370,7 @@ const NewOrderForm = ({ handleModalOpen }) => {
 														style={{ width: 65 }}
 														size='sm'
 														max={item.product.countInStock}
+														disabled={isLoading}
 													/>
 
 													<span style={{ display: 'flex', width: 100 }}>
@@ -369,6 +385,7 @@ const NewOrderForm = ({ handleModalOpen }) => {
 														color='red'
 														style={{ padding: 0 }}
 														onClick={() => dispatch(removeItem(item.product))}
+														disabled={isLoading}
 													>
 														<TrashIcon />
 													</Button>
@@ -389,6 +406,7 @@ const NewOrderForm = ({ handleModalOpen }) => {
 											appearance='primary'
 											size='xs'
 											onClick={handleModalOpen}
+											disabled={isLoading}
 										>
 											Add item
 										</Button>
@@ -405,6 +423,7 @@ const NewOrderForm = ({ handleModalOpen }) => {
 											onChange={notes =>
 												setOrderDetails(prev => ({ ...prev, notes }))
 											}
+											disabled={isLoading}
 										/>
 									</Col>
 
@@ -420,6 +439,7 @@ const NewOrderForm = ({ handleModalOpen }) => {
 													orderDetails={orderDetails}
 													setOrderDetails={setOrderDetails}
 													cartItemsTotal={cartItemsTotal}
+													isLoading={isLoading}
 												/>
 											</Col>
 											<Col xs={15}>
@@ -442,6 +462,7 @@ const NewOrderForm = ({ handleModalOpen }) => {
 													orderDetails={orderDetails}
 													setOrderDetails={setOrderDetails}
 													rate={rate}
+													isLoading={isLoading}
 												/>
 											</Col>
 											<Col xs={15}>
@@ -497,6 +518,7 @@ const NewOrderForm = ({ handleModalOpen }) => {
 													payment: { ...orderDetails.payment, status },
 												}))
 											}
+											disabled={isLoading}
 										/>
 									</Stack>
 								}
@@ -509,6 +531,7 @@ const NewOrderForm = ({ handleModalOpen }) => {
 											payment: { ...orderDetails.payment, method },
 										}))
 									}
+									disabled={isLoading}
 								>
 									<Radio value='cash'>Cash</Radio>
 									<Radio value='mobile money' disabled>
@@ -537,6 +560,7 @@ const NewOrderForm = ({ handleModalOpen }) => {
 													shipping: { ...orderDetails.shipping, status },
 												}))
 											}
+											disabled={isLoading}
 										/>
 									</Stack>
 								}
@@ -553,6 +577,7 @@ const NewOrderForm = ({ handleModalOpen }) => {
 											},
 										}))
 									}
+									disabled={isLoading}
 								>
 									<Radio value='pickup'>Pickup</Radio>
 									<Radio value='delivery'>Delivery</Radio>
@@ -651,6 +676,7 @@ const NewOrderForm = ({ handleModalOpen }) => {
 															})
 														)
 													}}
+													disabled={isLoading}
 												>
 													Edit
 												</Button>
@@ -659,6 +685,7 @@ const NewOrderForm = ({ handleModalOpen }) => {
 													size='sm'
 													style={{ padding: 0 }}
 													onClick={() => setCustomer(null)}
+													disabled={isLoading}
 												>
 													Cancel
 												</Button>
