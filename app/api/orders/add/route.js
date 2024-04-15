@@ -28,15 +28,7 @@ export const POST = async request => {
 		}
 
 		const orderNumber = await generateOrderNumber()
-		// const invoiceNumber = generateInvoiceNumber()
 
-		// const newOrder = await Order.create({
-		// 	...data,
-		// 	orderNumber,
-		// 	invoice: {
-		// 		number: invoiceNumber,
-		// 	},
-		// })
 		const newOrder = await Order.create({
 			...data,
 			orderNumber,
@@ -50,14 +42,14 @@ export const POST = async request => {
 		// 	fetchProfile('new-order'),
 		// ])
 
-		const template = await fetchTemplate('new-order')
+		// const template = await fetchTemplate('new-order')
 
-		const { transporter, mailOptions } = await configMailer({
-			group: 'admins',
-			template,
-		})
+		// const { transporter, mailOptions } = await configMailer({
+		// 	group: 'admins',
+		// 	template,
+		// })
 
-		await transporter.sendMail(mailOptions)
+		// await transporter.sendMail(mailOptions)
 
 		// const recipients = [
 		// 	{

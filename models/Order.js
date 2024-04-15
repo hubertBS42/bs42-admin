@@ -1,3 +1,4 @@
+import { generateInvoiceNumber } from '@/utils/functions'
 import mongoose from 'mongoose'
 
 const OrderSchema = new mongoose.Schema(
@@ -97,11 +98,21 @@ OrderSchema.pre('save', async function (next) {
 	if (order.isModified('status')) {
 		if (order.status === 'confirmed') {
 			const lastOrder = await this.constructor
-				.findOne({})
-				.sort({ createdAt: { $exists: true } })
+				.findOne({ invoice: { $exists: true } })
+				.sort({ createdAt: 'desc' })
 				.lean()
 
-			console.log(lastOrder)
+			const lastInvoiceNumber = lastOrder.invoice.number
+
+			console.log(lastInvoiceNumber)
+
+			const invoiceNumber = generateInvoiceNumber()
+
+			order.invoice = {
+				number: invoiceNumber,
+				date: new Date(),
+				dueDate: new Date(),
+			}
 
 			// const template = await fetchTemplate(
 			// 	'account-application-approval'

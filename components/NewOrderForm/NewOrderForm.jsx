@@ -1,12 +1,13 @@
 'use client'
 import {
+	emptyCart,
 	modifyItem,
 	removeItem,
 	selectAllCartItems,
 	totalCartItemSelector,
 	totalPriceSelector,
 } from '@/redux/features/cart/cartSlice'
-import { genFullName, roundMoney } from '@/utils/functions'
+import { fetcher, genFullName, roundMoney } from '@/utils/functions'
 import Image from 'next/image'
 import { useDispatch, useSelector } from 'react-redux'
 import {
@@ -44,6 +45,7 @@ import AddShippingPopover from '../AddShippingPopper/AddShippingPopover'
 import { selectAllCategories } from '@/redux/features/categories/categoriesSlice'
 import { createOrder } from '@/redux/features/orders/ordersActions'
 import { useRouter } from 'next/navigation'
+import { toast } from 'react-toastify'
 
 const NewOrderForm = ({ handleModalOpen }) => {
 	const [users, loading, searchUsers] = useUsers()
@@ -241,8 +243,21 @@ const NewOrderForm = ({ handleModalOpen }) => {
 			...rest,
 		}
 
-		await createOrder(preparedData)
-		router.push('/orders')
+		const { status, message } = await fetcher('/api/orders/add', {
+			method: 'POST',
+			body: JSON.stringify(preparedData),
+			headers: {
+				'Content-type': 'application/json; charset=UTF-8',
+			},
+		})
+
+		if (status === 'success') {
+			toast.success('Order created.')
+			dispatch(emptyCart())
+			router.push('/orders')
+		} else {
+			toast.error('Failed to create order.')
+		}
 	}
 
 	useEffect(() => {
