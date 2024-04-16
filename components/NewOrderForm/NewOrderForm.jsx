@@ -7,7 +7,12 @@ import {
 	totalCartItemSelector,
 	totalPriceSelector,
 } from '@/redux/features/cart/cartSlice'
-import { fetcher, genFullName, roundMoney } from '@/utils/functions'
+import {
+	fetcher,
+	genFullName,
+	generateInvoiceNumber,
+	roundMoney,
+} from '@/utils/functions'
 import Image from 'next/image'
 import { useDispatch, useSelector } from 'react-redux'
 import {
@@ -258,6 +263,8 @@ const NewOrderForm = ({ handleModalOpen }) => {
 		} else {
 			toast.error('Failed to create order.')
 		}
+
+		setIsLoading(false)
 	}
 
 	useEffect(() => {

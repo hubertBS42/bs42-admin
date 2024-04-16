@@ -289,21 +289,36 @@ export const replacePlaceholders = (inputString, values) => {
 }
 
 // Function to generate date-based invoice numbers
-export const generateInvoiceNumber = () => {
-	const today = new Date()
-	const year = today.getFullYear()
-	const month = String(today.getMonth() + 1).padStart(2, '0') // Month is zero-indexed
-	const day = String(today.getDate()).padStart(2, '0')
+export const generateInvoiceNumber = (
+	lastInvoiceNumber,
+	timestamp
+) => {
+	const year = timestamp.getFullYear()
+	const month = String(timestamp.getMonth() + 1).padStart(2, '0') // Month is zero-indexed
+	const day = String(timestamp.getDate()).padStart(2, '0')
 
-	// Get the last used number for the current date, from a database or storage
-	// Here, we'll just use a simple increment for demonstration
-	let lastInvoiceNumber = 1 // Initialize to 1 or retrieve from storage
-	lastInvoiceNumber++ // Increment for the next invoice
+	// Extract the numeric part from the lastInvoiceNumber
+	let lastNumber = 0
+
+	if (lastInvoiceNumber !== 0) {
+		lastNumber = parseInt(lastInvoiceNumber.match(/\d+$/)[0], 10)
+	}
+
+	// Increment the last number for the next invoice
+	lastNumber++
+
+	// Adjust padding based on lastNumber
+	let paddedInvoiceNumber
+	if (lastNumber < 10) {
+		paddedInvoiceNumber = `00${lastNumber}`
+	} else if (lastNumber < 100) {
+		paddedInvoiceNumber = `0${lastNumber}`
+	} else {
+		paddedInvoiceNumber = `${lastNumber}`
+	}
 
 	// Combine date and number to create the invoice number
-	const invoiceNumber = `${year}${month}${day}-${String(
-		lastInvoiceNumber
-	).padStart(3, '0')}`
+	const invoiceNumber = `${year}${month}${day}-${paddedInvoiceNumber}`
 
 	return invoiceNumber
 }

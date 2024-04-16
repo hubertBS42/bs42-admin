@@ -1,4 +1,4 @@
-import { formatDate, roundMoney } from '@/utils/functions'
+import { roundMoney } from '@/utils/functions'
 import {
 	Document,
 	Font,
@@ -8,6 +8,7 @@ import {
 	Text,
 	View,
 } from '@react-pdf/renderer'
+import { format } from 'date-fns'
 import path from 'path'
 
 const fontPath = path.resolve(process.cwd(), 'public/fonts')
@@ -35,7 +36,7 @@ const styles = StyleSheet.create({
 		fontFamily: 'Nunito',
 		backgroundColor: 'white',
 		color: '#555555',
-		fontSize: 13,
+		fontSize: 10,
 	},
 	section: {
 		margin: '0 10px',
@@ -51,7 +52,7 @@ const styles = StyleSheet.create({
 		textTransform: 'uppercase',
 	},
 	companyName: {
-		fontSize: 13,
+		fontSize: 10,
 		fontWeight: 'semibold',
 	},
 
@@ -135,9 +136,9 @@ const styles = StyleSheet.create({
 })
 
 const Invoice = ({ data }) => {
-	const subtotal = data.totalPrice * data.rate
-	const saleTax = subtotal * 0.15
-	const total = subtotal + saleTax
+	// const subtotal = data.total * data.rate
+	// const saleTax = subtotal * 0.15
+	// const total = subtotal + saleTax
 	return (
 		<Document>
 			<Page size='A4' style={styles.page}>
@@ -154,28 +155,51 @@ const Invoice = ({ data }) => {
 				</View>
 
 				<View style={styles.section}>
-					<View>
-						<Text style={styles.companyName}>BS42.NET</Text>
+					<View style={styles.subsection}>
+						<Text style={styles.subsectionTitle}>BS42.NET</Text>
 						<Text>Tycan House, House NO. 43</Text>
 						<Text>Tetteh Okuley Ave.</Text>
 						<Text>Abofu - Achimota</Text>
+					</View>
+
+					<View style={styles.subsection}>
+						<Text style={styles.subsectionTitle}>Sold To</Text>
+						<Text>{`${data.contact.firstName} ${data.contact.lastName}`}</Text>
+						<Text>{data.contact.email}</Text>
+						<Text>{data.contact.phone}</Text>
 					</View>
 				</View>
 
 				<View style={styles.section}>
 					<View style={styles.subsection}>
-						<Text style={styles.subsectionTitle}>Sold To</Text>
-						<Text>{`${data.customerInfo.firstName} ${data.customerInfo.lastName}`}</Text>
-						<Text>{data.customerInfo.address}</Text>
-						<Text>{`${data.customerInfo.town}, ${data.customerInfo.region}`}</Text>
-						<Text>{data.customerInfo.digitalAddress}</Text>
+						<Text style={styles.subsectionTitle}>Billing</Text>
+						<Text>{`${data.billing.firstName} ${data.billing.lastName}`}</Text>
+						<Text>{data.billing.address}</Text>
+						<Text>{`${data.billing.town}, ${data.billing.region}`}</Text>
+						<Text>{data.billing.phone}</Text>
 					</View>
+
+					{data.shipping.method === 'delivery' && (
+						<View style={styles.subsection}>
+							<Text style={styles.subsectionTitle}>Shipping</Text>
+							<Text>{`${data.shipping.firstName} ${data.shipping.lastName}`}</Text>
+							<Text>{data.shipping.address}</Text>
+							<Text>{`${data.shipping.town}, ${data.shipping.region}`}</Text>
+							<Text>{data.shipping.phone}</Text>
+						</View>
+					)}
 
 					<View style={styles.subsection}>
 						<Text style={styles.subsectionTitle}>Invoice Summary</Text>
-						<Text>Invoice Date: {formatDate(data.invoice.date)}</Text>
+						<Text>
+							Invoice Date:{' '}
+							{format(new Date(data.invoice.date), 'yyyy-MM-dd')}
+						</Text>
 						<Text>Invoice Number: {data.invoice.number}</Text>
-						<Text>Due Date: {formatDate(data.invoice.date)}</Text>
+						<Text>
+							Due Date:{' '}
+							{format(new Date(data.invoice.dueDate), 'yyyy-MM-dd')}
+						</Text>
 					</View>
 				</View>
 				<View
@@ -227,15 +251,19 @@ const Invoice = ({ data }) => {
 					<View style={styles.summaryBlock}>
 						<View style={styles.summaryBlockSection}>
 							<Text>Sub Total</Text>
-							<Text style={styles.price}>GHS {roundMoney(subtotal)}</Text>
+							<Text style={styles.price}>
+								GHS {roundMoney(data.subtotal * data.rate)}
+							</Text>
 						</View>
-						<View style={styles.summaryBlockSection}>
+						{/* <View style={styles.summaryBlockSection}>
 							<Text>Sale Tax (15%)</Text>
 							<Text style={styles.price}>GHS {roundMoney(saleTax)}</Text>
-						</View>
+						</View> */}
 						<View style={[styles.summaryBlockSection, styles.last]}>
 							<Text style={styles.totalText}>Total</Text>
-							<Text style={styles.price}>GHS {roundMoney(total)}</Text>
+							<Text style={styles.price}>
+								GHS {roundMoney(data.total * data.rate)}
+							</Text>
 						</View>
 					</View>
 				</View>
