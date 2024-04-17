@@ -45,6 +45,7 @@ const OrderSchema = new mongoose.Schema(
 		rate: { type: Number },
 		discount: {
 			percentage: { type: Number, default: 0 },
+			value: { type: Number, default: 0 },
 			reason: { type: String },
 		},
 		products: [

@@ -83,6 +83,7 @@ const NewOrderForm = ({ handleModalOpen }) => {
 		total: 0,
 		discount: {
 			percentage: 0,
+			value: 0,
 			reason: '',
 		},
 		notes: '',
@@ -462,6 +463,7 @@ const NewOrderForm = ({ handleModalOpen }) => {
 													setOrderDetails={setOrderDetails}
 													cartItemsTotal={cartItemsTotal}
 													isLoading={isLoading}
+													rate={rate}
 												/>
 											</Col>
 											<Col xs={15}>

@@ -26,6 +26,10 @@ Font.register({
 			src: `${fontPath}/Nunito-SemiBold.ttf`,
 			fontWeight: 'semibold',
 		},
+		{
+			src: `${fontPath}/Nunito-Bold.ttf`,
+			fontWeight: 'bold',
+		},
 	],
 })
 
@@ -36,24 +40,23 @@ const styles = StyleSheet.create({
 		fontFamily: 'Nunito',
 		backgroundColor: 'white',
 		color: '#555555',
-		fontSize: 10,
+		fontSize: 8,
 	},
 	section: {
 		margin: '0 10px',
 		padding: 10,
 		flexDirection: 'row',
 		justifyContent: 'space-between',
-		alignItems: 'center',
+		alignItems: 'flex-start',
 	},
 	invoiceTitle: {
-		fontSize: 35,
+		fontSize: 18,
 		color: '#555555',
 		fontWeight: 'semibold',
 		textTransform: 'uppercase',
 	},
 	companyName: {
-		fontSize: 10,
-		fontWeight: 'semibold',
+		fontWeight: 'bold',
 	},
 
 	subsection: {
@@ -61,13 +64,13 @@ const styles = StyleSheet.create({
 		flexDirection: 'column',
 	},
 	subsectionTitle: {
-		fontWeight: 'semibold',
+		fontWeight: 'bold',
 		color: '#222222',
 		textTransform: 'uppercase',
-		marginBottom: 3,
+		// marginBottom: 3,
 	},
 	logo: {
-		width: 130,
+		width: 80,
 	},
 	table: {
 		display: 'flex',
@@ -121,7 +124,7 @@ const styles = StyleSheet.create({
 		display: 'flex',
 		flexDirection: 'row',
 		justifyContent: 'space-between',
-		padding: '8px',
+		padding: '8px 18px',
 	},
 	last: {
 		backgroundColor: '#EBEBEB',
@@ -149,59 +152,53 @@ const Invoice = ({ data }) => {
 							style={styles.logo}
 						/>
 					</View>
-					<View>
+					<View style={styles.subsection}>
 						<Text style={styles.invoiceTitle}>Invoice</Text>
 					</View>
 				</View>
 
 				<View style={styles.section}>
 					<View style={styles.subsection}>
-						<Text style={styles.subsectionTitle}>BS42.NET</Text>
+						<Text style={styles.subsectionTitle}>Bill From</Text>
+						<Text>BS42.NET</Text>
 						<Text>Tycan House, House NO. 43</Text>
 						<Text>Tetteh Okuley Ave.</Text>
 						<Text>Abofu - Achimota</Text>
 					</View>
 
 					<View style={styles.subsection}>
-						<Text style={styles.subsectionTitle}>Sold To</Text>
-						<Text>{`${data.contact.firstName} ${data.contact.lastName}`}</Text>
-						<Text>{data.contact.email}</Text>
-						<Text>{data.contact.phone}</Text>
-					</View>
-				</View>
-
-				<View style={styles.section}>
-					<View style={styles.subsection}>
-						<Text style={styles.subsectionTitle}>Billing</Text>
+						<Text style={styles.subsectionTitle}>Bill To</Text>
 						<Text>{`${data.billing.firstName} ${data.billing.lastName}`}</Text>
 						<Text>{data.billing.address}</Text>
 						<Text>{`${data.billing.town}, ${data.billing.region}`}</Text>
-						<Text>{data.billing.phone}</Text>
+						<Text>{data.billing.digitalAddress}</Text>
 					</View>
-
-					{data.shipping.method === 'delivery' && (
-						<View style={styles.subsection}>
-							<Text style={styles.subsectionTitle}>Shipping</Text>
-							<Text>{`${data.shipping.firstName} ${data.shipping.lastName}`}</Text>
-							<Text>{data.shipping.address}</Text>
-							<Text>{`${data.shipping.town}, ${data.shipping.region}`}</Text>
-							<Text>{data.shipping.phone}</Text>
-						</View>
-					)}
 
 					<View style={styles.subsection}>
 						<Text style={styles.subsectionTitle}>Invoice Summary</Text>
 						<Text>
-							Invoice Date:{' '}
-							{format(new Date(data.invoice.date), 'yyyy-MM-dd')}
+							Date: {format(new Date(data.invoice.date), 'yyyy-MM-dd')}
 						</Text>
-						<Text>Invoice Number: {data.invoice.number}</Text>
+						<Text>Number: {data.invoice.number}</Text>
+						<Text>Total: GHS {roundMoney(data.total * data.rate)}</Text>
 						<Text>
 							Due Date:{' '}
 							{format(new Date(data.invoice.dueDate), 'yyyy-MM-dd')}
 						</Text>
 					</View>
 				</View>
+				{data.shipping.method === 'delivery' && (
+					<View style={styles.section}>
+						<View style={styles.subsection}>
+							<Text style={styles.subsectionTitle}>Shipped to</Text>
+							<Text>{`${data.shipping.firstName} ${data.shipping.lastName}`}</Text>
+							<Text>{data.shipping.address}</Text>
+							<Text>{`${data.shipping.town}, ${data.shipping.region}`}</Text>
+							<Text>{data.shipping.digitalAddress}</Text>
+						</View>
+					</View>
+				)}
+
 				<View
 					style={[
 						styles.section,
@@ -209,7 +206,6 @@ const Invoice = ({ data }) => {
 					]}
 				>
 					<View>
-						<Text style={styles.subsectionTitle}>Ordered Items</Text>
 						<View style={styles.table}>
 							<View style={styles.tableHead}>
 								<View style={styles.tableColumn1}>
@@ -235,10 +231,11 @@ const Invoice = ({ data }) => {
 											<Text>{product.quantity}</Text>
 										</View>
 										<View style={styles.tableColumn3}>
-											<Text>{roundMoney(product.price * data.rate)}</Text>
+											<Text>GHS {roundMoney(product.price * data.rate)}</Text>
 										</View>
 										<View style={styles.tableColumn4}>
 											<Text>
+												GHS
 												{roundMoney(product.price * product.quantity * data.rate)}
 											</Text>
 										</View>
@@ -250,15 +247,24 @@ const Invoice = ({ data }) => {
 
 					<View style={styles.summaryBlock}>
 						<View style={styles.summaryBlockSection}>
+							<Text>Discount</Text>
+							<Text style={styles.price}>
+								GHS {roundMoney(data.discount.value * data.rate)}
+							</Text>
+						</View>
+						<View style={styles.summaryBlockSection}>
 							<Text>Sub Total</Text>
 							<Text style={styles.price}>
 								GHS {roundMoney(data.subtotal * data.rate)}
 							</Text>
 						</View>
-						{/* <View style={styles.summaryBlockSection}>
-							<Text>Sale Tax (15%)</Text>
-							<Text style={styles.price}>GHS {roundMoney(saleTax)}</Text>
-						</View> */}
+
+						<View style={styles.summaryBlockSection}>
+							<Text>Shipping</Text>
+							<Text style={styles.price}>
+								GHS {roundMoney(data.shipping.cost * data.rate)}
+							</Text>
+						</View>
 						<View style={[styles.summaryBlockSection, styles.last]}>
 							<Text style={styles.totalText}>Total</Text>
 							<Text style={styles.price}>

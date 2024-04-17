@@ -1,4 +1,5 @@
 'use client'
+import { roundMoney } from '@/utils/functions'
 import { useRef, useState } from 'react'
 import {
 	Button,
@@ -13,6 +14,7 @@ import {
 const AddDiscountPopover = ({
 	setOrderDetails,
 	orderDetails,
+	rate,
 	cartItemsTotal,
 	isLoading,
 }) => {
@@ -21,12 +23,14 @@ const AddDiscountPopover = ({
 	const close = () => triggerRef.current.close()
 	const [discount, setDiscount] = useState({
 		percentage: 0,
+		value: 0,
 		reason: '',
 	})
 
 	const updateForm = orderDetails => {
 		setDiscount({
 			percentage: orderDetails.discount.percentage,
+			value: orderDetails.discount.value,
 			reason: orderDetails.discount.reason,
 		})
 
@@ -38,6 +42,7 @@ const AddDiscountPopover = ({
 			...prev,
 			discount: {
 				percentage: Number(discount.percentage),
+				value: discount.value,
 				reason: discount.reason,
 			},
 		}))
@@ -56,12 +61,20 @@ const AddDiscountPopover = ({
 						<Stack direction='column' alignItems='flex-start' spacing={3}>
 							<Text>Percentage:</Text>
 							<InputNumber
-								onChange={percentage =>
-									setDiscount(prev => ({ ...prev, percentage }))
-								}
+								onChange={percentage => {
+									const value = roundMoney(
+										(percentage / 100) * orderDetails.subtotal * rate
+									)
+									setDiscount(prev => ({ ...prev, percentage, value }))
+								}}
 								value={discount.percentage}
 								min={0}
+								max={100}
 							/>
+						</Stack>
+
+						<Stack direction='column' alignItems='flex-start' spacing={3}>
+							<Text>Value: GHS {discount.value}</Text>
 						</Stack>
 
 						<Stack direction='column' alignItems='stretch' spacing={3}>
