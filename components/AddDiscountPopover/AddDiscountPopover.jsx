@@ -62,9 +62,7 @@ const AddDiscountPopover = ({
 							<Text>Percentage:</Text>
 							<InputNumber
 								onChange={percentage => {
-									const value = roundMoney(
-										(percentage / 100) * orderDetails.subtotal * rate
-									)
+									const value = (percentage / 100) * orderDetails.subtotal
 									setDiscount(prev => ({ ...prev, percentage, value }))
 								}}
 								value={discount.percentage}
@@ -74,7 +72,7 @@ const AddDiscountPopover = ({
 						</Stack>
 
 						<Stack direction='column' alignItems='flex-start' spacing={3}>
-							<Text>Value: GHS {discount.value}</Text>
+							<Text>Value: GHS {roundMoney(discount.value * rate)}</Text>
 						</Stack>
 
 						<Stack direction='column' alignItems='stretch' spacing={3}>
