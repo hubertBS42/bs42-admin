@@ -6,7 +6,7 @@ import Setting from '@/models/Setting'
 import {
 	convertToDollar,
 	findIdsOfCategoryAndChildrenBySlug,
-	groupCategories,
+	groupCategories1,
 } from '@/utils/functions'
 
 export const GET = async request => {
@@ -95,7 +95,7 @@ export const GET = async request => {
 				}
 			})
 
-			const groupedCategories = groupCategories(categories)
+			const groupedCategories = groupCategories1(categories)
 
 			const categoriesIds = findIdsOfCategoryAndChildrenBySlug(
 				groupedCategories,

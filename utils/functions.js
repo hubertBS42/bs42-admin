@@ -217,6 +217,21 @@ export const groupCategories = (categories, parent = null) => {
 		}))
 }
 
+export const groupCategories1 = (categories, parent = null) => {
+	return categories
+		.filter(category => category.parent === parent)
+		.map(category => ({
+			id: category._id,
+			name: category.name,
+			parent: category.parent,
+			slug: category.slug,
+			images: category.images,
+			isActive: category.isActive,
+			createdAt: category.createdAt,
+			children: groupCategories1(categories, category._id),
+		}))
+}
+
 export const findIdsOfCategoryAndChildrenBySlug = (
 	categories,
 	targetSlug
