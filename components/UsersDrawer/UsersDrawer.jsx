@@ -67,10 +67,10 @@ const UsersDrawer = () => {
 		billing: {
 			firstName: '',
 			lastName: '',
+			email: '',
 			region: '',
 			town: '',
 			address: '',
-			digitalAddress: '',
 		},
 		company: {
 			name: '',
@@ -79,7 +79,6 @@ const UsersDrawer = () => {
 			region: '',
 			town: '',
 			address: '',
-			digitalAddress: '',
 		},
 		shipping: [],
 		profileImg: [],
@@ -111,6 +110,9 @@ const UsersDrawer = () => {
 			lastName: formValue.billingActive
 				? StringType().isRequired('You must provide a last name.')
 				: StringType(),
+			email: formValue.billingActive
+				? StringType().isRequired('You must provide an email address.')
+				: StringType(),
 			region: formValue.billingActive
 				? StringType().isRequired('You must provide a region.')
 				: StringType(),
@@ -119,9 +121,6 @@ const UsersDrawer = () => {
 				: StringType(),
 			address: formValue.billingActive
 				? StringType().isRequired('You must provide an address.')
-				: StringType(),
-			digitalAddress: formValue.billingActive
-				? StringType().isRequired('You must provide a digital address.')
 				: StringType(),
 		}),
 		company: ObjectType().shape({
@@ -143,12 +142,12 @@ const UsersDrawer = () => {
 				lastName: StringType().isRequired(
 					'You must provide a last name.'
 				),
+				phone: StringType().isRequired(
+					'You must provide a phone number.'
+				),
 				region: StringType().isRequired('You must provide a region.'),
 				town: StringType().isRequired('You must provide a town.'),
 				address: StringType().isRequired('You must provide an address.'),
-				digitalAddress: StringType().isRequired(
-					'You must provide a digital address.'
-				),
 			})
 		),
 		notes: StringType(),
@@ -197,7 +196,7 @@ const UsersDrawer = () => {
 						region: user?.billing?.region || '',
 						town: user?.billing?.town || '',
 						address: user?.billing?.address || '',
-						digitalAddress: user?.billing?.digitalAddress || '',
+						email: user?.billing?.email || '',
 					},
 					company: {
 						name: user?.company?.name || '',
@@ -206,7 +205,6 @@ const UsersDrawer = () => {
 						region: user?.company?.region || '',
 						town: user?.company?.town || '',
 						address: user?.company?.address || '',
-						digitalAddress: user?.company?.digitalAddress || '',
 					},
 					shipping: user?.shipping,
 					password: '',
@@ -228,10 +226,10 @@ const UsersDrawer = () => {
 				billing: {
 					firstName: '',
 					lastName: '',
+					email: '',
 					region: '',
 					town: '',
 					address: '',
-					digitalAddress: '',
 				},
 				company: {
 					name: '',
@@ -240,7 +238,6 @@ const UsersDrawer = () => {
 					region: '',
 					town: '',
 					address: '',
-					digitalAddress: '',
 				},
 				shipping: [],
 				profileImg: [],
@@ -309,7 +306,7 @@ const UsersDrawer = () => {
 						firstName: '',
 						lastName: '',
 						address: '',
-						digitalAddress: '',
+						phone: '',
 						town: '',
 						region: '',
 						isPrimary: formValue.shipping.length >= 1 ? false : true,
@@ -558,20 +555,12 @@ const UsersDrawer = () => {
 						</Row>
 
 						<Row>
-							<Col xs={12}>
+							<Col xs={24}>
 								<Field
 									name='company.address'
 									label='Address'
 									accepter={Input}
 									error={formError?.company?.address}
-								/>
-							</Col>
-							<Col xs={12}>
-								<Field
-									name='company.digitalAddress'
-									label='Digital address'
-									accepter={Input}
-									error={formError?.company?.digitalAddress}
 								/>
 							</Col>
 						</Row>
@@ -605,6 +594,17 @@ const UsersDrawer = () => {
 											label='Last name'
 											accepter={Input}
 											error={formError?.billing?.lastName}
+										/>
+									</Col>
+								</Row>
+
+								<Row style={{ marginBottom: '1.4em' }}>
+									<Col xs={24}>
+										<Field
+											name='billing.email'
+											label='Email'
+											accepter={Input}
+											error={formError?.billing?.email}
 										/>
 									</Col>
 								</Row>
@@ -644,20 +644,12 @@ const UsersDrawer = () => {
 								</Row>
 
 								<Row>
-									<Col xs={12}>
+									<Col xs={24}>
 										<Field
 											name='billing.address'
 											label='Address'
 											accepter={Input}
 											error={formError?.billing?.address}
-										/>
-									</Col>
-									<Col xs={12}>
-										<Field
-											name='billing.digitalAddress'
-											label='Digital address'
-											accepter={Input}
-											error={formError?.billing?.digitalAddress}
 										/>
 									</Col>
 								</Row>

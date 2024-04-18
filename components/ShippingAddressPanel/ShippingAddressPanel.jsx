@@ -111,6 +111,23 @@ const ShippingAddressPanel = ({
 			</Row>
 
 			<Row style={{ marginBottom: '1.2em' }}>
+				<Col xs={24}>
+					<label style={{ fontSize: 13 }}>Phone</label>
+					<Input
+						name='phone'
+						onChange={(val, e) => handleChange(val, address.index, 'phone')}
+						defaultValue={address.phone}
+						style={{ marginTop: '.3em' }}
+					/>
+					{errorsObject && errorsObject.phone.hasError && (
+						<Text color='red' size='sm' style={{ marginTop: 2 }}>
+							{errorsObject.phone.errorMessage}
+						</Text>
+					)}
+				</Col>
+			</Row>
+
+			<Row style={{ marginBottom: '1.2em' }}>
 				<Col xs={12}>
 					<label style={{ fontSize: 13 }}>Region</label>
 					<InputPicker
@@ -163,7 +180,7 @@ const ShippingAddressPanel = ({
 			</Row>
 
 			<Row style={{ marginBottom: '1.2em' }}>
-				<Col xs={12}>
+				<Col xs={24}>
 					<label style={{ fontSize: 13 }}>Address</label>
 					<Input
 						name='address'
@@ -176,22 +193,6 @@ const ShippingAddressPanel = ({
 					{errorsObject && errorsObject.address.hasError && (
 						<Text color='red' size='sm' style={{ marginTop: 2 }}>
 							{errorsObject.address.errorMessage}
-						</Text>
-					)}
-				</Col>
-				<Col xs={12}>
-					<label style={{ fontSize: 13 }}>Digital address</label>
-					<Input
-						name='digitalAddress'
-						onChange={(val, e) =>
-							handleChange(val, address.index, 'digitalAddress')
-						}
-						defaultValue={address.digitalAddress}
-						style={{ marginTop: '.3em' }}
-					/>
-					{errorsObject && errorsObject.digitalAddress.hasError && (
-						<Text color='red' size='sm' style={{ marginTop: 2 }}>
-							{errorsObject.digitalAddress.errorMessage}
 						</Text>
 					)}
 				</Col>

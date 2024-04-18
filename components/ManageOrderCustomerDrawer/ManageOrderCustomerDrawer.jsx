@@ -44,7 +44,7 @@ const ManageOrderCustomerDrawer = ({
 			address: StringType().isRequired('This field is required.'),
 			town: StringType().isRequired('This field is required.'),
 			region: StringType().isRequired('This field is required.'),
-			digitalAddress: StringType().isRequired('This field is required.'),
+			email: StringType().isRequired('This field is required.'),
 		}),
 		shipping: ObjectType().shape({
 			firstName:
@@ -67,7 +67,7 @@ const ManageOrderCustomerDrawer = ({
 				shipmentMethod === 'delivery'
 					? StringType().isRequired('This field is required.')
 					: StringType(),
-			digitalAddress:
+			phone:
 				shipmentMethod === 'delivery'
 					? StringType().isRequired('This field is required.')
 					: StringType(),
@@ -104,7 +104,7 @@ const ManageOrderCustomerDrawer = ({
 			address: '',
 			town: '',
 			region: '',
-			digitalAddress: '',
+			email: '',
 		},
 		shipping: {
 			firstName: '',
@@ -112,7 +112,7 @@ const ManageOrderCustomerDrawer = ({
 			address: '',
 			town: '',
 			region: '',
-			digitalAddress: '',
+			phone: '',
 		},
 	})
 
@@ -140,7 +140,7 @@ const ManageOrderCustomerDrawer = ({
 						address: customer?.billing?.address || '',
 						town: customer?.billing?.town || '',
 						region: customer?.billing?.region || '',
-						digitalAddress: customer?.billing?.digitalAddress || '',
+						email: customer?.billing?.email || '',
 					},
 					shipping: {
 						firstName: customer?.shipping?.firstName || '',
@@ -148,7 +148,7 @@ const ManageOrderCustomerDrawer = ({
 						address: customer?.shipping?.address || '',
 						town: customer?.shipping?.town || '',
 						region: customer?.shipping?.region || '',
-						digitalAddress: customer?.shipping?.digitalAddress || '',
+						phone: customer?.shipping?.phone || '',
 					},
 				}
 			})
@@ -168,7 +168,7 @@ const ManageOrderCustomerDrawer = ({
 					address: '',
 					town: '',
 					region: '',
-					digitalAddress: '',
+					email: '',
 				},
 				shipping: {
 					firstName: '',
@@ -176,7 +176,7 @@ const ManageOrderCustomerDrawer = ({
 					address: '',
 					town: '',
 					region: '',
-					digitalAddress: '',
+					phone: '',
 				},
 			})
 		}
@@ -300,6 +300,17 @@ const ManageOrderCustomerDrawer = ({
 							</Row>
 
 							<Row style={{ marginBottom: '1.4em' }}>
+								<Col xs={24}>
+									<Field
+										name='billing.email'
+										label='Email'
+										accepter={Input}
+										error={formError?.billing?.email}
+									/>
+								</Col>
+							</Row>
+
+							<Row style={{ marginBottom: '1.4em' }}>
 								<Col xs={12}>
 									<Field
 										name='billing.region'
@@ -343,17 +354,6 @@ const ManageOrderCustomerDrawer = ({
 									/>
 								</Col>
 							</Row>
-
-							<Row style={{ marginBottom: '1.4em' }}>
-								<Col xs={24}>
-									<Field
-										name='billing.digitalAddress'
-										label='Digital address'
-										accepter={Input}
-										error={formError?.billing?.digitalAddress}
-									/>
-								</Col>
-							</Row>
 						</Panel>
 						{shipmentMethod === 'delivery' && (
 							<Panel header='Shipping' bordered>
@@ -372,6 +372,17 @@ const ManageOrderCustomerDrawer = ({
 											label='Last name'
 											accepter={Input}
 											error={formError?.shipping?.lastName}
+										/>
+									</Col>
+								</Row>
+
+								<Row style={{ marginBottom: '1.4em' }}>
+									<Col xs={24}>
+										<Field
+											name='shipping.phone'
+											label='Phone'
+											accepter={Input}
+											error={formError?.shipping?.phone}
 										/>
 									</Col>
 								</Row>
@@ -417,17 +428,6 @@ const ManageOrderCustomerDrawer = ({
 											label='Address'
 											accepter={Input}
 											error={formError?.shipping?.address}
-										/>
-									</Col>
-								</Row>
-
-								<Row style={{ marginBottom: '1.4em' }}>
-									<Col xs={24}>
-										<Field
-											name='shipping.digitalAddress'
-											label='Digital address'
-											accepter={Input}
-											error={formError?.shipping?.digitalAddress}
 										/>
 									</Col>
 								</Row>

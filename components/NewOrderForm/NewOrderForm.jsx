@@ -218,10 +218,10 @@ const NewOrderForm = ({ handleModalOpen }) => {
 					orderDetails.shipping.method === 'pickup'
 						? ''
 						: customer.shipping.address,
-				digitalAddress:
+				phone:
 					orderDetails.shipping.method === 'pickup'
 						? ''
-						: customer.shipping.digitalAddress,
+						: customer.shipping.phone,
 				town:
 					orderDetails.shipping.method === 'pickup'
 						? ''
@@ -653,7 +653,7 @@ const NewOrderForm = ({ handleModalOpen }) => {
 												region: data?.billing?.region,
 												town: data?.billing?.town,
 												address: data?.billing?.address,
-												digitalAddress: data?.billing?.digitalAddress,
+												email: data?.billing?.email,
 											},
 											shipping: data?.shipping.find(
 												address => address.isPrimary
@@ -766,11 +766,11 @@ const NewOrderForm = ({ handleModalOpen }) => {
 												{customer?.billing?.firstName}{' '}
 												{customer?.billing?.lastName}
 											</div>
+											<div>{customer?.billing?.email}</div>
 											<div>{customer?.billing?.address}</div>
 											<div>
 												{customer?.billing?.town}, {customer?.billing?.region}
 											</div>
-											<div>{customer?.billing?.digitalAddress}</div>
 										</Stack>
 									) : (
 										<p style={{ color: '#D4D4D4', fontSize: 13 }}>
@@ -791,11 +791,11 @@ const NewOrderForm = ({ handleModalOpen }) => {
 													{customer.shipping?.firstName}{' '}
 													{customer.shipping?.lastName}
 												</div>
+												<div>{customer.shipping?.phone}</div>
 												<div>{customer.shipping?.address}</div>
 												<div>
 													{customer.shipping?.town}, {customer.shipping?.region}
 												</div>
-												<div>{customer.shipping?.digitalAddress}</div>
 											</Stack>
 										) : (
 											<p style={{ color: '#D4D4D4', fontSize: 13 }}>

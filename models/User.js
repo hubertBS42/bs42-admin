@@ -22,8 +22,8 @@ const UserSchema = new mongoose.Schema(
 		billing: {
 			firstName: { type: String, trim: true },
 			lastName: { type: String, trim: true },
+			email: { type: String, trim: true },
 			address: { type: String },
-			digitalAddress: { type: String },
 			town: { type: String },
 			region: { type: String },
 		},
@@ -31,8 +31,8 @@ const UserSchema = new mongoose.Schema(
 			{
 				firstName: { type: String },
 				lastName: { type: String },
+				phone: { type: String },
 				address: { type: String },
-				digitalAddress: { type: String },
 				town: { type: String },
 				region: { type: String },
 				index: { type: String },

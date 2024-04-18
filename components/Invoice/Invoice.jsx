@@ -124,7 +124,7 @@ const styles = StyleSheet.create({
 		display: 'flex',
 		flexDirection: 'row',
 		justifyContent: 'space-between',
-		padding: '8px 18px',
+		padding: '8px 10px',
 	},
 	last: {
 		backgroundColor: '#EBEBEB',
@@ -169,9 +169,9 @@ const Invoice = ({ data }) => {
 					<View style={styles.subsection}>
 						<Text style={styles.subsectionTitle}>Bill To</Text>
 						<Text>{`${data.billing.firstName} ${data.billing.lastName}`}</Text>
+						<Text>{data.billing.email}</Text>
 						<Text>{data.billing.address}</Text>
 						<Text>{`${data.billing.town}, ${data.billing.region}`}</Text>
-						<Text>{data.billing.digitalAddress}</Text>
 					</View>
 
 					<View style={styles.subsection}>
@@ -192,9 +192,9 @@ const Invoice = ({ data }) => {
 						<View style={styles.subsection}>
 							<Text style={styles.subsectionTitle}>Shipped to</Text>
 							<Text>{`${data.shipping.firstName} ${data.shipping.lastName}`}</Text>
+							<Text>{data.shipping.phone}</Text>
 							<Text>{data.shipping.address}</Text>
 							<Text>{`${data.shipping.town}, ${data.shipping.region}`}</Text>
-							<Text>{data.shipping.digitalAddress}</Text>
 						</View>
 					</View>
 				)}
@@ -235,7 +235,7 @@ const Invoice = ({ data }) => {
 										</View>
 										<View style={styles.tableColumn4}>
 											<Text>
-												GHS
+												GHS{' '}
 												{roundMoney(product.price * product.quantity * data.rate)}
 											</Text>
 										</View>
@@ -246,30 +246,51 @@ const Invoice = ({ data }) => {
 					</View>
 
 					<View style={styles.summaryBlock}>
+						{data.discount.percentage > 0 && (
+							<View style={styles.summaryBlockSection}>
+								<View style={{ width: '80%' }}>
+									<Text>Discount ({data.discount.percentage}%)</Text>
+								</View>
+								<View style={{ width: '20%' }}>
+									<Text style={styles.price}>
+										GHS {roundMoney(data.discount.value * data.rate)}
+									</Text>
+								</View>
+							</View>
+						)}
 						<View style={styles.summaryBlockSection}>
-							<Text>Discount</Text>
-							<Text style={styles.price}>
-								GHS {roundMoney(data.discount.value * data.rate)}
-							</Text>
-						</View>
-						<View style={styles.summaryBlockSection}>
-							<Text>Sub Total</Text>
-							<Text style={styles.price}>
-								GHS {roundMoney(data.subtotal * data.rate)}
-							</Text>
+							<View style={{ width: '80%' }}>
+								<Text>Sub Total</Text>
+							</View>
+							<View style={{ width: '20%' }}>
+								<Text style={styles.price}>
+									GHS {roundMoney(data.subtotal * data.rate)}
+								</Text>
+							</View>
 						</View>
 
-						<View style={styles.summaryBlockSection}>
-							<Text>Shipping</Text>
-							<Text style={styles.price}>
-								GHS {roundMoney(data.shipping.cost * data.rate)}
-							</Text>
-						</View>
+						{data.shipping.method === 'delivery' && (
+							<View style={styles.summaryBlockSection}>
+								<View style={{ width: '80%' }}>
+									<Text>Shipping</Text>
+								</View>
+								<View style={{ width: '20%' }}>
+									<Text style={styles.price}>
+										GHS {roundMoney(data.shipping.cost * data.rate)}
+									</Text>
+								</View>
+							</View>
+						)}
+
 						<View style={[styles.summaryBlockSection, styles.last]}>
-							<Text style={styles.totalText}>Total</Text>
-							<Text style={styles.price}>
-								GHS {roundMoney(data.total * data.rate)}
-							</Text>
+							<View style={{ width: '80%' }}>
+								<Text style={styles.totalText}>Total</Text>
+							</View>
+							<View style={{ width: '20%' }}>
+								<Text style={styles.price}>
+									GHS {roundMoney(data.total * data.rate)}
+								</Text>
+							</View>
 						</View>
 					</View>
 				</View>
