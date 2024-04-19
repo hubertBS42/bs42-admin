@@ -180,7 +180,6 @@ const Invoice = ({ data }) => {
 							Date: {format(new Date(data.invoice.date), 'yyyy-MM-dd')}
 						</Text>
 						<Text>Number: {data.invoice.number}</Text>
-						<Text>Total: GHS {roundMoney(data.total * data.rate)}</Text>
 						<Text>
 							Due Date:{' '}
 							{format(new Date(data.invoice.dueDate), 'yyyy-MM-dd')}

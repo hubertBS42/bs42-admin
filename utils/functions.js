@@ -333,7 +333,7 @@ export const generateInvoiceNumber = (
 	}
 
 	// Combine date and number to create the invoice number
-	const invoiceNumber = `${year}${month}${day}-${paddedInvoiceNumber}`
+	const invoiceNumber = `${year}${month}${day}_${paddedInvoiceNumber}`
 
 	return invoiceNumber
 }

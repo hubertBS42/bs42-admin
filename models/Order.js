@@ -146,7 +146,7 @@ OrderSchema.pre('save', async function (next) {
 				template,
 				attachments: [
 					{
-						filename: `${invoiceNumber}.pdf`,
+						filename: `invoice_${invoiceNumber}.pdf`,
 						content: stream,
 						contentType: 'application/pdf',
 					},
