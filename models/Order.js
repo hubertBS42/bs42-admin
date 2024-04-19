@@ -20,18 +20,18 @@ const OrderSchema = new mongoose.Schema(
 		billing: {
 			firstName: { type: String },
 			lastName: { type: String },
+			email: { type: String },
 			region: { type: String },
 			town: { type: String },
 			address: { type: String },
-			digitalAddress: { type: String },
 		},
 		shipping: {
 			firstName: { type: String },
 			lastName: { type: String },
+			phone: { type: String },
 			region: { type: String },
 			town: { type: String },
 			address: { type: String },
-			digitalAddress: { type: String },
 			method: { type: String },
 			cost: { type: Number, default: 0 },
 			status: { type: String, default: 'pending' },
@@ -41,7 +41,7 @@ const OrderSchema = new mongoose.Schema(
 			date: { type: Date },
 			dueDate: { type: Date },
 		},
-		status: { type: String, default: 'placed' }, //placed, pending, confirmed, rejected, ready/shipped, delivering, pickedUp/delivered
+		status: { type: String, default: 'pending' }, //placed, pending, confirmed, rejected, ready/shipped, delivering, pickedUp/delivered
 		rate: { type: Number },
 		discount: {
 			percentage: { type: Number, default: 0 },
