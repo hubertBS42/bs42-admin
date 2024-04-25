@@ -41,7 +41,12 @@ const OrderSchema = new mongoose.Schema(
 			date: { type: Date },
 			dueDate: { type: Date },
 		},
-		status: { type: String, default: 'pending' }, //placed, pending, confirmed, rejected, ready/shipped, delivering, pickedUp/delivered
+		status: [
+			{
+				type: { type: String }, //created, payment_received, shipped, delivered, picked, cancelled
+				timestamp: { type: Date },
+			},
+		],
 		rate: { type: Number },
 		discount: {
 			percentage: { type: Number, default: 0 },
@@ -100,7 +105,12 @@ OrderSchema.pre('save', async function (next) {
 	const order = this
 
 	if (order.isModified('status')) {
-		if (order.status === 'confirmed') {
+		const created = order.status.find(step => step.type === 'created')
+		const cancelled = order.status.find(
+			step => step.type === 'cancelled'
+		)
+
+		if (created) {
 			const timestamp = new Date()
 
 			const startOfDay = timestamp
@@ -134,40 +144,59 @@ OrderSchema.pre('save', async function (next) {
 
 			const [stream, template] = await Promise.all([
 				renderToStream(<Invoice data={order} />),
-				fetchTemplate('confirm-order'),
+				fetchTemplate('order-created'),
 			])
 
+			const recipients = [
+				{
+					variables: {
+						firstName: order.contact.firstName,
+						orderNumber: order.orderNumber,
+					},
+					toEmail: order.contact.email,
+					group: 'users',
+					template,
+					attachments: [
+						{
+							filename: `invoice_${invoiceNumber}.pdf`,
+							content: stream,
+							contentType: 'application/pdf',
+						},
+					],
+				},
+				{
+					group: 'admins',
+					variables: null,
+					toEmail: null,
+					attachments: null,
+				},
+			]
+
+			recipients.forEach(async group => {
+				const { transporter, mailOptions } = await configMailer({
+					group: group.group,
+					variables: group.variables,
+					toEmail: group.toEmail,
+					attachments: group.attachments,
+					template,
+				})
+
+				await transporter.sendMail(mailOptions)
+			})
+		}
+
+		if (cancelled) {
+			const template = await fetchTemplate('order-cancelled')
 			const { transporter, mailOptions } = await configMailer({
 				variables: {
 					firstName: order.contact.firstName,
+					orderNumber: order.orderNumber,
 				},
 				toEmail: order.contact.email,
 				group: 'users',
 				template,
-				attachments: [
-					{
-						filename: `invoice_${invoiceNumber}.pdf`,
-						content: stream,
-						contentType: 'application/pdf',
-					},
-				],
 			})
-
 			await transporter.sendMail(mailOptions)
-		} else {
-			// const template = await fetchTemplate(
-			// 	'account-application-rejection'
-			// )
-			// const { transporter, mailOptions } = await configMailer({
-			// 	variables: {
-			// 		firstName: application.firstName,
-			// 		reviewNotes: application.reviewNotes || 'N/A',
-			// 	},
-			// 	toEmail: application.email,
-			// 	group: 'users',
-			// 	template,
-			// })
-			// await transporter.sendMail(mailOptions)
 		}
 	}
 

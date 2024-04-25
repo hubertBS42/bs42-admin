@@ -1,0 +1,17 @@
+import OrderForm from '@/components/OrderForm/OrderForm'
+import { fetcher } from '@/utils/functions'
+import { notFound } from 'next/navigation'
+
+const page = async ({ params }) => {
+	const { status, data } = await fetcher(
+		`http://localhost:3000/api/orders/${params.id}`
+	)
+
+	if (status === 'error') return notFound()
+	return (
+		<>
+			<OrderForm order={data} />
+		</>
+	)
+}
+export default page
