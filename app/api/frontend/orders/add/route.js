@@ -9,6 +9,7 @@ import {
 } from '@/utils/functions'
 import { renderToStream } from '@react-pdf/renderer'
 import { fetchTemplate } from '@/utils/mailer'
+import Invoice from '@/components/Invoice/Invoice'
 
 export const POST = async request => {
 	const data = await request.json()

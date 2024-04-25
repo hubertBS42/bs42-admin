@@ -51,9 +51,11 @@ import { selectAllCategories } from '@/redux/features/categories/categoriesSlice
 import { createOrder } from '@/redux/features/orders/ordersActions'
 import { useRouter } from 'next/navigation'
 import { toast } from 'react-toastify'
+import { getSession } from 'next-auth/react'
 
-const NewOrderForm = ({ handleModalOpen }) => {
+const NewOrderForm = async ({ handleModalOpen }) => {
 	const [users, loading, searchUsers] = useUsers()
+	const session = await getSession()
 	const router = useRouter()
 	const dispatch = useDispatch()
 	const items = useSelector(selectAllCartItems)

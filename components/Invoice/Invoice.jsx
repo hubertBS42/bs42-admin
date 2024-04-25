@@ -150,6 +150,7 @@ const Invoice = ({ data }) => {
 						<Image
 							src={'https://portal.bs42.net/images/logo.png'}
 							style={styles.logo}
+							alt='BS42.NET'
 						/>
 					</View>
 					<View style={styles.subsection}>
