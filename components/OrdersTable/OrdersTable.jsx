@@ -120,7 +120,7 @@ const OrdersTable = () => {
 					<Column flexGrow={1} sortable verticalAlign='middle'>
 						<HeaderCell>Status</HeaderCell>
 						<Cell dataKey='isActive'>
-							{rowData => <OrderStatus status={rowData.status} />}
+							{rowData => <OrderStatus data={rowData} />}
 						</Cell>
 					</Column>
 

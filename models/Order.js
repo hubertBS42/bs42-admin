@@ -43,7 +43,7 @@ const OrderSchema = new mongoose.Schema(
 		},
 		status: [
 			{
-				type: { type: String }, //created, payment_received, shipped, delivered, picked, cancelled
+				type: { type: String }, //created, processing, payment_received, delivering, delivered, collected, cancelled
 				timestamp: { type: Date },
 			},
 		],
@@ -105,85 +105,85 @@ OrderSchema.pre('save', async function (next) {
 	const order = this
 
 	if (order.isModified('status')) {
-		const created = order.status.find(step => step.type === 'created')
+		// const created = order.status.find(step => step.type === 'created')
 		const cancelled = order.status.find(
 			step => step.type === 'cancelled'
 		)
 
-		if (created) {
-			const timestamp = new Date()
+		// if (created) {
+		// 	const timestamp = new Date()
 
-			const startOfDay = timestamp
-			startOfDay.setHours(0, 0, 0, 0) // Set to the beginning of the day
+		// 	const startOfDay = timestamp
+		// 	startOfDay.setHours(0, 0, 0, 0) // Set to the beginning of the day
 
-			const endOfDay = timestamp
-			endOfDay.setHours(23, 59, 59, 999) // Set to the end of the day
+		// 	const endOfDay = timestamp
+		// 	endOfDay.setHours(23, 59, 59, 999) // Set to the end of the day
 
-			const lastOrder = await this.constructor
-				.findOne({
-					'invoice.date': {
-						$gte: startOfDay,
-						$lte: endOfDay,
-					},
-				})
-				.sort({ createdAt: 'desc' }) // Sort by createdAt in descending order
-				.lean()
+		// 	const lastOrder = await this.constructor
+		// 		.findOne({
+		// 			'invoice.date': {
+		// 				$gte: startOfDay,
+		// 				$lte: endOfDay,
+		// 			},
+		// 		})
+		// 		.sort({ createdAt: 'desc' }) // Sort by createdAt in descending order
+		// 		.lean()
 
-			const lastInvoiceNumber = lastOrder?.invoice?.number || 0
+		// 	const lastInvoiceNumber = lastOrder?.invoice?.number || 0
 
-			const invoiceNumber = generateInvoiceNumber(
-				lastInvoiceNumber,
-				timestamp
-			)
+		// 	const invoiceNumber = generateInvoiceNumber(
+		// 		lastInvoiceNumber,
+		// 		timestamp
+		// 	)
 
-			order.invoice = {
-				number: invoiceNumber,
-				date: timestamp,
-				dueDate: timestamp,
-			}
+		// 	order.invoice = {
+		// 		number: invoiceNumber,
+		// 		date: timestamp,
+		// 		dueDate: timestamp,
+		// 	}
 
-			const [stream, template] = await Promise.all([
-				renderToStream(<Invoice data={order} />),
-				fetchTemplate('order-created'),
-			])
+		// 	const [stream, template] = await Promise.all([
+		// 		renderToStream(<Invoice data={order} />),
+		// 		fetchTemplate('order-created'),
+		// 	])
 
-			const recipients = [
-				{
-					variables: {
-						firstName: order.contact.firstName,
-						orderNumber: order.orderNumber,
-					},
-					toEmail: order.contact.email,
-					group: 'users',
-					template,
-					attachments: [
-						{
-							filename: `invoice_${invoiceNumber}.pdf`,
-							content: stream,
-							contentType: 'application/pdf',
-						},
-					],
-				},
-				{
-					group: 'admins',
-					variables: null,
-					toEmail: null,
-					attachments: null,
-				},
-			]
+		// 	const recipients = [
+		// 		{
+		// 			variables: {
+		// 				firstName: order.contact.firstName,
+		// 				orderNumber: order.orderNumber,
+		// 			},
+		// 			toEmail: order.contact.email,
+		// 			group: 'users',
+		// 			template,
+		// 			attachments: [
+		// 				{
+		// 					filename: `invoice_${invoiceNumber}.pdf`,
+		// 					content: stream,
+		// 					contentType: 'application/pdf',
+		// 				},
+		// 			],
+		// 		},
+		// 		{
+		// 			group: 'admins',
+		// 			variables: null,
+		// 			toEmail: null,
+		// 			attachments: null,
+		// 		},
+		// 	]
 
-			recipients.forEach(async group => {
-				const { transporter, mailOptions } = await configMailer({
-					group: group.group,
-					variables: group.variables,
-					toEmail: group.toEmail,
-					attachments: group.attachments,
-					template,
-				})
+		// 	recipients.forEach(async group => {
+		// 		const { transporter, mailOptions } = await configMailer({
+		// 			group: group.group,
+		// 			variables: group.variables,
+		// 			toEmail: group.toEmail,
+		// 			attachments: group.attachments,
+		// 			template,
+		// 		})
 
-				await transporter.sendMail(mailOptions)
-			})
-		}
+		// 		await transporter.sendMail(mailOptions)
+		// 	})
+		// }
 
 		if (cancelled) {
 			const template = await fetchTemplate('order-cancelled')
