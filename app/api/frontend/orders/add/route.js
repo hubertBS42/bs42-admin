@@ -8,7 +8,7 @@ import {
 	generateRandomCode,
 } from '@/utils/functions'
 import { renderToStream } from '@react-pdf/renderer'
-import { fetchTemplate } from '@/utils/mailer'
+import { configMailer, fetchTemplate } from '@/utils/mailer'
 import Invoice from '@/components/Invoice/Invoice'
 
 export const POST = async request => {
@@ -71,7 +71,7 @@ export const POST = async request => {
 
 		const [stream, template] = await Promise.all([
 			renderToStream(<Invoice data={newOrder} />),
-			fetchTemplate('order-created'),
+			fetchTemplate('order-placed'),
 		])
 
 		const recipients = [
