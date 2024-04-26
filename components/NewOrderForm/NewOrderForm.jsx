@@ -48,7 +48,6 @@ import ManageOrderCustomerDrawer from '../ManageOrderCustomerDrawer/ManageOrderC
 import AddDiscountPopover from '../AddDiscountPopover/AddDiscountPopover'
 import AddShippingPopover from '../AddShippingPopper/AddShippingPopover'
 import { selectAllCategories } from '@/redux/features/categories/categoriesSlice'
-import { createOrder } from '@/redux/features/orders/ordersActions'
 import { useRouter } from 'next/navigation'
 import { toast } from 'react-toastify'
 
@@ -62,9 +61,9 @@ const NewOrderForm = ({ handleModalOpen }) => {
 	const cartPriceTotal = useSelector(totalPriceSelector)
 	const cartItemsTotal = useSelector(totalCartItemSelector)
 
-	// const [orderStatus, setOrderStatus] = useState('processing')
-
 	const [customer, setCustomer] = useState(null)
+	const [steps, setSteps] = useState([])
+	const [currentStatus, setCurrentStatus] = useState('created')
 	const [isLoading, setIsLoading] = useState(false)
 	const [total, setTotal] = useState(0)
 	const [subtotal, setSubtotal] = useState(0)
@@ -195,6 +194,14 @@ const NewOrderForm = ({ handleModalOpen }) => {
 
 		setIsLoading(true)
 
+		const index = steps.findIndex(step => step.value === currentStatus)
+		const data = steps
+			.map(step => ({
+				type: step.value,
+				timestamp: new Date().toISOString(),
+			}))
+			.slice(0, index + 1)
+
 		const preparedData = {
 			...customer,
 			shipping: {
@@ -245,7 +252,7 @@ const NewOrderForm = ({ handleModalOpen }) => {
 				price: item.product.sellPrice,
 			})),
 			rate,
-			status: 'confirmed',
+			status: data,
 			...rest,
 		}
 
@@ -271,10 +278,29 @@ const NewOrderForm = ({ handleModalOpen }) => {
 	useEffect(() => {
 		handleCalculations()
 		handleEnableSubmit()
+
+		if (orderDetails.shipping.method === 'delivery') {
+			setSteps([
+				{ label: 'Pending', value: 'created' },
+				{ label: 'Processing', value: 'processing' },
+				{ label: 'Delivering', value: 'delivering' },
+				{ label: 'Delivered', value: 'delivered' },
+				{ label: 'Payment received', value: 'paymentReceived' },
+			])
+		} else {
+			setSteps([
+				{ label: 'Pending', value: 'created' },
+				{ label: 'Processing', value: 'processing' },
+				{ label: 'Ready for pickup', value: 'readyForPickup' },
+				{ label: 'Payment received', value: 'paymentReceived' },
+				{ label: 'Picked up', value: 'pickedUp' },
+			])
+		}
 	}, [
 		cartItemsTotal,
 		orderDetails.discount.percentage,
 		orderDetails.shipping.cost,
+		orderDetails.shipping.method,
 		customer,
 	])
 
@@ -284,7 +310,16 @@ const NewOrderForm = ({ handleModalOpen }) => {
 				setCustomer={setCustomer}
 				shipmentMethod={orderDetails.shipping.method}
 			/>
-			<Stack justifyContent='flex-end' style={{ marginBottom: 16 }}>
+			<Stack justifyContent='space-between' style={{ marginBottom: 16 }}>
+				<SelectPicker
+					data={steps}
+					searchable={false}
+					cleanable={false}
+					style={{ width: 224 }}
+					value={currentStatus}
+					disabledItemValues={['created']}
+					onSelect={setCurrentStatus}
+				/>
 				<ButtonToolbar>
 					<Button
 						appearance='primary'
@@ -298,29 +333,6 @@ const NewOrderForm = ({ handleModalOpen }) => {
 				</ButtonToolbar>
 			</Stack>
 			<Grid fluid>
-				{/* <Row style={{ marginBottom: 10 }}>
-					<Col xs={24}>
-						<Panel
-							header={
-								<Stack justifyContent='space-between'>
-									<span>Order status</span>
-									<SelectPicker
-										data={orderStatusSteps}
-										searchable={false}
-										cleanable={false}
-										style={{ width: 224 }}
-										defaultValue='processing'
-										// disabledItemValues={['processing']}
-										onSelect={setOrderStatus}
-									/>
-								</Stack>
-							}
-							bordered
-						>
-							{renderSteps(orderStatus, orderStatusSteps)}
-						</Panel>
-					</Col>
-				</Row> */}
 				<Row>
 					<Col xs={16}>
 						<PanelGroup bordered>
@@ -578,12 +590,13 @@ const NewOrderForm = ({ handleModalOpen }) => {
 											cleanable={false}
 											style={{ width: 224 }}
 											defaultValue={orderDetails.shipping.status}
-											onSelect={status =>
+											onSelect={status => {
+												setCurrentStatus('created')
 												setOrderDetails(prev => ({
 													...prev,
 													shipping: { ...orderDetails.shipping, status },
 												}))
-											}
+											}}
 											disabled={isLoading}
 										/>
 									</Stack>
@@ -591,7 +604,7 @@ const NewOrderForm = ({ handleModalOpen }) => {
 							>
 								<RadioGroup
 									value={orderDetails.shipping.method}
-									onChange={method =>
+									onChange={method => {
 										setOrderDetails(prev => ({
 											...prev,
 											shipping: {
@@ -600,7 +613,7 @@ const NewOrderForm = ({ handleModalOpen }) => {
 												cost: method === 'pickup' && 0,
 											},
 										}))
-									}
+									}}
 									disabled={isLoading}
 								>
 									<Radio value='pickup'>Pickup</Radio>

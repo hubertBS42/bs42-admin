@@ -43,7 +43,7 @@ const OrderSchema = new mongoose.Schema(
 		},
 		status: [
 			{
-				type: { type: String }, //created, processing, payment_received, delivering, delivered, collected, cancelled
+				type: { type: String }, //created, processing, paymentReceived, delivering, delivered, pickedUp, cancelled
 				timestamp: { type: Date },
 			},
 		],

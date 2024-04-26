@@ -62,56 +62,40 @@ export const POST = async request => {
 
 		if (!newOrder) throw new Error('Failed to create order')
 
-		const [stream, template] = await Promise.all([
-			renderToStream(<Invoice data={newOrder} />),
-			fetchTemplate('new-order'),
-		])
+		// const [stream, template] = await Promise.all([
+		// 	renderToStream(<Invoice data={newOrder} />),
+		// 	fetchTemplate('new-order'),
+		// ])
 
-		// const { transporter, mailOptions } = await configMailer({
-		// 	group: 'admins',
-		// 	template,
+		// const recipients = [
+		// 	{
+		// 		group: 'users',
+		// 		variables: { firstName: newOrder.contact.firstName },
+		// 		toEmail: newOrder.contact.email,
+		// 		attachments: [
+		// 			{
+		// 				filename: `invoice_${invoiceNumber}.pdf`,
+		// 				content: stream,
+		// 				contentType: 'application/pdf',
+		// 			},
+		// 		],
+		// 	},
+		// 	{
+		// 		group: 'admins',
+		// 	},
+		// ]
+
+		// recipients.forEach(async group => {
+		// 	const { transporter, mailOptions } = await configMailer({
+		// 		group: group.group,
+		// 		variables: group.variables,
+		// 		toEmail: group.toEmail,
+		// 		attachments: group.attachments,
+		// 		template,
+		// 	})
+
+		// 	await transporter.sendMail(mailOptions)
 		// })
-
-		// await transporter.sendMail(mailOptions)
-
-		const recipients = [
-			{
-				group: 'users',
-				variables: { firstName: newOrder.contact.firstName },
-				toEmail: newOrder.contact.email,
-				attachments: [
-					{
-						filename: `invoice_${invoiceNumber}.pdf`,
-						content: stream,
-						contentType: 'application/pdf',
-					},
-				],
-			},
-			{
-				group: 'admins',
-			},
-		]
-
-		recipients.forEach(async group => {
-			const { transporter, mailOptions } = await configMailer({
-				group: group.group,
-				variables: group.variables,
-				toEmail: group.toEmail,
-				attachments: group.attachments,
-				template,
-			})
-
-			await transporter.sendMail(mailOptions)
-		})
-
-		if (cartToken) {
-			jwt.verify(cartToken, 'abc123')
-			await Cart.findOneAndDelete({ token: cartToken })
-		}
-
-		if (userID) {
-			await Cart.findOneAndDelete({ user: userID })
-		}
 
 		return new NextResponse(
 			JSON.stringify({

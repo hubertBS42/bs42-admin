@@ -31,15 +31,27 @@ const OrderStatus = ({ data }) => {
 				color: 'cyan',
 			}
 			break
+		case 'readyForPickup':
+			status = {
+				label: 'Pickup ready',
+				color: 'cyan',
+			}
+			break
 		case 'delivered':
 			status = {
 				label: 'Delivered',
 				color: 'green',
 			}
 			break
-		case 'collected':
+		case 'paymentReceived':
 			status = {
-				label: 'Collected',
+				label: 'Payment received',
+				color: 'cyan',
+			}
+			break
+		case 'pickedUp':
+			status = {
+				label: 'Picked up',
 				color: 'green',
 			}
 			break
