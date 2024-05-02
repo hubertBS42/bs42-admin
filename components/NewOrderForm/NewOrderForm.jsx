@@ -20,6 +20,7 @@ import {
 	ButtonGroup,
 	ButtonToolbar,
 	Col,
+	DatePicker,
 	Grid,
 	Input,
 	InputNumber,
@@ -34,6 +35,7 @@ import {
 	Stack,
 	Steps,
 	Text,
+	Toggle,
 	Whisper,
 } from 'rsuite'
 
@@ -50,6 +52,8 @@ import AddShippingPopover from '../AddShippingPopper/AddShippingPopover'
 import { selectAllCategories } from '@/redux/features/categories/categoriesSlice'
 import { useRouter } from 'next/navigation'
 import { toast } from 'react-toastify'
+import CustomToggle from '../CustomToggle/CustomToggle'
+import { isBefore, sub } from 'date-fns'
 
 const NewOrderForm = ({ handleModalOpen }) => {
 	const [users, loading, searchUsers] = useUsers()
@@ -86,6 +90,11 @@ const NewOrderForm = ({ handleModalOpen }) => {
 			reason: '',
 		},
 		notes: '',
+		invoice: {
+			email: false,
+			date: new Date(),
+			dueDate: new Date(),
+		},
 	})
 
 	const handleCalculations = () => {
@@ -619,6 +628,80 @@ const NewOrderForm = ({ handleModalOpen }) => {
 									<Radio value='pickup'>Pickup</Radio>
 									<Radio value='delivery'>Delivery</Radio>
 								</RadioGroup>
+							</Panel>
+							<Panel
+								header={
+									<Stack justifyContent='space-between'>
+										<span>Invoice</span>
+										<label
+											style={{
+												fontSize: 14,
+												display: 'flex',
+												columnGap: 10,
+												alignItems: 'center',
+											}}
+										>
+											<Toggle
+												onChange={value =>
+													setOrderDetails(prev => ({
+														...prev,
+														invoice: {
+															...orderDetails.invoice,
+															email: value,
+														},
+													}))
+												}
+												checked={orderDetails.invoice.email}
+											/>
+											Send invoice
+										</label>
+									</Stack>
+								}
+							>
+								<Row>
+									<Col xs={12}>
+										<Stack spacing={5} direction='column' alignItems='stretch'>
+											<label style={{ fontSize: 13 }}>Date:</label>
+											<DatePicker
+												placeholder='Select Date'
+												style={{ width: '100%' }}
+												value={orderDetails.invoice.date}
+												onChange={value =>
+													setOrderDetails(prev => ({
+														...prev,
+														invoice: { ...orderDetails.invoice, date: value },
+													}))
+												}
+												oneTap
+												placement='topStart'
+												shouldDisableDate={date =>
+													isBefore(date, sub(new Date(), { days: 1 }))
+												}
+											/>
+										</Stack>
+									</Col>
+									<Col xs={12}>
+										<Stack spacing={5} direction='column' alignItems='stretch'>
+											<label style={{ fontSize: 13 }}>Due date:</label>
+											<DatePicker
+												placeholder='Select Date'
+												style={{ width: '100%' }}
+												value={orderDetails.invoice.dueDate}
+												onChange={value =>
+													setOrderDetails(prev => ({
+														...prev,
+														invoice: { ...orderDetails.invoice, dueDate: value },
+													}))
+												}
+												oneTap
+												placement='topStart'
+												shouldDisableDate={date =>
+													isBefore(date, sub(new Date(), { days: 1 }))
+												}
+											/>
+										</Stack>
+									</Col>
+								</Row>
 							</Panel>
 						</PanelGroup>
 					</Col>

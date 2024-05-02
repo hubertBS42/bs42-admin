@@ -4,7 +4,7 @@ import { notFound } from 'next/navigation'
 
 const page = async ({ params }) => {
 	const { status, data } = await fetcher(
-		`http://localhost:3000/api/orders/${params.id}`
+		`http://localhost:3000/api/orders/${params.number}`
 	)
 
 	if (status === 'error') return notFound()

@@ -304,10 +304,8 @@ export const replacePlaceholders = (inputString, values) => {
 }
 
 // Function to generate date-based invoice numbers
-export const generateInvoiceNumber = (
-	lastInvoiceNumber,
-	timestamp
-) => {
+export const generateInvoiceNumber = lastInvoiceNumber => {
+	const timestamp = new Date()
 	const year = timestamp.getFullYear()
 	const month = String(timestamp.getMonth() + 1).padStart(2, '0') // Month is zero-indexed
 	const day = String(timestamp.getDate()).padStart(2, '0')

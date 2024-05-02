@@ -7,7 +7,9 @@ export const GET = async (request, { params }) => {
 	try {
 		await connectToDB()
 
-		const order = await Order.findOne({ orderNumber: params.id }).lean()
+		const order = await Order.findOne({
+			orderNumber: params.number,
+		}).lean()
 
 		if (order) {
 			return new NextResponse(
