@@ -97,7 +97,7 @@ export const POST = async request => {
 		// 	await transporter.sendMail(mailOptions)
 		// })
 
-		const template = await fetchTemplate('new-order')
+		const template = await fetchTemplate('order-placed')
 
 		const { transporter, mailOptions } = await configMailer({
 			group: 'admins',
