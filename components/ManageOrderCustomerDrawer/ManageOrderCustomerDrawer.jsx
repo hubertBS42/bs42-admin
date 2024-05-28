@@ -30,6 +30,7 @@ const { StringType, ObjectType } = Schema.Types
 const ManageOrderCustomerDrawer = ({
 	setCustomer,
 	shipmentMethod,
+	updateCustomerDetails,
 }) => {
 	const model = Schema.Model({
 		contact: ObjectType().shape({
@@ -189,11 +190,20 @@ const ManageOrderCustomerDrawer = ({
 			return
 		}
 
-		setCustomer({
-			...formValue,
-			shipping:
-				shipmentMethod === 'delivery' ? formValue.shipping : null,
-		})
+		if (updateCustomerDetails) {
+			const data = {
+				...formValue,
+				shipping:
+					shipmentMethod === 'delivery' ? formValue.shipping : null,
+			}
+			updateCustomerDetails(data)
+		} else {
+			setCustomer({
+				...formValue,
+				shipping:
+					shipmentMethod === 'delivery' ? formValue.shipping : null,
+			})
+		}
 
 		dispatch(setDrawerClose())
 	}

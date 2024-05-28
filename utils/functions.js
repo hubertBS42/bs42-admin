@@ -462,3 +462,17 @@ export const genFullName = (firstName, lastName) => {
 
 	return fullName
 }
+
+export const calculateCartTotal = products => {
+	// Initialize total
+	let total = 0
+
+	// Iterate over each item in the cart
+	products.forEach(product => {
+		// Multiply price by quantity and add to total
+		total += product.price * product.quantity
+	})
+
+	// Return the total
+	return total
+}

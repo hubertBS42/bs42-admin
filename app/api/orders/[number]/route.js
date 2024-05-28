@@ -39,7 +39,7 @@ export const PATCH = async (request, { params }) => {
 	try {
 		await connectToDB()
 
-		const order = await Order.findByIdAndUpdate(params.id, data, {
+		const order = await Order.findByIdAndUpdate(params.number, data, {
 			new: true,
 		})
 			.select('_id')

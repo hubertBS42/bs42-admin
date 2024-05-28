@@ -2,80 +2,80 @@
 import { useEffect, useState } from 'react'
 import { Panel, SelectPicker, Stack, Steps } from 'rsuite'
 
-const OrderStatusPanel = ({ orderDetails, setOrderDetails }) => {
-	const [orderSteps, setOrderSteps] = useState([
-		{ label: 'Pending', value: 'pending' },
-		{ label: 'Confirmed', value: 'confirmed' },
-		{ label: 'Rejected', value: 'rejected' },
-		{ label: 'Processing', value: 'processing' },
-		{ label: 'Completed', value: 'completed' },
-	])
+const OrderStatusPanel = ({
+	orderDetails,
+	setStatus,
+	status,
+	newOrder = false,
+}) => {
+	const [steps, setSteps] = useState([])
 
 	useEffect(() => {
-		const steps = [...orderSteps]
-
-		// if (orderDetails.status === 'confirmed') {
-
-		// }
-
 		if (orderDetails.shipping.method === 'delivery') {
-			const exists = steps.find(step => step.label === 'Delivering')
-			if (!exists) {
-				steps.splice(4, 0, {
-					label: 'Delivering',
-					value: 'delivering',
-				})
-			}
+			const data = [
+				{ label: 'Pending', value: 'created' },
+				{ label: 'Processing', value: 'processing' },
+				{ label: 'Delivering', value: 'delivering' },
+				{ label: 'Delivered', value: 'delivered' },
+				{ label: 'Payment received', value: 'paymentReceived' },
+			]
+			!newOrder && data.push({ label: 'Cancelled', value: 'cancelled' })
+			setSteps(data)
 		} else {
-			steps.splice(4, 0, { label: 'Ready', value: 'ready' })
+			const data = [
+				{ label: 'Pending', value: 'created' },
+				{ label: 'Processing', value: 'processing' },
+				{ label: 'Ready for pickup', value: 'readyForPickup' },
+				{ label: 'Payment received', value: 'paymentReceived' },
+				{ label: 'Picked up', value: 'pickedUp' },
+			]
+			!newOrder && data.push({ label: 'Cancelled', value: 'cancelled' })
+			setSteps(data)
+		}
+	}, [orderDetails.shipping.method])
+
+	const renderSteps = (steps, status) => {
+		let data = steps
+
+		if (status === 'cancelled') {
+			const events = orderDetails.status.map(event => event.type)
+			const filteredSteps = steps.filter(step =>
+				events.includes(step.value)
+			)
+			filteredSteps.push({ label: 'Cancelled', value: 'cancelled' })
+			data = filteredSteps
+		} else {
+			data = steps.filter(step => step.value !== 'cancelled')
 		}
 
-		setOrderSteps(steps)
-	}, [orderDetails.status, orderDetails.shipping.method])
-
-	const handleStatusChange = value => {
-		setOrderDetails(prev => ({ ...prev, status: value }))
-	}
-
-	const renderSteps = (current, steps) => {
-		const data = [...steps]
-		const allowed = [
-			'confirmed',
-			'processing',
-			'delivering',
-			'ready',
-			'completed',
-		]
-		if (orderDetails.status === 'pending') data.splice(1, 2)
-		if (orderDetails.status === 'rejected') data.splice(1, 1)
-		if (allowed.includes(orderDetails.status)) data.splice(2, 1)
 		return (
-			<Steps current={data.findIndex(step => step.value === current)}>
+			<Steps current={data.findIndex(step => step.value === status)}>
 				{data.map(step => (
 					<Steps.Item title={step.label} key={step.label} />
 				))}
 			</Steps>
 		)
 	}
+
 	return (
 		<Panel
 			header={
 				<Stack justifyContent='space-between'>
 					<span>Order status</span>
 					<SelectPicker
-						data={orderSteps}
+						data={steps}
 						searchable={false}
 						cleanable={false}
 						style={{ width: 224 }}
-						defaultValue={orderDetails.status}
-						disabledItemValues={['pending']}
-						onSelect={handleStatusChange}
+						value={status}
+						disabledItemValues={!newOrder ? ['created'] : []}
+						onChange={setStatus}
 					/>
 				</Stack>
 			}
 			bordered
 		>
-			{renderSteps(orderDetails.status, orderSteps)}
+			{renderSteps(steps, status)}
 		</Panel>
 	)
 }

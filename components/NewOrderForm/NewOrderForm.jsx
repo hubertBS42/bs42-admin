@@ -54,6 +54,7 @@ import { useRouter } from 'next/navigation'
 import { toast } from 'react-toastify'
 import CustomToggle from '../CustomToggle/CustomToggle'
 import { isBefore, sub } from 'date-fns'
+import OrderStatusPanel from '../OrderStatusPanel/OrderStatusPanel'
 
 const NewOrderForm = ({ handleModalOpen }) => {
 	const [users, loading, searchUsers] = useUsers()
@@ -181,22 +182,6 @@ const NewOrderForm = ({ handleModalOpen }) => {
 		]
 	}
 
-	// const orderStatusSteps = [
-	// 	{ label: 'Processing', value: 'processing' },
-	// 	{ label: 'Shipped', value: 'shipped' },
-	// 	{ label: 'Completed', value: 'completed' },
-	// ]
-
-	// const renderSteps = (current, steps) => {
-	// 	return (
-	// 		<Steps current={steps.findIndex(step => step.value === current)}>
-	// 			{steps.map(step => (
-	// 				<Steps.Item title={step.label} key={step.label} />
-	// 			))}
-	// 		</Steps>
-	// 	)
-	// }
-
 	const handleSubmit = async () => {
 		const { shipping, billingActive, profileImg, ...rest } =
 			orderDetails
@@ -319,7 +304,7 @@ const NewOrderForm = ({ handleModalOpen }) => {
 				setCustomer={setCustomer}
 				shipmentMethod={orderDetails.shipping.method}
 			/>
-			<Stack justifyContent='space-between' style={{ marginBottom: 16 }}>
+			{/* <Stack justifyContent='space-between' style={{ marginBottom: 16 }}>
 				<SelectPicker
 					data={steps}
 					searchable={false}
@@ -340,8 +325,18 @@ const NewOrderForm = ({ handleModalOpen }) => {
 					</Button>
 					<Button disabled={isLoading}>Cancel</Button>
 				</ButtonToolbar>
-			</Stack>
+			</Stack> */}
 			<Grid fluid>
+				<Row style={{ marginBottom: 10 }}>
+					<Col xs={24}>
+						<OrderStatusPanel
+							orderDetails={orderDetails}
+							status={currentStatus}
+							setStatus={setCurrentStatus}
+							newOrder
+						/>
+					</Col>
+				</Row>
 				<Row>
 					<Col xs={16}>
 						<PanelGroup bordered>
@@ -485,6 +480,7 @@ const NewOrderForm = ({ handleModalOpen }) => {
 													cartItemsTotal={cartItemsTotal}
 													isLoading={isLoading}
 													rate={rate}
+													cartPriceTotal={cartPriceTotal}
 												/>
 											</Col>
 											<Col xs={15}>
@@ -547,7 +543,7 @@ const NewOrderForm = ({ handleModalOpen }) => {
 								header={
 									<Stack justifyContent='space-between'>
 										<span>Payment method</span>
-										<SelectPicker
+										{/* <SelectPicker
 											data={[
 												{ label: 'Pending', value: 'pending' },
 												{ label: 'Paid', value: 'paid' },
@@ -564,7 +560,7 @@ const NewOrderForm = ({ handleModalOpen }) => {
 												}))
 											}
 											disabled={isLoading}
-										/>
+										/> */}
 									</Stack>
 								}
 							>
@@ -589,7 +585,7 @@ const NewOrderForm = ({ handleModalOpen }) => {
 								header={
 									<Stack justifyContent='space-between'>
 										<span>Shipment method</span>
-										<SelectPicker
+										{/* <SelectPicker
 											data={[
 												{ label: 'Pending', value: 'pending' },
 												{ label: 'Completed', value: 'completed' },
@@ -607,7 +603,7 @@ const NewOrderForm = ({ handleModalOpen }) => {
 												}))
 											}}
 											disabled={isLoading}
-										/>
+										/> */}
 									</Stack>
 								}
 							>
@@ -902,6 +898,20 @@ const NewOrderForm = ({ handleModalOpen }) => {
 								)}
 							</PanelGroup>
 						)}
+
+						<Stack justifyContent='flex-end' style={{ marginTop: '1em' }}>
+							<ButtonToolbar>
+								<Button
+									appearance='primary'
+									onClick={handleSubmit}
+									disabled={enableSubmit}
+									loading={isLoading}
+								>
+									Create order
+								</Button>
+								<Button disabled={isLoading}>Discard</Button>
+							</ButtonToolbar>
+						</Stack>
 					</Col>
 				</Row>
 			</Grid>

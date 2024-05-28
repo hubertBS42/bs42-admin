@@ -139,9 +139,8 @@ const OrdersTable = () => {
 								<>
 									<Button
 										appearance='link'
-										onClick={() =>
-											dispatch(setDrawerOpen({ mode: 'edit', data: rowData }))
-										}
+										as={Link}
+										href={`/orders/${rowData.orderNumber}`}
 										style={{ padding: 0, marginRight: '.7em' }}
 									>
 										<VisibleIcon />

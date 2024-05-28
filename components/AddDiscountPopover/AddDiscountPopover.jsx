@@ -1,5 +1,5 @@
 'use client'
-import { roundMoney } from '@/utils/functions'
+import { calculateCartTotal, roundMoney } from '@/utils/functions'
 import { useRef, useState } from 'react'
 import {
 	Button,
@@ -16,6 +16,7 @@ const AddDiscountPopover = ({
 	orderDetails,
 	rate,
 	cartItemsTotal,
+	cartPriceTotal = null,
 	isLoading,
 }) => {
 	const triggerRef = useRef()
@@ -26,8 +27,16 @@ const AddDiscountPopover = ({
 		value: 0,
 		reason: '',
 	})
+	const [cartTotal, setCartTotal] = useState(0)
 
 	const updateForm = orderDetails => {
+		if (cartPriceTotal) {
+			setCartTotal(cartPriceTotal)
+		} else {
+			const total = calculateCartTotal(orderDetails.products)
+			setCartTotal(total)
+		}
+
 		setDiscount({
 			percentage: orderDetails.discount.percentage,
 			value: orderDetails.discount.value,
@@ -62,7 +71,7 @@ const AddDiscountPopover = ({
 							<Text>Percentage:</Text>
 							<InputNumber
 								onChange={percentage => {
-									const value = (percentage / 100) * orderDetails.subtotal
+									const value = (percentage / 100) * cartTotal
 									setDiscount(prev => ({ ...prev, percentage, value }))
 								}}
 								value={discount.percentage}
