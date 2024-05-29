@@ -610,7 +610,8 @@ const NewOrderForm = ({ handleModalOpen }) => {
 								header={
 									<Stack justifyContent='space-between'>
 										<span>Invoice</span>
-										<label
+
+										{/* <label
 											style={{
 												fontSize: 14,
 												display: 'flex',
@@ -631,7 +632,7 @@ const NewOrderForm = ({ handleModalOpen }) => {
 												checked={orderDetails.invoice.email}
 											/>
 											Send invoice
-										</label>
+										</label> */}
 									</Stack>
 								}
 							>

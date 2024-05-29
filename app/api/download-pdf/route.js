@@ -6,10 +6,11 @@ export const POST = async request => {
 	let data = await request.json()
 
 	try {
-		const stream = await renderToStream(<Invoice />)
+		const stream = await renderToStream(<Invoice data={data} />)
 
 		return new NextResponse(stream, { status: 201 })
 	} catch (error) {
+		console.log(error)
 		return new NextResponse(
 			JSON.stringify({
 				status: 'error',

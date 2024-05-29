@@ -35,6 +35,7 @@ import ManageOrderCustomerDrawer from '../ManageOrderCustomerDrawer/ManageOrderC
 import { toast } from 'react-toastify'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+
 const OrderForm = ({ order }) => {
 	const [isLoading, setIsLoading] = useState(false)
 	const router = useRouter()
@@ -161,6 +162,24 @@ const OrderForm = ({ order }) => {
 		}
 
 		setIsLoading(false)
+	}
+
+	const handleInvoiceDownload = async () => {
+		const { user, status, ...rest } = orderDetails
+		const response = await fetcher(`/api/download-pdf`, {
+			method: 'POST',
+			body: JSON.stringify(rest),
+			headers: {
+				'Content-type': 'application/json; charset=UTF-8',
+				Accept: 'application/pdf',
+			},
+		})
+
+		// if (updateStatus === 'success') {
+		// 	toast.success('Order updated.')
+		// } else {
+		// 	toast.error('Failed to download invoice.')
+		// }
 	}
 
 	useEffect(() => {
@@ -508,7 +527,23 @@ const OrderForm = ({ order }) => {
 								header={
 									<Stack justifyContent='space-between'>
 										<span>Invoice</span>
-										<label
+										<ButtonToolbar>
+											<Button
+												appearance='ghost'
+												disabled={enableSubmit}
+												loading={isLoading}
+											>
+												Send Invoice
+											</Button>
+											<Button
+												appearance='ghost'
+												disabled={isLoading || enableSubmit}
+												onClick={handleInvoiceDownload}
+											>
+												Download Invoice
+											</Button>
+										</ButtonToolbar>
+										{/* <label
 											style={{
 												fontSize: 14,
 												display: 'flex',
@@ -529,7 +564,7 @@ const OrderForm = ({ order }) => {
 												checked={orderDetails.invoice.email}
 											/>
 											Send invoice
-										</label>
+										</label> */}
 									</Stack>
 								}
 							>
