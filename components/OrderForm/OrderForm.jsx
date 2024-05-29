@@ -259,7 +259,7 @@ const OrderForm = ({ order }) => {
 				shipmentMethod={orderDetails.shipping.method}
 			/>
 			<Grid fluid>
-				<Row style={{ marginBottom: 10 }}>
+				{/* <Row style={{ marginBottom: 10 }}>
 					<Col xs={24}>
 						<OrderStatusPanel
 							orderDetails={orderDetails}
@@ -267,7 +267,7 @@ const OrderForm = ({ order }) => {
 							setStatus={setStatus}
 						/>
 					</Col>
-				</Row>
+				</Row> */}
 				<Row>
 					<Col xs={16}>
 						<PanelGroup bordered>
