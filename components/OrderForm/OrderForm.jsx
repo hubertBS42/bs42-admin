@@ -96,66 +96,6 @@ const OrderForm = ({ order }) => {
 		},
 	})
 
-	const handleCalculations = () => {
-		const cartTotal = calculateCartTotal(orderDetails.products)
-		const discountDifference = cartTotal - orderDetails.discount.value
-
-		setOrderDetails(prev => ({
-			...prev,
-			subtotal: discountDifference,
-			total: discountDifference + Number(orderDetails.shipping.cost),
-		}))
-
-		setSubtotal(discountDifference * orderDetails.rate)
-		setTotal(
-			discountDifference * orderDetails.rate +
-				Number(orderDetails.shipping.cost) * orderDetails.rate
-		)
-	}
-
-	const handleEnableSubmit = () => {
-		let shippingCost
-		let shippingAddress
-
-		if (orderDetails.shipping.method === 'delivery') {
-			if (orderDetails.shipping.cost > 0) {
-				shippingCost = true
-			} else {
-				shippingCost = false
-			}
-
-			if (orderDetails?.shipping.address) {
-				shippingAddress = true
-			} else {
-				shippingAddress = false
-			}
-		} else {
-			shippingCost = false
-			shippingAddress = false
-		}
-
-		const providedFields = [
-			{
-				field: 'shippingCost',
-				required:
-					orderDetails.shipping.method === 'delivery' ? true : false,
-				provided: shippingCost,
-			},
-			{
-				field: 'shippingAddress',
-				required:
-					orderDetails.shipping.method === 'delivery' ? true : false,
-				provided: shippingAddress,
-			},
-		]
-
-		const missing = element => element.required && !element.provided
-
-		const result = providedFields.some(missing)
-
-		setEnableSubmit(result)
-	}
-
 	const updateCustomerDetails = formValue => {
 		setOrderDetails(prev => ({
 			...prev,
@@ -222,6 +162,65 @@ const OrderForm = ({ order }) => {
 	}
 
 	useEffect(() => {
+		const handleCalculations = () => {
+			const cartTotal = calculateCartTotal(orderDetails.products)
+			const discountDifference = cartTotal - orderDetails.discount.value
+
+			setOrderDetails(prev => ({
+				...prev,
+				subtotal: discountDifference,
+				total: discountDifference + Number(orderDetails.shipping.cost),
+			}))
+
+			setSubtotal(discountDifference * orderDetails.rate)
+			setTotal(
+				discountDifference * orderDetails.rate +
+					Number(orderDetails.shipping.cost) * orderDetails.rate
+			)
+		}
+
+		const handleEnableSubmit = () => {
+			let shippingCost
+			let shippingAddress
+
+			if (orderDetails.shipping.method === 'delivery') {
+				if (orderDetails.shipping.cost > 0) {
+					shippingCost = true
+				} else {
+					shippingCost = false
+				}
+
+				if (orderDetails?.shipping.address) {
+					shippingAddress = true
+				} else {
+					shippingAddress = false
+				}
+			} else {
+				shippingCost = false
+				shippingAddress = false
+			}
+
+			const providedFields = [
+				{
+					field: 'shippingCost',
+					required:
+						orderDetails.shipping.method === 'delivery' ? true : false,
+					provided: shippingCost,
+				},
+				{
+					field: 'shippingAddress',
+					required:
+						orderDetails.shipping.method === 'delivery' ? true : false,
+					provided: shippingAddress,
+				},
+			]
+
+			const missing = element => element.required && !element.provided
+
+			const result = providedFields.some(missing)
+
+			setEnableSubmit(result)
+		}
 		handleCalculations()
 		handleEnableSubmit()
 
@@ -249,6 +248,8 @@ const OrderForm = ({ order }) => {
 		orderDetails.shipping.method,
 		orderDetails.shipping.cost,
 		orderDetails.shipping.address,
+		orderDetails.products,
+		orderDetails.rate,
 	])
 
 	return (

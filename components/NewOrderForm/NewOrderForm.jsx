@@ -98,81 +98,6 @@ const NewOrderForm = ({ handleModalOpen }) => {
 		},
 	})
 
-	const handleCalculations = () => {
-		const discountValue =
-			(Number(orderDetails.discount.percentage) / 100) * cartPriceTotal
-		const discountDifference = cartPriceTotal - discountValue
-
-		setOrderDetails(prev => ({
-			...prev,
-			subtotal: discountDifference,
-			total: discountDifference + Number(orderDetails.shipping.cost),
-		}))
-		setSubtotal(discountDifference * rate)
-		setTotal(
-			discountDifference * rate +
-				Number(orderDetails.shipping.cost) * rate
-		)
-	}
-
-	const handleEnableSubmit = () => {
-		let shippingCost
-		let shippingAddress
-
-		if (orderDetails.shipping.method === 'delivery') {
-			if (orderDetails.shipping.cost > 0) {
-				shippingCost = true
-			} else {
-				shippingCost = false
-			}
-
-			if (customer?.shipping) {
-				shippingAddress = true
-			} else {
-				shippingAddress = false
-			}
-		} else {
-			shippingCost = false
-			shippingAddress = false
-		}
-
-		const providedFields = [
-			{
-				field: 'products',
-				required: true,
-				provided: cartItemsTotal === 0 ? false : true,
-			},
-			{
-				field: 'customer',
-				required: true,
-				provided: !customer ? false : true,
-			},
-			{
-				field: 'shippingCost',
-				required:
-					orderDetails.shipping.method === 'delivery' ? true : false,
-				provided: shippingCost,
-			},
-			{
-				field: 'shippingAddress',
-				required:
-					orderDetails.shipping.method === 'delivery' ? true : false,
-				provided: shippingAddress,
-			},
-			{
-				field: 'billingAddress',
-				required: true,
-				provided: customer?.billingActive ? true : false,
-			},
-		]
-
-		const missing = element => element.required && !element.provided
-
-		const result = providedFields.some(missing)
-
-		setEnableSubmit(result)
-	}
-
 	const fetchCategories = id => {
 		const category = categories.find(category => category._id === id)
 		return [
@@ -270,6 +195,81 @@ const NewOrderForm = ({ handleModalOpen }) => {
 	}
 
 	useEffect(() => {
+		const handleCalculations = () => {
+			const discountValue =
+				(Number(orderDetails.discount.percentage) / 100) * cartPriceTotal
+			const discountDifference = cartPriceTotal - discountValue
+
+			setOrderDetails(prev => ({
+				...prev,
+				subtotal: discountDifference,
+				total: discountDifference + Number(orderDetails.shipping.cost),
+			}))
+			setSubtotal(discountDifference * rate)
+			setTotal(
+				discountDifference * rate +
+					Number(orderDetails.shipping.cost) * rate
+			)
+		}
+
+		const handleEnableSubmit = () => {
+			let shippingCost
+			let shippingAddress
+
+			if (orderDetails.shipping.method === 'delivery') {
+				if (orderDetails.shipping.cost > 0) {
+					shippingCost = true
+				} else {
+					shippingCost = false
+				}
+
+				if (customer?.shipping) {
+					shippingAddress = true
+				} else {
+					shippingAddress = false
+				}
+			} else {
+				shippingCost = false
+				shippingAddress = false
+			}
+
+			const providedFields = [
+				{
+					field: 'products',
+					required: true,
+					provided: cartItemsTotal === 0 ? false : true,
+				},
+				{
+					field: 'customer',
+					required: true,
+					provided: !customer ? false : true,
+				},
+				{
+					field: 'shippingCost',
+					required:
+						orderDetails.shipping.method === 'delivery' ? true : false,
+					provided: shippingCost,
+				},
+				{
+					field: 'shippingAddress',
+					required:
+						orderDetails.shipping.method === 'delivery' ? true : false,
+					provided: shippingAddress,
+				},
+				{
+					field: 'billingAddress',
+					required: true,
+					provided: customer?.billingActive ? true : false,
+				},
+			]
+
+			const missing = element => element.required && !element.provided
+
+			const result = providedFields.some(missing)
+
+			setEnableSubmit(result)
+		}
+
 		handleCalculations()
 		handleEnableSubmit()
 
@@ -296,6 +296,8 @@ const NewOrderForm = ({ handleModalOpen }) => {
 		orderDetails.shipping.cost,
 		orderDetails.shipping.method,
 		customer,
+		cartPriceTotal,
+		rate,
 	])
 
 	return (

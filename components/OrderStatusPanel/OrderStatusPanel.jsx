@@ -32,7 +32,12 @@ const OrderStatusPanel = ({
 			!newOrder && data.push({ label: 'Cancelled', value: 'cancelled' })
 			setSteps(data)
 		}
-	}, [orderDetails.shipping.method])
+	}, [
+		orderDetails.shipping.method,
+		newOrder,
+		orderDetails.products,
+		orderDetails.rate,
+	])
 
 	const renderSteps = (steps, status) => {
 		let data = steps
