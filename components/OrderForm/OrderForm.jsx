@@ -380,12 +380,16 @@ const OrderForm = ({ order }) => {
 										{orderDetails.shipping.method === 'delivery' && (
 											<Row style={{ textAlign: 'right', marginBottom: 12 }}>
 												<Col xs={9}>
-													<AddShippingPopover
-														orderDetails={orderDetails}
-														setOrderDetails={setOrderDetails}
-														rate={orderDetails.rate}
-														isLoading={isLoading}
-													/>
+													{cancelled ? (
+														<Text>Shipping</Text>
+													) : (
+														<AddShippingPopover
+															orderDetails={orderDetails}
+															setOrderDetails={setOrderDetails}
+															rate={orderDetails.rate}
+															isLoading={isLoading}
+														/>
+													)}
 												</Col>
 												<Col xs={15}>
 													<Text>
