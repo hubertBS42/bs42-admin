@@ -55,6 +55,7 @@ import { toast } from 'react-toastify'
 import CustomToggle from '../CustomToggle/CustomToggle'
 import { isBefore, sub } from 'date-fns'
 import OrderStatusPanel from '../OrderStatusPanel/OrderStatusPanel'
+import Link from 'next/link'
 
 const NewOrderForm = ({ handleModalOpen }) => {
 	const [users, loading, searchUsers] = useUsers()
@@ -68,7 +69,7 @@ const NewOrderForm = ({ handleModalOpen }) => {
 
 	const [customer, setCustomer] = useState(null)
 	const [steps, setSteps] = useState([])
-	const [currentStatus, setCurrentStatus] = useState('created')
+	const [currentStatus, setCurrentStatus] = useState(['created'])
 	const [isLoading, setIsLoading] = useState(false)
 	const [total, setTotal] = useState(0)
 	const [subtotal, setSubtotal] = useState(0)
@@ -113,13 +114,10 @@ const NewOrderForm = ({ handleModalOpen }) => {
 
 		setIsLoading(true)
 
-		const index = steps.findIndex(step => step.value === currentStatus)
-		const data = steps
-			.map(step => ({
-				type: step.value,
-				timestamp: new Date().toISOString(),
-			}))
-			.slice(0, index + 1)
+		const data = currentStatus.map(event => ({
+			type: event,
+			timestamp: new Date().toISOString(),
+		}))
 
 		const preparedData = {
 			...customer,
@@ -175,15 +173,18 @@ const NewOrderForm = ({ handleModalOpen }) => {
 			...rest,
 		}
 
-		const { status, message } = await fetcher('/api/orders/add', {
-			method: 'POST',
-			body: JSON.stringify(preparedData),
-			headers: {
-				'Content-type': 'application/json; charset=UTF-8',
-			},
-		})
+		const { status: addStatus, message } = await fetcher(
+			'/api/orders/add',
+			{
+				method: 'POST',
+				body: JSON.stringify(preparedData),
+				headers: {
+					'Content-type': 'application/json; charset=UTF-8',
+				},
+			}
+		)
 
-		if (status === 'success') {
+		if (addStatus === 'success') {
 			toast.success('Order created.')
 			dispatch(emptyCart())
 			router.push('/orders')
@@ -306,28 +307,6 @@ const NewOrderForm = ({ handleModalOpen }) => {
 				setCustomer={setCustomer}
 				shipmentMethod={orderDetails.shipping.method}
 			/>
-			{/* <Stack justifyContent='space-between' style={{ marginBottom: 16 }}>
-				<SelectPicker
-					data={steps}
-					searchable={false}
-					cleanable={false}
-					style={{ width: 224 }}
-					value={currentStatus}
-					disabledItemValues={['created']}
-					onSelect={setCurrentStatus}
-				/>
-				<ButtonToolbar>
-					<Button
-						appearance='primary'
-						onClick={handleSubmit}
-						disabled={enableSubmit}
-						loading={isLoading}
-					>
-						Create order
-					</Button>
-					<Button disabled={isLoading}>Cancel</Button>
-				</ButtonToolbar>
-			</Stack> */}
 			<Grid fluid>
 				<Row style={{ marginBottom: 10 }}>
 					<Col xs={24}>
@@ -911,7 +890,9 @@ const NewOrderForm = ({ handleModalOpen }) => {
 								>
 									Create order
 								</Button>
-								<Button disabled={isLoading}>Discard</Button>
+								<Button as={Link} href='/orders' disabled={isLoading}>
+									Cancel
+								</Button>
 							</ButtonToolbar>
 						</Stack>
 					</Col>

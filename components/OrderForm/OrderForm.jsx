@@ -34,13 +34,15 @@ import { useDispatch } from 'react-redux'
 import ManageOrderCustomerDrawer from '../ManageOrderCustomerDrawer/ManageOrderCustomerDrawer'
 import { toast } from 'react-toastify'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 const OrderForm = ({ order }) => {
 	const [isLoading, setIsLoading] = useState(false)
 	const router = useRouter()
 	const dispatch = useDispatch()
 	const [status, setStatus] = useState(
-		order.status[order.status.length - 1].type
+		order.status.map(event => event.type)
 	)
+	const [cancelled, setCancelled] = useState(false)
 
 	const [enableSubmit, setEnableSubmit] = useState(false)
 	const [steps, setSteps] = useState([])
@@ -112,14 +114,14 @@ const OrderForm = ({ order }) => {
 				? [...order.status]
 				: [{ type: 'created', timestamp: new Date().toISOString() }]
 
-		if (status === 'cancelled') {
+		if (status.includes('cancelled')) {
 			latestStatus.push({
 				type: 'cancelled',
 				timestamp: new Date().toISOString(),
 			})
 		} else {
 			const latestStepIndex = steps.findIndex(
-				step => step.value === status
+				step => step.value === status[status.length - 1]
 			)
 
 			const statusUpdate = steps.slice(
@@ -127,9 +129,9 @@ const OrderForm = ({ order }) => {
 				latestStepIndex + 1
 			)
 
-			statusUpdate.forEach(status =>
+			statusUpdate.forEach(event =>
 				latestStatus.push({
-					type: status.value,
+					type: event.value,
 					timestamp: new Date().toISOString(),
 				})
 			)
@@ -223,6 +225,10 @@ const OrderForm = ({ order }) => {
 		}
 		handleCalculations()
 		handleEnableSubmit()
+
+		if (order.status.map(event => event.type).includes('cancelled')) {
+			setCancelled(true)
+		}
 
 		if (orderDetails.shipping.method === 'delivery') {
 			setSteps([
@@ -345,13 +351,17 @@ const OrderForm = ({ order }) => {
 											}}
 										>
 											<Col xs={9}>
-												<AddDiscountPopover
-													orderDetails={orderDetails}
-													setOrderDetails={setOrderDetails}
-													cartItemsTotal={orderDetails.products.length}
-													isLoading={isLoading}
-													rate={orderDetails.rate}
-												/>
+												{cancelled ? (
+													<Text>Discount</Text>
+												) : (
+													<AddDiscountPopover
+														orderDetails={orderDetails}
+														setOrderDetails={setOrderDetails}
+														cartItemsTotal={orderDetails.products.length}
+														isLoading={isLoading}
+														rate={orderDetails.rate}
+													/>
+												)}
 											</Col>
 											<Col xs={15}>
 												<Text>% {orderDetails.discount.percentage}</Text>
@@ -432,7 +442,7 @@ const OrderForm = ({ order }) => {
 											payment: { ...orderDetails.payment, method },
 										}))
 									}
-									disabled={isLoading}
+									disabled={isLoading || cancelled}
 								>
 									<Radio value='cash'>Cash</Radio>
 									<Radio value='mobile money' disabled>
@@ -470,9 +480,9 @@ const OrderForm = ({ order }) => {
 									value={orderDetails.shipping.method}
 									onChange={method => {
 										if (method === order.shipping.method) {
-											setStatus(order.status[order.status.length - 1].type)
+											setStatus(order.status.map(event => event.type))
 										} else {
-											setStatus('created')
+											setStatus(['created'])
 										}
 
 										setOrderDetails(prev => ({
@@ -484,7 +494,7 @@ const OrderForm = ({ order }) => {
 											},
 										}))
 									}}
-									disabled={isLoading}
+									disabled={isLoading || cancelled}
 								>
 									<Radio value='pickup'>Pickup</Radio>
 									<Radio value='delivery'>Delivery</Radio>
@@ -552,24 +562,26 @@ const OrderForm = ({ order }) => {
 								header={
 									<Stack justifyContent='space-between'>
 										<span>Customer</span>
-										<Stack spacing={10}>
-											<Button
-												appearance='link'
-												size='sm'
-												style={{ padding: 0 }}
-												onClick={() => {
-													dispatch(
-														setDrawerOpen({
-															mode: 'edit',
-															data: orderDetails,
-														})
-													)
-												}}
-												disabled={isLoading}
-											>
-												Edit
-											</Button>
-										</Stack>
+										{!cancelled && (
+											<Stack spacing={10}>
+												<Button
+													appearance='link'
+													size='sm'
+													style={{ padding: 0 }}
+													onClick={() => {
+														dispatch(
+															setDrawerOpen({
+																mode: 'edit',
+																data: orderDetails,
+															})
+														)
+													}}
+													disabled={isLoading}
+												>
+													Edit
+												</Button>
+											</Stack>
+										)}
 									</Stack>
 								}
 							>
@@ -669,7 +681,9 @@ const OrderForm = ({ order }) => {
 								>
 									Update order
 								</Button>
-								<Button disabled={isLoading}>Discard</Button>
+								<Button as={Link} href='/orders' disabled={isLoading}>
+									Cancel
+								</Button>
 							</ButtonToolbar>
 						</Stack>
 					</Col>

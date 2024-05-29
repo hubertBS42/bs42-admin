@@ -9,8 +9,20 @@ const OrderStatusPanel = ({
 	newOrder = false,
 }) => {
 	const [steps, setSteps] = useState([])
+	const [disabledSteps, setDisabledSteps] = useState([])
+	const [cancelled, setCancelled] = useState(false)
 
 	useEffect(() => {
+		setDisabledSteps(status)
+
+		if (
+			orderDetails?.status
+				?.map(event => event.type)
+				.includes('cancelled')
+		) {
+			setCancelled(true)
+		}
+
 		if (orderDetails.shipping.method === 'delivery') {
 			const data = [
 				{ label: 'Pending', value: 'created' },
@@ -41,20 +53,24 @@ const OrderStatusPanel = ({
 
 	const renderSteps = (steps, status) => {
 		let data = steps
+		if (status.includes('cancelled')) {
+			const filteredSteps = steps.filter(step => {
+				if (status.includes(step.value)) {
+					return step
+				}
+			})
 
-		if (status === 'cancelled') {
-			const events = orderDetails.status.map(event => event.type)
-			const filteredSteps = steps.filter(step =>
-				events.includes(step.value)
-			)
-			filteredSteps.push({ label: 'Cancelled', value: 'cancelled' })
 			data = filteredSteps
 		} else {
 			data = steps.filter(step => step.value !== 'cancelled')
 		}
 
 		return (
-			<Steps current={data.findIndex(step => step.value === status)}>
+			<Steps
+				current={data.findIndex(
+					step => step.value === status[status.length - 1]
+				)}
+			>
 				{data.map(step => (
 					<Steps.Item title={step.label} key={step.label} />
 				))}
@@ -67,15 +83,29 @@ const OrderStatusPanel = ({
 			header={
 				<Stack justifyContent='space-between'>
 					<span>Order status</span>
-					<SelectPicker
-						data={steps}
-						searchable={false}
-						cleanable={false}
-						style={{ width: 224 }}
-						value={status}
-						disabledItemValues={!newOrder ? ['created'] : []}
-						onChange={setStatus}
-					/>
+					{!cancelled && (
+						<SelectPicker
+							data={steps}
+							searchable={false}
+							cleanable={false}
+							style={{ width: 224 }}
+							value={status[status.length - 1]}
+							disabledItemValues={disabledSteps}
+							onChange={value => {
+								if (value === 'cancelled') {
+									const data = orderDetails.status.map(event => event.type)
+									data.push('cancelled')
+									setStatus(data)
+								} else {
+									const index = steps.findIndex(step => step.value === value)
+									const data = steps
+										.map(step => step.value)
+										.slice(0, index + 1)
+									setStatus(data)
+								}
+							}}
+						/>
+					)}
 				</Stack>
 			}
 			bordered

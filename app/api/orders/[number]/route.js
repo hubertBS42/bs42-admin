@@ -4,6 +4,7 @@ import { NextResponse } from 'next/server'
 
 //GET
 export const GET = async (request, { params }) => {
+	const { searchParams } = new URL(request.url)
 	try {
 		await connectToDB()
 
