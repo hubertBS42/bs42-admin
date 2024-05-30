@@ -9,10 +9,6 @@ const page = async ({ params }) => {
 	)
 
 	if (status === 'error') return notFound()
-	return (
-		<>
-			<OrderForm order={data} />
-		</>
-	)
+	return <OrderForm order={data} />
 }
 export default page

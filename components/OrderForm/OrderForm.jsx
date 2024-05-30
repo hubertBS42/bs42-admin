@@ -45,7 +45,7 @@ const OrderForm = ({ order }) => {
 	const [status, setStatus] = useState(
 		order.status.map(event => event.type)
 	)
-	const [cancelled, setCancelled] = useState(false)
+	const [editable, setEditable] = useState(true)
 
 	const [enableSubmit, setEnableSubmit] = useState(false)
 	const [steps, setSteps] = useState([])
@@ -58,7 +58,7 @@ const OrderForm = ({ order }) => {
 			firstName: order.contact.firstName,
 			lastName: order.contact.lastName,
 			email: order.contact.email,
-			phone: order.contact.firstName,
+			phone: order.contact.phone,
 		},
 		billing: {
 			firstName: order.billing.firstName,
@@ -258,12 +258,18 @@ const OrderForm = ({ order }) => {
 
 			setEnableSubmit(result)
 		}
+
+		const checkIfEditable = () => {
+			const options = ['cancelled', 'pickedUp', 'delivered']
+			const events = order.status.map(event => event.type)
+			const atLeastOne = options.some(option => events.includes(option))
+
+			if (atLeastOne) setEditable(false)
+		}
+
+		checkIfEditable()
 		handleCalculations()
 		handleEnableSubmit()
-
-		if (order.status.map(event => event.type).includes('cancelled')) {
-			setCancelled(true)
-		}
 
 		if (orderDetails.shipping.method === 'delivery') {
 			setSteps([
@@ -306,6 +312,7 @@ const OrderForm = ({ order }) => {
 							orderDetails={orderDetails}
 							status={status}
 							setStatus={setStatus}
+							editable={editable}
 						/>
 					</Col>
 				</Row>
@@ -386,7 +393,7 @@ const OrderForm = ({ order }) => {
 											}}
 										>
 											<Col xs={9}>
-												{cancelled ? (
+												{!editable ? (
 													<Text>Discount</Text>
 												) : (
 													<AddDiscountPopover
@@ -415,7 +422,7 @@ const OrderForm = ({ order }) => {
 										{orderDetails.shipping.method === 'delivery' && (
 											<Row style={{ textAlign: 'right', marginBottom: 12 }}>
 												<Col xs={9}>
-													{cancelled ? (
+													{!editable ? (
 														<Text>Shipping</Text>
 													) : (
 														<AddShippingPopover
@@ -481,7 +488,7 @@ const OrderForm = ({ order }) => {
 											payment: { ...orderDetails.payment, method },
 										}))
 									}
-									disabled={isLoading || cancelled}
+									disabled={isLoading || !editable}
 								>
 									<Radio value='cash'>Cash</Radio>
 									<Radio value='mobile money' disabled>
@@ -533,7 +540,7 @@ const OrderForm = ({ order }) => {
 											},
 										}))
 									}}
-									disabled={isLoading || cancelled}
+									disabled={isLoading || !editable}
 								>
 									<Radio value='pickup'>Pickup</Radio>
 									<Radio value='delivery'>Delivery</Radio>
@@ -615,7 +622,7 @@ const OrderForm = ({ order }) => {
 								header={
 									<Stack justifyContent='space-between'>
 										<span>Customer</span>
-										{!cancelled && (
+										{editable && (
 											<Stack spacing={10}>
 												<Button
 													appearance='link'

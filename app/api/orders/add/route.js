@@ -50,54 +50,63 @@ export const POST = async request => {
 
 		if (!newOrder) throw new Error('Failed to create order')
 
-		if (data.invoice.email) {
-			const [stream, template] = await Promise.all([
-				renderToStream(<Invoice data={newOrder} />),
-				fetchTemplate('order-placed'),
-			])
+		// const template = await fetchTemplate('order-placed')
 
-			const recipients = [
-				{
-					group: 'users',
-					variables: {
-						firstName: newOrder.contact.firstName,
-						orderNumber: newOrder.orderNumber,
-					},
-					toEmail: newOrder.contact.email,
-					attachments: [
-						{
-							filename: `invoice_${invoiceNumber}.pdf`,
-							content: stream,
-							contentType: 'application/pdf',
-						},
-					],
-				},
-				{
-					group: 'admins',
-				},
-			]
+		// const { transporter, mailOptions } = await configMailer({
+		// 	group: 'admins',
+		// 	template,
+		// })
 
-			recipients.forEach(async group => {
-				const { transporter, mailOptions } = await configMailer({
-					group: group.group,
-					variables: group.variables,
-					toEmail: group.toEmail,
-					attachments: group.attachments,
-					template,
-				})
+		// await transporter.sendMail(mailOptions)
 
-				await transporter.sendMail(mailOptions)
-			})
-		} else {
-			const template = await fetchTemplate('order-placed')
+		// if (data.invoice.email) {
+		// 	const [stream, template] = await Promise.all([
+		// 		renderToStream(<Invoice data={newOrder} />),
+		// 		fetchTemplate('order-placed'),
+		// 	])
 
-			const { transporter, mailOptions } = await configMailer({
-				group: 'admins',
-				template,
-			})
+		// 	const recipients = [
+		// 		{
+		// 			group: 'users',
+		// 			variables: {
+		// 				firstName: newOrder.contact.firstName,
+		// 				orderNumber: newOrder.orderNumber,
+		// 			},
+		// 			toEmail: newOrder.contact.email,
+		// 			attachments: [
+		// 				{
+		// 					filename: `invoice_${invoiceNumber}.pdf`,
+		// 					content: stream,
+		// 					contentType: 'application/pdf',
+		// 				},
+		// 			],
+		// 		},
+		// 		{
+		// 			group: 'admins',
+		// 		},
+		// 	]
 
-			await transporter.sendMail(mailOptions)
-		}
+		// 	recipients.forEach(async group => {
+		// 		const { transporter, mailOptions } = await configMailer({
+		// 			group: group.group,
+		// 			variables: group.variables,
+		// 			toEmail: group.toEmail,
+		// 			attachments: group.attachments,
+		// 			template,
+		// 		})
+
+		// 		await transporter.sendMail(mailOptions)
+		// 	})
+		// } else {
+		// 	const template = await fetchTemplate('order-placed')
+
+		// 	const { transporter, mailOptions } = await configMailer({
+		// 		group: 'admins',
+		// 		template,
+		// 	})
+
+		// 	await transporter.sendMail(mailOptions)
+		// }
 
 		return new NextResponse(
 			JSON.stringify({

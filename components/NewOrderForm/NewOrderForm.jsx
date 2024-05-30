@@ -185,9 +185,9 @@ const NewOrderForm = ({ handleModalOpen }) => {
 		)
 
 		if (addStatus === 'success') {
+			router.push('/orders')
 			toast.success('Order created.')
 			dispatch(emptyCart())
-			router.push('/orders')
 		} else {
 			toast.error('Failed to create order.')
 		}

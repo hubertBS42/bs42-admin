@@ -6,30 +6,22 @@ const OrderStatusPanel = ({
 	orderDetails,
 	setStatus,
 	status,
+	editable = true,
 	newOrder = false,
 }) => {
 	const [steps, setSteps] = useState([])
 	const [disabledSteps, setDisabledSteps] = useState([])
-	const [cancelled, setCancelled] = useState(false)
 
 	useEffect(() => {
 		setDisabledSteps(status)
-
-		if (
-			orderDetails?.status
-				?.map(event => event.type)
-				.includes('cancelled')
-		) {
-			setCancelled(true)
-		}
 
 		if (orderDetails.shipping.method === 'delivery') {
 			const data = [
 				{ label: 'Pending', value: 'created' },
 				{ label: 'Processing', value: 'processing' },
 				{ label: 'Delivering', value: 'delivering' },
-				{ label: 'Delivered', value: 'delivered' },
 				{ label: 'Payment received', value: 'paymentReceived' },
+				{ label: 'Delivered', value: 'delivered' },
 			]
 			!newOrder && data.push({ label: 'Cancelled', value: 'cancelled' })
 			setSteps(data)
@@ -83,7 +75,7 @@ const OrderStatusPanel = ({
 			header={
 				<Stack justifyContent='space-between'>
 					<span>Order status</span>
-					{!cancelled && (
+					{editable && (
 						<SelectPicker
 							data={steps}
 							searchable={false}
