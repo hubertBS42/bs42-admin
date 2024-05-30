@@ -8,9 +8,15 @@ export const POST = async request => {
 	try {
 		const stream = await renderToStream(<Invoice data={data} />)
 
-		return new NextResponse(stream, { status: 201 })
+		return new NextResponse(stream, {
+			status: 201,
+			headers: new Headers({
+				// this optional header triggers a download in the browser
+				'content-disposition': `attachment; filename=invoice_${data.invoice.number}.pdf`,
+				'content-type': 'application/pdf',
+			}),
+		})
 	} catch (error) {
-		console.log(error)
 		return new NextResponse(
 			JSON.stringify({
 				status: 'error',

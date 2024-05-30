@@ -35,6 +35,8 @@ import ManageOrderCustomerDrawer from '../ManageOrderCustomerDrawer/ManageOrderC
 import { toast } from 'react-toastify'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import axios from 'axios'
+import SendInvoiceModal from '../SendInvoiceModal/SendInvoiceModal'
 
 const OrderForm = ({ order }) => {
 	const [isLoading, setIsLoading] = useState(false)
@@ -51,6 +53,7 @@ const OrderForm = ({ order }) => {
 	const [subtotal, setSubtotal] = useState(0)
 	const [orderDetails, setOrderDetails] = useState({
 		user: order.user,
+		orderNumber: order.orderNumber,
 		contact: {
 			firstName: order.contact.firstName,
 			lastName: order.contact.lastName,
@@ -165,21 +168,34 @@ const OrderForm = ({ order }) => {
 	}
 
 	const handleInvoiceDownload = async () => {
-		const { user, status, ...rest } = orderDetails
-		const response = await fetcher(`/api/download-pdf`, {
-			method: 'POST',
-			body: JSON.stringify(rest),
-			headers: {
-				'Content-type': 'application/json; charset=UTF-8',
-				Accept: 'application/pdf',
-			},
-		})
+		try {
+			const response = await axios({
+				url: '/api/invoices/download', //your url
+				method: 'POST',
+				data: orderDetails,
+				responseType: 'blob', // important
+			})
 
-		// if (updateStatus === 'success') {
-		// 	toast.success('Order updated.')
-		// } else {
-		// 	toast.error('Failed to download invoice.')
-		// }
+			// create file link in browser's memory
+			const href = URL.createObjectURL(response.data)
+
+			// create "a" HTML element with href to file & click
+			const link = document.createElement('a')
+			link.href = href
+			link.setAttribute(
+				'download',
+				`invoice_${orderDetails.invoice.number}.pdf`
+			) //or any other extension
+			document.body.appendChild(link)
+			link.click()
+
+			// clean up "a" element & remove ObjectURL
+			document.body.removeChild(link)
+			URL.revokeObjectURL(href)
+			toast.success('Invoice downloaded successfully.')
+		} catch (error) {
+			toast.error('Failed to download invoice.')
+		}
 	}
 
 	useEffect(() => {
@@ -528,13 +544,11 @@ const OrderForm = ({ order }) => {
 									<Stack justifyContent='space-between'>
 										<span>Invoice</span>
 										<ButtonToolbar>
-											<Button
-												appearance='ghost'
-												disabled={enableSubmit}
-												loading={isLoading}
-											>
-												Send Invoice
-											</Button>
+											<SendInvoiceModal
+												enableSubmit={enableSubmit}
+												isLoading={isLoading}
+												order={orderDetails}
+											/>
 											<Button
 												appearance='ghost'
 												disabled={isLoading || enableSubmit}
