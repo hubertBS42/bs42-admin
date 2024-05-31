@@ -1,4 +1,5 @@
 'use client'
+import { orderStatusOptions } from '@/utils/data'
 import { useEffect, useState } from 'react'
 import { Panel, SelectPicker, Stack, Steps } from 'rsuite'
 
@@ -15,27 +16,20 @@ const OrderStatusPanel = ({
 	useEffect(() => {
 		setDisabledSteps(status)
 
-		if (orderDetails.shipping.method === 'delivery') {
-			const data = [
-				{ label: 'Pending', value: 'created' },
-				{ label: 'Processing', value: 'processing' },
-				{ label: 'Delivering', value: 'delivering' },
-				{ label: 'Payment received', value: 'paymentReceived' },
-				{ label: 'Delivered', value: 'delivered' },
-			]
-			!newOrder && data.push({ label: 'Cancelled', value: 'cancelled' })
-			setSteps(data)
-		} else {
-			const data = [
-				{ label: 'Pending', value: 'created' },
-				{ label: 'Processing', value: 'processing' },
-				{ label: 'Ready for pickup', value: 'readyForPickup' },
-				{ label: 'Payment received', value: 'paymentReceived' },
-				{ label: 'Picked up', value: 'pickedUp' },
-			]
-			!newOrder && data.push({ label: 'Cancelled', value: 'cancelled' })
-			setSteps(data)
+		const setOrderSteps = () => {
+			const { delivery, pickup } = orderStatusOptions
+			if (orderDetails.shipping.method === 'delivery') {
+				const data = [...delivery]
+				if (newOrder) data.pop()
+				setSteps(data)
+			} else {
+				const data = [...pickup]
+				if (newOrder) data.pop()
+				setSteps(data)
+			}
 		}
+
+		setOrderSteps()
 	}, [
 		orderDetails.shipping.method,
 		newOrder,

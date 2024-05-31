@@ -56,6 +56,7 @@ import CustomToggle from '../CustomToggle/CustomToggle'
 import { isBefore, sub } from 'date-fns'
 import OrderStatusPanel from '../OrderStatusPanel/OrderStatusPanel'
 import Link from 'next/link'
+import { orderStatusOptions } from '@/utils/data'
 
 const NewOrderForm = ({ handleModalOpen }) => {
 	const [users, loading, searchUsers] = useUsers()
@@ -173,19 +174,20 @@ const NewOrderForm = ({ handleModalOpen }) => {
 			...rest,
 		}
 
-		const { status: addStatus, message } = await fetcher(
-			'/api/orders/add',
-			{
-				method: 'POST',
-				body: JSON.stringify(preparedData),
-				headers: {
-					'Content-type': 'application/json; charset=UTF-8',
-				},
-			}
-		)
+		const {
+			status: addStatus,
+			message,
+			data: order,
+		} = await fetcher('/api/orders/add', {
+			method: 'POST',
+			body: JSON.stringify(preparedData),
+			headers: {
+				'Content-type': 'application/json; charset=UTF-8',
+			},
+		})
 
 		if (addStatus === 'success') {
-			router.push('/orders')
+			router.push(`/orders/${order.orderNumber}`)
 			toast.success('Order created.')
 			dispatch(emptyCart())
 		} else {
@@ -271,26 +273,15 @@ const NewOrderForm = ({ handleModalOpen }) => {
 			setEnableSubmit(result)
 		}
 
+		const setOrderSteps = () => {
+			const { delivery, pickup } = orderStatusOptions
+			if (orderDetails.shipping.method === 'delivery') setSteps(delivery)
+			if (orderDetails.shipping.method === 'pickup') setSteps(pickup)
+		}
+
 		handleCalculations()
 		handleEnableSubmit()
-
-		if (orderDetails.shipping.method === 'delivery') {
-			setSteps([
-				{ label: 'Pending', value: 'created' },
-				{ label: 'Processing', value: 'processing' },
-				{ label: 'Delivering', value: 'delivering' },
-				{ label: 'Delivered', value: 'delivered' },
-				{ label: 'Payment received', value: 'paymentReceived' },
-			])
-		} else {
-			setSteps([
-				{ label: 'Pending', value: 'created' },
-				{ label: 'Processing', value: 'processing' },
-				{ label: 'Ready for pickup', value: 'readyForPickup' },
-				{ label: 'Payment received', value: 'paymentReceived' },
-				{ label: 'Picked up', value: 'pickedUp' },
-			])
-		}
+		setOrderSteps()
 	}, [
 		cartItemsTotal,
 		orderDetails.discount.percentage,

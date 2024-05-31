@@ -1116,3 +1116,22 @@ export const geoData = [
 		],
 	},
 ]
+
+export const orderStatusOptions = {
+	delivery: [
+		{ label: 'Pending', value: 'created' },
+		{ label: 'Processing', value: 'processing' },
+		{ label: 'Delivering', value: 'delivering' },
+		{ label: 'Payment received', value: 'paymentReceived' },
+		{ label: 'Delivered', value: 'delivered' },
+		{ label: 'Cancelled', value: 'cancelled' },
+	],
+	pickup: [
+		{ label: 'Pending', value: 'created' },
+		{ label: 'Processing', value: 'processing' },
+		{ label: 'Ready for pickup', value: 'readyForPickup' },
+		{ label: 'Payment received', value: 'paymentReceived' },
+		{ label: 'Picked up', value: 'pickedUp' },
+		{ label: 'Cancelled', value: 'cancelled' },
+	],
+}

@@ -37,6 +37,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import axios from 'axios'
 import SendInvoiceModal from '../SendInvoiceModal/SendInvoiceModal'
+import { orderStatusOptions } from '@/utils/data'
 
 const OrderForm = ({ order }) => {
 	const [isLoading, setIsLoading] = useState(false)
@@ -158,8 +159,8 @@ const OrderForm = ({ order }) => {
 		)
 
 		if (updateStatus === 'success') {
+			router.refresh()
 			toast.success('Order updated.')
-			router.push('/orders')
 		} else {
 			toast.error('Failed to update order.')
 		}
@@ -267,29 +268,16 @@ const OrderForm = ({ order }) => {
 			if (atLeastOne) setEditable(false)
 		}
 
+		const setOrderSteps = () => {
+			const { delivery, pickup } = orderStatusOptions
+			if (orderDetails.shipping.method === 'delivery') setSteps(delivery)
+			if (orderDetails.shipping.method === 'pickup') setSteps(pickup)
+		}
+
 		checkIfEditable()
 		handleCalculations()
 		handleEnableSubmit()
-
-		if (orderDetails.shipping.method === 'delivery') {
-			setSteps([
-				{ label: 'Pending', value: 'created' },
-				{ label: 'Processing', value: 'processing' },
-				{ label: 'Delivering', value: 'delivering' },
-				{ label: 'Delivered', value: 'delivered' },
-				{ label: 'Payment received', value: 'paymentReceived' },
-				{ label: 'Cancelled', value: 'cancelled' },
-			])
-		} else {
-			setSteps([
-				{ label: 'Pending', value: 'created' },
-				{ label: 'Processing', value: 'processing' },
-				{ label: 'Ready for pickup', value: 'readyForPickup' },
-				{ label: 'Payment received', value: 'paymentReceived' },
-				{ label: 'Picked up', value: 'pickedUp' },
-				{ label: 'Cancelled', value: 'cancelled' },
-			])
-		}
+		setOrderSteps()
 	}, [
 		orderDetails.discount.value,
 		orderDetails.shipping.method,
