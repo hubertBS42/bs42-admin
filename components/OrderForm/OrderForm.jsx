@@ -47,6 +47,7 @@ const OrderForm = ({ order }) => {
 		order.status.map(event => event.type)
 	)
 	const [editable, setEditable] = useState(true)
+	const [isDownloading, setIsDownloading] = useState(false)
 
 	const [enableSubmit, setEnableSubmit] = useState(false)
 	const [steps, setSteps] = useState([])
@@ -169,6 +170,7 @@ const OrderForm = ({ order }) => {
 	}
 
 	const handleInvoiceDownload = async () => {
+		setIsDownloading(true)
 		try {
 			const response = await axios({
 				url: '/api/invoices/download', //your url
@@ -193,6 +195,7 @@ const OrderForm = ({ order }) => {
 			// clean up "a" element & remove ObjectURL
 			document.body.removeChild(link)
 			URL.revokeObjectURL(href)
+			setIsDownloading(false)
 			toast.success('Invoice downloaded successfully.')
 		} catch (error) {
 			toast.error('Failed to download invoice.')
@@ -548,6 +551,7 @@ const OrderForm = ({ order }) => {
 												appearance='ghost'
 												disabled={isLoading || enableSubmit}
 												onClick={handleInvoiceDownload}
+												loading={isDownloading}
 											>
 												Download Invoice
 											</Button>
