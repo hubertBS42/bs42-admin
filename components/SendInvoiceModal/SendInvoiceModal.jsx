@@ -78,8 +78,7 @@ const SendInvoiceModal = ({ enableSubmit, isLoading, order }) => {
 		<>
 			<Button
 				appearance='ghost'
-				disabled={enableSubmit}
-				loading={isLoading || isSending}
+				disabled={enableSubmit || isLoading || isSending}
 				onClick={handleOpen}
 			>
 				Send Invoice
