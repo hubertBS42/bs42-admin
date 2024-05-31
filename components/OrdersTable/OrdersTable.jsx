@@ -31,12 +31,13 @@ import {
 import { setDrawerOpen } from '@/redux/features/drawer/drawerSlice'
 import OrderStatus from '../OrderStatus/OrderStatus'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 
 const { Column, HeaderCell, Cell } = Table
 
 const OrdersTable = () => {
 	const dispatch = useDispatch()
-
+	const router = useRouter()
 	const [sortType, setSortType] = useState('desc')
 	const [sortColumn, setSortColumn] = useState('createdAt')
 	const [limit, setLimit] = useState(10)
@@ -139,6 +140,9 @@ const OrdersTable = () => {
 								<>
 									<Button
 										appearance='link'
+										onClick={() => {
+											router.refresh()
+										}}
 										as={Link}
 										href={`/orders/${rowData.orderNumber}`}
 										style={{ padding: 0, marginRight: '.7em' }}

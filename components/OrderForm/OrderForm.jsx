@@ -160,7 +160,7 @@ const OrderForm = ({ order }) => {
 		)
 
 		if (updateStatus === 'success') {
-			router.refresh()
+			router.push('/orders')
 			toast.success('Order updated.')
 		} else {
 			toast.error('Failed to update order.')
