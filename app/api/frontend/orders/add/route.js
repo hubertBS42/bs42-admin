@@ -77,10 +77,11 @@ export const POST = async request => {
 		const recipients = [
 			{
 				variables: {
-					firstName: newOrder.contact.firstName,
+					firstName: newOrder.billing.firstName,
+					lastName: newOrder.billing.lastName,
 					orderNumber,
 				},
-				toEmail: newOrder.contact.email,
+				toEmail: newOrder.billing.email,
 				group: 'users',
 				template,
 				attachments: [
