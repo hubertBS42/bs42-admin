@@ -126,7 +126,7 @@ const ManageOrderCustomerDrawer = ({
 			setFormValue(prev => {
 				return {
 					...prev,
-					user: customer.user,
+					user: customer.user || null,
 					contact: {
 						firstName: customer.contact.firstName,
 						lastName: customer.contact.lastName,
@@ -155,7 +155,7 @@ const ManageOrderCustomerDrawer = ({
 			})
 		} else {
 			setFormValue({
-				user: '',
+				user: null,
 				contact: {
 					firstName: '',
 					lastName: '',

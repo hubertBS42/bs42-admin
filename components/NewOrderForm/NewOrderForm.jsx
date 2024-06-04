@@ -191,6 +191,7 @@ const NewOrderForm = ({ handleModalOpen }) => {
 			toast.success('Order created.')
 			dispatch(emptyCart())
 		} else {
+			console.log(message)
 			toast.error('Failed to create order.')
 		}
 
