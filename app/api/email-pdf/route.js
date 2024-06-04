@@ -4,7 +4,7 @@ import { NextResponse } from 'next/server'
 import nodemailer from 'nodemailer'
 
 export const GET = async request => {
-	// let data = await request.json()
+	const { searchParams } = new URL(request.url)
 
 	const transporter = nodemailer.createTransport({
 		host: 'mail.bs42.co.uk',
