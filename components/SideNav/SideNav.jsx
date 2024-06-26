@@ -127,11 +127,27 @@ const SideNav = () => {
 			href: null,
 			sublinks: [
 				{
-					title: 'Banner Slides',
-					slug: 'banner-slides',
+					title: 'Website',
+					slug: null,
 					eventKey: '8-1',
 					icon: null,
-					href: '/settings/banner-slides',
+					href: null,
+					sublinks: [
+						{
+							title: 'Banner Slides',
+							slug: 'banner-slides',
+							eventKey: '8-1-1',
+							icon: null,
+							href: '/settings/website/banner-slides',
+						},
+						{
+							title: 'Projects',
+							slug: 'projects',
+							eventKey: '8-1-2',
+							icon: null,
+							href: '/settings/website/projects',
+						},
+					],
 				},
 				{
 					title: 'Currencies',

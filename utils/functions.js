@@ -476,3 +476,64 @@ export const calculateCartTotal = products => {
 	// Return the total
 	return total
 }
+
+export const getVideoThumbnail = file => {
+	return new Promise((resolve, reject) => {
+		const video = document.createElement('video')
+		const canvas = document.createElement('canvas')
+		const context = canvas.getContext('2d')
+
+		video.preload = 'metadata'
+		video.src = URL.createObjectURL(file)
+		video.muted = true
+		video.playsInline = true
+
+		video.addEventListener('loadeddata', () => {
+			video.currentTime = 0
+		})
+
+		video.addEventListener('seeked', () => {
+			canvas.width = video.videoWidth
+			canvas.height = video.videoHeight
+			context.drawImage(video, 0, 0, video.videoWidth, video.videoHeight)
+			const thumbnail = canvas.toDataURL('image/png')
+			resolve(thumbnail)
+		})
+
+		video.addEventListener('error', error => {
+			reject(error)
+		})
+	})
+}
+
+export const getVideoThumbnailBlob = file => {
+	return new Promise((resolve, reject) => {
+		const video = document.createElement('video')
+		const canvas = document.createElement('canvas')
+		const context = canvas.getContext('2d')
+
+		video.preload = 'metadata'
+		video.src = URL.createObjectURL(file)
+		video.muted = true
+		video.playsInline = true
+
+		video.addEventListener('loadeddata', () => {
+			video.currentTime = 0
+		})
+
+		video.addEventListener('seeked', () => {
+			canvas.width = video.videoWidth
+			canvas.height = video.videoHeight
+			context.drawImage(video, 0, 0, video.videoWidth, video.videoHeight)
+
+			canvas.toBlob(blob => {
+				blob.name = file.name.split('.')[0] + '.png'
+				resolve(blob)
+			}, 'image/png')
+		})
+
+		video.addEventListener('error', error => {
+			reject(error)
+		})
+	})
+}

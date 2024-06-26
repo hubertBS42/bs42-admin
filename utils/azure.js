@@ -1,13 +1,17 @@
 import { BlobServiceClient } from '@azure/storage-blob'
+import { getVideoThumbnailBlob } from './functions'
 
-const picturesContainer = 'pictures'
-// const picturesContainer = 'testpictures'
+// const picturesContainer = 'pictures'
+const picturesContainer = 'testimages'
 // const filesContainer = 'testfiles'
-const vidoesContainer = 'videos'
+// const videosContainer = 'videos'
+const videosContainer = 'testvideos'
 const filesContainer = 'files'
 
 const storageName =
 	process.env.NEXT_PUBLIC_AZURE_STORAGE_RESOURCE_NAME
+// const token =
+// 	'sp=racwdl&st=2024-06-21T10:52:02Z&se=2024-06-21T18:52:02Z&sv=2022-11-02&sr=c&sig=UCTGocodoJt0F32xUWsfKTbj54CCaGWoX1q7RIVMC%2BI%3D'
 const token = process.env.NEXT_PUBLIC_AZURE_STORAGE_SAS_TOKEN
 
 const url = `https://${storageName}.blob.core.windows.net/?${token}`
@@ -16,6 +20,9 @@ const blobService = new BlobServiceClient(url)
 
 const picturesContainerClient =
 	blobService.getContainerClient(picturesContainer)
+
+const videosContainerClient =
+	blobService.getContainerClient(videosContainer)
 
 const filesContainerClient =
 	blobService.getContainerClient(filesContainer)
@@ -45,6 +52,25 @@ const createBlobInPicturesContainer = async file => {
 	// create blobClient for container
 	const blobClient =
 		picturesContainerClient.getBlockBlobClient(newFilename)
+
+	// set mimetype as determined from browser with file upload control
+	const options = {
+		blobHTTPHeaders: { blobContentType: file.type },
+	}
+
+	// upload file
+	await blobClient.uploadData(file, options)
+
+	return newFilename
+}
+
+const createBlobInVideosContainer = async file => {
+	const ext = file.name.split('.').pop()
+	const newFilename = Date.now() + '.' + ext
+
+	// create blobClient for container
+	const blobClient =
+		videosContainerClient.getBlockBlobClient(newFilename)
 
 	// set mimetype as determined from browser with file upload control
 	const options = {
@@ -167,6 +193,51 @@ export const updateImages = async (toBeUploaded, toBeDeleted) => {
 	})
 
 	return formatted
+}
+
+export const updateVideos = async (toBeUploaded, toBeDeleted) => {
+	const videos = []
+
+	if (toBeUploaded.length > 0) {
+		for (const file of toBeUploaded) {
+			const thumbnailBlob = await getVideoThumbnailBlob(file)
+
+			const [thumbnail, video] = await Promise.all([
+				createBlobInPicturesContainer(thumbnailBlob),
+				createBlobInVideosContainer(file),
+			])
+
+			const media = {
+				type: 'video',
+				thumbnail: {
+					name: thumbnail,
+					url: `https://${storageName}.blob.core.windows.net/${picturesContainer}/${thumbnail}`,
+				},
+				content: {
+					name: video,
+					url: `https://${storageName}.blob.core.windows.net/${videosContainer}/${video}`,
+				},
+			}
+
+			videos.push(media)
+		}
+	}
+
+	if (toBeDeleted.length > 0) {
+		const options = {
+			deleteSnapshots: 'include', // or 'only'
+		}
+		const deleteQueries = []
+
+		for (const file of toBeDeleted) {
+			const blobClient = videosContainerClient.getBlockBlobClient(file)
+			deleteQueries.push(blobClient.deleteIfExists(options))
+		}
+
+		await Promise.all(deleteQueries)
+	}
+
+	return videos
 }
 
 export const updateFiles = async (toBeUploaded, toBeDeleted) => {
