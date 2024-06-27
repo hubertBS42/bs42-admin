@@ -126,8 +126,8 @@ const ProjectsDrawer = () => {
 
 		if (isEditing) {
 			//update
-			await updateProject(formValue, mediaToBeDeleted)
-			// setMediaToBeDeleted([])
+			await updateProject(project, formValue, mediaToBeDeleted)
+			setMediaToBeDeleted([])
 		} else {
 			//add
 			await createProject(formValue)

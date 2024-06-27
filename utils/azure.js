@@ -230,8 +230,13 @@ export const updateVideos = async (toBeUploaded, toBeDeleted) => {
 		const deleteQueries = []
 
 		for (const file of toBeDeleted) {
-			const blobClient = videosContainerClient.getBlockBlobClient(file)
-			deleteQueries.push(blobClient.deleteIfExists(options))
+			const videoBlobClient = videosContainerClient.getBlockBlobClient(
+				file.content.name
+			)
+			const pictureBlobClient =
+				picturesContainerClient.getBlockBlobClient(file.thumbnail.name)
+			deleteQueries.push(videoBlobClient.deleteIfExists(options))
+			deleteQueries.push(pictureBlobClient.deleteIfExists(options))
 		}
 
 		await Promise.all(deleteQueries)

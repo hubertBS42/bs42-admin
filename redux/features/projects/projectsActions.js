@@ -233,10 +233,13 @@ export const createProject = async data => {
 	// let uploadedImage = await uploadImagesToBlob([blobFile])
 }
 
-export const updateProject = async (data, mediaToBeDeleted) => {
+export const updateProject = async (
+	project,
+	data,
+	mediaToBeDeleted
+) => {
 	dispatch(setDrawerLoading(true))
 
-	const queries = []
 	const imagesToBeUploaded = []
 	const imagesToBeDeleted = []
 	const videosToBeUploaded = []
@@ -248,7 +251,8 @@ export const updateProject = async (data, mediaToBeDeleted) => {
 
 	mediaToBeDeleted.forEach(item => {
 		if (item.type === 'image') {
-			imagesToBeDeleted.push(item?.content?.name || item.name)
+			const image = item?.content?.name || item.name
+			imagesToBeDeleted.push(image)
 		} else {
 			videosToBeDeleted.push(item)
 		}
@@ -264,78 +268,81 @@ export const updateProject = async (data, mediaToBeDeleted) => {
 		}
 	})
 
-	console.log('uploadImages: ', imagesToBeUploaded)
-	console.log('uploadVideos: ', videosToBeUploaded)
-	console.log('deleteImages: ', imagesToBeDeleted)
-	console.log('deleteVideos: ', videosToBeDeleted)
+	const queries = [
+		updateImages(imagesToBeUploaded, imagesToBeDeleted),
+		updateVideos(videosToBeUploaded, videosToBeDeleted),
+	]
 
-	// if (data.image[0].hasOwnProperty('blobFile')) {
-	// 	const blobFile = data.image[0].blobFile
-	// 	uploadedImage = await updateImages([blobFile], imageToBeDeleted)
-	// }
+	const [uploadedImages, uploadedVideos] = await Promise.all(queries)
 
-	// const { image, ...rest } = data
+	const remainingMedia = project.media.filter(item => {
+		const pics = data.media.map(item => item.name)
+		if (pics.includes(item.thumbnail.name)) {
+			return item
+		}
+	})
 
-	// let preparedData
+	const preparedData = {
+		...data,
+		cardImg: cardImageBlob ? uploadedImages.shift() : data.cardImg,
+		media: remainingMedia
+			.concat(
+				uploadedImages.map(image => ({
+					type: 'image',
+					thumbnail: {
+						name: image.name,
+						url: image.url,
+					},
+					content: {
+						name: image.name,
+						url: image.url,
+					},
+				}))
+			)
+			.concat(uploadedVideos),
+	}
 
-	// if (!uploadedImage) {
-	// 	preparedData = {
-	// 		cta: {
-	// 			label: data.ctaLabel,
-	// 			url: data.ctaURL,
-	// 		},
-	// 		...rest,
-	// 	}
-	// } else {
-	// 	preparedData = {
-	// 		image: uploadedImage[0],
-	// 		cta: {
-	// 			label: data.ctaLabel,
-	// 			url: data.ctaURL,
-	// 		},
-	// 		...rest,
-	// 	}
-	// }
-
-	// const { status, message } = await fetcher(
-	// 	`/api/slides/${slide._id}`,
-	// 	{
-	// 		method: 'PATCH',
-	// 		body: JSON.stringify(preparedData),
-	// 		headers: {
-	// 			'Content-type': 'application/json; charset=UTF-8',
-	// 		},
-	// 	}
-	// )
-	// dispatch(setDrawerClose())
-	// dispatch(setDrawerLoading(false))
-
-	// if (status === 'success') {
-	// 	toast.success(message)
-	// 	loadSlides()
-	// 	return
-	// }
-
-	// toast.error('Failed to update slide')
-}
-
-export const deleteSlide = async slide => {
-	dispatch(setModalLoading(true))
-
-	await deleteImages([slide.image.name])
+	console.log(preparedData)
 
 	const { status, message } = await fetcher(
-		`/api/slides/${slide._id}`,
+		`/api/projects/${project._id}`,
 		{
-			method: 'DELETE',
+			method: 'PATCH',
+			body: JSON.stringify(preparedData),
+			headers: {
+				'Content-type': 'application/json; charset=UTF-8',
+			},
 		}
 	)
+	dispatch(setDrawerClose())
+	dispatch(setDrawerLoading(false))
 
-	dispatch(setModalClose())
-
-	if (status === 'failed') return toast.error(message)
 	if (status === 'success') {
 		toast.success(message)
-		loadSlides()
+		loadProjects()
+		return
 	}
+
+	toast.error('Failed to update project.')
 }
+
+// export const deleteSlide = async slide => {
+// 	dispatch(setModalLoading(true))
+
+// 	await deleteImages([slide.image.name])
+
+// 	const { status, message } = await fetcher(
+// 		`/api/slides/${slide._id}`,
+// 		{
+// 			method: 'DELETE',
+// 		}
+// 	)
+
+// 	dispatch(setModalClose())
+
+// 	if (status === 'failed') return toast.error(message)
+// 	if (status === 'success') {
+// 		toast.success(message)
+// 		loadSlides()
+// 	}
+// }
