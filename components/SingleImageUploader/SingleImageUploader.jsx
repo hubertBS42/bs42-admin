@@ -31,8 +31,11 @@ const SingleImageUploader = forwardRef((props, ref) => {
 		const latestFile = cardImageList[cardImageList.length - 1]
 		if (latestFile) {
 			if (latestFile.hasOwnProperty('blobFile')) {
-				if (oldCardImage)
+				console.log(latestFile)
+				console.log('single ran')
+				if (oldCardImage) {
 					grabRemovedMedia({ type: 'image', ...oldCardImage })
+				}
 
 				previewFile(latestFile.blobFile, value => {
 					setFileInfo(value)

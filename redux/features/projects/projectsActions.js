@@ -268,23 +268,25 @@ export const updateProject = async (
 		}
 	})
 
-	const queries = [
+	console.log(imagesToBeDeleted)
+
+	const [uploadedImages, uploadedVideos] = await Promise.all([
 		updateImages(imagesToBeUploaded, imagesToBeDeleted),
 		updateVideos(videosToBeUploaded, videosToBeDeleted),
-	]
-
-	const [uploadedImages, uploadedVideos] = await Promise.all(queries)
+	])
 
 	const remainingMedia = project.media.filter(item => {
-		const pics = data.media.map(item => item.name)
-		if (pics.includes(item.thumbnail.name)) {
+		const submitted = data.media.map(
+			item => item?.thumbnail?.name || item.name
+		)
+		if (submitted.includes(item.thumbnail.name)) {
 			return item
 		}
 	})
 
 	const preparedData = {
 		...data,
-		cardImg: cardImageBlob ? uploadedImages.shift() : data.cardImg,
+		cardImg: cardImageBlob ? uploadedImages.shift() : project.cardImg,
 		media: remainingMedia
 			.concat(
 				uploadedImages.map(image => ({
@@ -301,8 +303,6 @@ export const updateProject = async (
 			)
 			.concat(uploadedVideos),
 	}
-
-	console.log(preparedData)
 
 	const { status, message } = await fetcher(
 		`/api/projects/${project._id}`,

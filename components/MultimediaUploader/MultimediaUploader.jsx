@@ -36,7 +36,6 @@ const MultimediaUploader = React.forwardRef((props, ref) => {
 				return file
 			})
 		)
-
 		setFormValue(prev => {
 			return { ...prev, media: updatedFileList }
 		})

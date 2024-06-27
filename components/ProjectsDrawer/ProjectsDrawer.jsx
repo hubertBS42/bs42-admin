@@ -135,6 +135,7 @@ const ProjectsDrawer = () => {
 	}
 
 	const grabRemovedMedia = media => {
+		console.log(media)
 		setMediaToBeDeleted(prev => {
 			return [...prev, media]
 		})
