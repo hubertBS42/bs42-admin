@@ -1,11 +1,11 @@
 import { BlobServiceClient } from '@azure/storage-blob'
 import { getVideoThumbnailBlob } from './functions'
 
-// const picturesContainer = 'pictures'
-const picturesContainer = 'testimages'
+const picturesContainer = 'pictures'
+// const picturesContainer = 'testimages'
 // const filesContainer = 'testfiles'
-// const videosContainer = 'videos'
-const videosContainer = 'testvideos'
+const videosContainer = 'videos'
+// const videosContainer = 'testvideos'
 const filesContainer = 'files'
 
 const storageName =

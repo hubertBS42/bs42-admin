@@ -135,7 +135,6 @@ const ProjectsDrawer = () => {
 	}
 
 	const grabRemovedMedia = media => {
-		console.log(media)
 		setMediaToBeDeleted(prev => {
 			return [...prev, media]
 		})
@@ -214,7 +213,6 @@ const ProjectsDrawer = () => {
 									error={formError.cardImg}
 									label='Card image'
 									oldCardImage={project?.cardImg}
-									cardImageList={formValue.cardImg}
 									grabRemovedMedia={grabRemovedMedia}
 								/>
 							</Col>

@@ -42,16 +42,18 @@ const MultimediaUploader = React.forwardRef((props, ref) => {
 	}
 
 	const handleRemove = file => {
-		const source = project.media.find(item => {
-			if (
-				item.thumbnail.name === file.name ||
-				item.content.name === file.name
-			) {
-				return item
-			}
-		})
+		if (project) {
+			const source = project.media.find(item => {
+				if (
+					item.thumbnail.name === file.name ||
+					item.content.name === file.name
+				) {
+					return item
+				}
+			})
 
-		grabRemovedMedia(source)
+			grabRemovedMedia(source)
+		}
 	}
 
 	return (

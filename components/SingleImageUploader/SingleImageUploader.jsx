@@ -18,7 +18,6 @@ const SingleImageUploader = forwardRef((props, ref) => {
 	const {
 		name,
 		oldCardImage,
-		cardImageList,
 		label,
 		grabRemovedMedia,
 		message,
@@ -27,24 +26,27 @@ const SingleImageUploader = forwardRef((props, ref) => {
 	} = props
 
 	const [fileInfo, setFileInfo] = useState(null)
-	useEffect(() => {
-		const latestFile = cardImageList[cardImageList.length - 1]
-		if (latestFile) {
-			if (latestFile.hasOwnProperty('blobFile')) {
-				console.log(latestFile)
-				console.log('single ran')
-				if (oldCardImage) {
-					grabRemovedMedia({ type: 'image', ...oldCardImage })
-				}
+	const [deleteCardImg, setDeleteCardImg] = useState(false)
 
-				previewFile(latestFile.blobFile, value => {
-					setFileInfo(value)
-				})
-			} else {
-				setFileInfo(latestFile.url)
-			}
+	const handleChange = fileList => {
+		const latestFile = fileList[fileList.length - 1]
+
+		previewFile(latestFile.blobFile, value => {
+			setFileInfo(value)
+		})
+
+		if (oldCardImage && !deleteCardImg) {
+			grabRemovedMedia({ type: 'image', ...oldCardImage })
+			setDeleteCardImg(true)
 		}
-	}, [cardImageList])
+	}
+
+	useEffect(() => {
+		if (oldCardImage) {
+			setFileInfo(oldCardImage.url)
+		}
+	}, [])
+
 	return (
 		<Form.Group
 			controlId={name}
@@ -61,6 +63,7 @@ const SingleImageUploader = forwardRef((props, ref) => {
 				action='//jsonplaceholder.typicode.com/posts/'
 				autoUpload={false}
 				accept='image/jpeg, image/png'
+				onChange={handleChange}
 				{...rest}
 			>
 				<div

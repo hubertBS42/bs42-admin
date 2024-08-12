@@ -268,8 +268,6 @@ export const updateProject = async (
 		}
 	})
 
-	console.log(imagesToBeDeleted)
-
 	const [uploadedImages, uploadedVideos] = await Promise.all([
 		updateImages(imagesToBeUploaded, imagesToBeDeleted),
 		updateVideos(videosToBeUploaded, videosToBeDeleted),
@@ -326,23 +324,37 @@ export const updateProject = async (
 	toast.error('Failed to update project.')
 }
 
-// export const deleteSlide = async slide => {
-// 	dispatch(setModalLoading(true))
+export const deleteProject = async project => {
+	dispatch(setModalLoading(true))
 
-// 	await deleteImages([slide.image.name])
+	const imagesToBeDeleted = [project.cardImg.name]
+	const videosToBeDeleted = []
 
-// 	const { status, message } = await fetcher(
-// 		`/api/slides/${slide._id}`,
-// 		{
-// 			method: 'DELETE',
-// 		}
-// 	)
+	project.media.map(item => {
+		if (item.type === 'video') {
+			videosToBeDeleted.push(item)
+		} else {
+			imagesToBeDeleted.push(item.content.name)
+		}
+	})
 
-// 	dispatch(setModalClose())
+	await Promise.all([
+		updateImages([], imagesToBeDeleted),
+		updateVideos([], videosToBeDeleted),
+	])
 
-// 	if (status === 'failed') return toast.error(message)
-// 	if (status === 'success') {
-// 		toast.success(message)
-// 		loadSlides()
-// 	}
-// }
+	const { status, message } = await fetcher(
+		`/api/projects/${project._id}`,
+		{
+			method: 'DELETE',
+		}
+	)
+
+	dispatch(setModalClose())
+
+	if (status === 'failed') return toast.error(message)
+	if (status === 'success') {
+		toast.success(message)
+		loadProjects()
+	}
+}
