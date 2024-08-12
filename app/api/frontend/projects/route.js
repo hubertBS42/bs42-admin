@@ -11,14 +11,9 @@ export const GET = async request => {
 			.collation({ locale: 'en' })
 			.lean()
 
-		return new Response(
-			JSON.stringify({
-				projects,
-			}),
-			{
-				status: 200,
-			}
-		)
+		return new Response(JSON.stringify(projects), {
+			status: 200,
+		})
 	} catch (error) {
 		return new Response(
 			JSON.stringify({
