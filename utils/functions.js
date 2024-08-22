@@ -52,7 +52,7 @@ export const formatDate = date => format(date, 'yyyy-MM-dd hh:mm:ss')
 export const formatData = data => {
 	return data?.map(item => ({
 		label: item.title ? item.title : item.name,
-		value: item._id,
+		value: item._id ? item._id : item.name,
 	}))
 }
 

@@ -1,6 +1,8 @@
 import { configureStore } from '@reduxjs/toolkit'
 import categoriesReducer from './features/categories/categoriesSlice'
 import brandsReducer from './features/brands/brandsSlice'
+import locationsReducer from './features/locations/locationsSlice'
+import suppliersReducer from './features/suppliers/suppliersSlice'
 import blogsReducer from './features/blogs/blogsSlice'
 import slidesReducer from './features/slides/slidesSlice'
 import projectsReducer from './features/projects/projectsSlice'
@@ -23,6 +25,8 @@ export const store = configureStore({
 	reducer: {
 		categories: categoriesReducer,
 		brands: brandsReducer,
+		locations: locationsReducer,
+		suppliers: suppliersReducer,
 		blogs: blogsReducer,
 		slides: slidesReducer,
 		projects: projectsReducer,
