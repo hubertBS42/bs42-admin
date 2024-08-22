@@ -249,18 +249,18 @@ const SuppliersDrawer = () => {
 										<Row style={{ marginBottom: '1.4em' }}>
 											<Col xs={12}>
 												<Field
-													name='firstName'
+													name='contact.firstName'
 													label='First name'
 													accepter={Input}
-													error={formError.firstName}
+													error={formError?.contact?.firstName}
 												/>
 											</Col>
 											<Col xs={12}>
 												<Field
-													name='lastName'
+													name='contact.lastName'
 													label='Last name'
 													accepter={Input}
-													error={formError.firstName}
+													error={formError?.contact?.lastName}
 												/>
 											</Col>
 										</Row>
@@ -268,19 +268,19 @@ const SuppliersDrawer = () => {
 										<Row style={{ marginBottom: '1.4em' }}>
 											<Col xs={12}>
 												<Field
-													name='email'
+													name='contact.email'
 													label='Email'
 													accepter={Input}
-													error={formError.email}
+													error={formError?.contact?.email}
 												/>
 											</Col>
 
 											<Col xs={12}>
 												<Field
-													name='fax'
+													name='contact.fax'
 													label='Fax'
 													accepter={Input}
-													error={formError.fax}
+													error={formError?.contact?.fax}
 												/>
 											</Col>
 										</Row>
@@ -288,18 +288,18 @@ const SuppliersDrawer = () => {
 										<Row style={{ marginBottom: '1.4em' }}>
 											<Col xs={12}>
 												<Field
-													name='phone1'
+													name='contact.phone1'
 													label='Phone 1'
 													accepter={Input}
-													error={formError.phone1}
+													error={formError?.contact?.phone1}
 												/>
 											</Col>
 											<Col xs={12}>
 												<Field
-													name='phone2'
+													name='contact.phone2'
 													label='Phone 2'
 													accepter={Input}
-													error={formError.phone2}
+													error={formError?.contact?.phone2}
 												/>
 											</Col>
 										</Row>
@@ -308,18 +308,18 @@ const SuppliersDrawer = () => {
 										<Row style={{ marginBottom: '1.4em' }}>
 											<Col xs={12}>
 												<Field
-													name='line1'
+													name='address.line1'
 													label='Address line 1'
 													accepter={Input}
-													error={formError.line1}
+													error={formError?.address?.line1}
 												/>
 											</Col>
 											<Col xs={12}>
 												<Field
-													name='line2'
+													name='address.line2'
 													label='Address line 2'
 													accepter={Input}
-													error={formError.line2}
+													error={formError?.address?.line2}
 												/>
 											</Col>
 										</Row>
@@ -327,19 +327,19 @@ const SuppliersDrawer = () => {
 										<Row style={{ marginBottom: '1.4em' }}>
 											<Col xs={12}>
 												<Field
-													name='townCity'
+													name='address.townCity'
 													label='Town or City'
 													accepter={Input}
-													error={formError.townCity}
+													error={formError?.address?.townCity}
 												/>
 											</Col>
 
 											<Col xs={12}>
 												<Field
-													name='stateCounty'
+													name='address.stateCounty'
 													label='State or County'
 													accepter={Input}
-													error={formError.stateCounty}
+													error={formError?.address?.stateCounty}
 												/>
 											</Col>
 										</Row>
@@ -347,19 +347,19 @@ const SuppliersDrawer = () => {
 										<Row style={{ marginBottom: '1.4em' }}>
 											<Col xs={12}>
 												<Field
-													name='country'
+													name='address.country'
 													label='Country'
 													accepter={InputPicker}
 													data={formattedCountries}
-													error={formError.country}
+													error={formError?.address?.country}
 												/>
 											</Col>
 											<Col xs={12}>
 												<Field
-													name='postCode'
+													name='address.postCode'
 													label='Post code'
 													accepter={Input}
-													error={formError.postCode}
+													error={formError?.address?.postCode}
 												/>
 											</Col>
 										</Row>

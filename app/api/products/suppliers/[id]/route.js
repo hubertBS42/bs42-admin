@@ -42,13 +42,13 @@ export const DELETE = async (request, { params }) => {
 	try {
 		await connectToDB()
 
-		const products = await Product.find({ location: params.id })
+		const products = await Product.find({ supplier: params.id })
 
 		const queries = []
 
 		products.forEach(product => {
 			queries.push(
-				Product.findByIdAndUpdate(product._id, { brand: null })
+				Product.findByIdAndUpdate(product._id, { supplier: null })
 			)
 		})
 

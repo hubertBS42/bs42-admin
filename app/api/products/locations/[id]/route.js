@@ -48,7 +48,7 @@ export const DELETE = async (request, { params }) => {
 
 		products.forEach(product => {
 			queries.push(
-				Product.findByIdAndUpdate(product._id, { brand: null })
+				Product.findByIdAndUpdate(product._id, { location: null })
 			)
 		})
 
