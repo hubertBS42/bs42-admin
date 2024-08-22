@@ -4,7 +4,7 @@ const initialState = {
 	limitedCategories: [],
 	allCategories: [],
 	count: 0,
-	isLoading: false,
+	isLoading: true,
 }
 
 const categoriesSlice = createSlice({
@@ -20,6 +20,7 @@ const categoriesSlice = createSlice({
 		},
 		setAllCategories: (state, action) => {
 			state.allCategories = action.payload
+			state.isLoading = false
 		},
 		setLoading: (state, action) => {
 			state.isLoading = action.payload

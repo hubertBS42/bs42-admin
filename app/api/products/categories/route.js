@@ -21,7 +21,7 @@ export const GET = async request => {
 		const fetchAllCategoriesQuery = Category.find()
 			.collation({ locale: 'en' })
 			.sort({ name: 'asc' })
-			.select('name parent isActive')
+			// .select('name parent isActive')
 			.lean()
 
 		const getCountQuery = Category.count()

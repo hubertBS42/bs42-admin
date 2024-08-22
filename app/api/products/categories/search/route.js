@@ -1,5 +1,6 @@
 import Category from '@/models/Category'
 import { connectToDB } from '@/utils/database'
+import { findAncestors } from '@/utils/functions'
 
 export const GET = async request => {
 	const { searchParams } = new URL(request.url)
@@ -10,7 +11,9 @@ export const GET = async request => {
 
 		const queryRegx = new RegExp(query, 'i')
 
-		const categories = await Category.find({
+		const allCategories = await Category.find().lean()
+
+		const filteredCategories = await Category.find({
 			$or: [{ name: { $regex: queryRegx } }],
 		})
 			.sort({ createdAt: 'desc' })
@@ -25,7 +28,10 @@ export const GET = async request => {
 			JSON.stringify({
 				status: 'success',
 				message: null,
-				data: categories,
+				data: {
+					filtered: filteredCategories,
+					all: allCategories,
+				},
 			}),
 			{
 				status: 200,

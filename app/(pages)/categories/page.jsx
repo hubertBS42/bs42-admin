@@ -4,6 +4,7 @@ import CategoriesTable from '@/components/CategoriesTable/CategoriesTable'
 import CategoriesDrawer from '@/components/CategoriesDrawer/CategoriesDrawer'
 import {
 	deleteCategory,
+	loadAllCategories,
 	loadCategories,
 } from '@/redux/features/categories/categoriesActions'
 import styles from './page.module.scss'

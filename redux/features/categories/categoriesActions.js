@@ -1,4 +1,8 @@
-import { fetcher, formatCategoriesForTable } from '@/utils/functions'
+import {
+	fetcher,
+	formatCategoriesForTable,
+	searchAndRetrieveAncestorsAndDescendants,
+} from '@/utils/functions'
 import {
 	setLoading,
 	setLimitedCategories,
@@ -34,13 +38,14 @@ export const loadCategories = async () => {
 		return toast.error('Failed to load data.') //message site admin about error
 	}
 
-	const formattedCategories =
-		formatCategoriesForTable(limitedCategories)
+	// const limitedCategoriesFormatted =
+	// 	formatCategoriesForTable(limitedCategories)
 
-	dispatch(setLimitedCategories(formattedCategories))
-	dispatch(setCategoriesCount(count))
-
+	// dispatch(setLimitedCategories(limitedCategories))
 	dispatch(setAllCategories(allCategories))
+	// dispatch(setCategoriesCount(count))
+
+	// dispatch(setAllCategories(allCategories))
 }
 
 export const loadAllCategories = async () => {
@@ -137,36 +142,32 @@ export const searchCategories = async (query, limit, page) => {
 		const {
 			status,
 			message,
-			data: { limitedCategories },
-		} = await fetcher(
-			`/api/products/categories?limit=${limit}&page=${page}`
-		)
+			data: { allCategories },
+		} = await fetcher('/api/products/categories')
 
 		if (status === 'error') {
 			dispatch(setLoading(false))
 			return toast.error('Something went wrong.') //message site admin about error
 		}
 
-		const formattedCategories =
-			formatCategoriesForTable(limitedCategories)
-
-		dispatch(setLimitedCategories(formattedCategories))
+		dispatch(setAllCategories(allCategories))
 		return
 	}
 
 	const {
 		status,
 		message,
-		data: limitedCategories,
+		data: { filtered, all },
 	} = await fetcher(`/api/products/categories/search?q=${query}`)
 
 	if (status === 'error') {
 		dispatch(setLoading(false))
-		console.log(message)
 		return toast.error('Something went wrong.') //message site admin about error
 	}
 
-	dispatch(setLimitedCategories(limitedCategories))
+	const data = searchAndRetrieveAncestorsAndDescendants(all, filtered)
+
+	dispatch(setAllCategories(data))
 }
 
 export const createCategory = async data => {

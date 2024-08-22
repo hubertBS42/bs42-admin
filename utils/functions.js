@@ -69,7 +69,6 @@ export const formatCategoriesForTable = (
 		.map(category => ({
 			id: category._id,
 			name: category.name,
-			description: category.description,
 			parent: category.parent,
 			slug: category.slug,
 			images: category.images,
@@ -77,6 +76,63 @@ export const formatCategoriesForTable = (
 			createdAt: category.createdAt,
 			children: formatCategoriesForTable(categories, category._id),
 		}))
+}
+
+// Helper function to find ancestors of a category
+const findAncestors = (categories, category) => {
+	const ancestors = []
+	while (category.parent) {
+		const parent = categories.find(
+			c => c._id.toString() === category.parent.toString()
+		)
+		if (parent) {
+			ancestors.push(parent)
+			category = parent
+		} else {
+			break
+		}
+	}
+	return ancestors
+}
+
+// Helper function to find descendants of a category
+const findDescendants = (categories, parentId) => {
+	const descendants = categories.filter(c => c.parent === parentId)
+	descendants.forEach(descendant => {
+		descendants.push(...findDescendants(categories, descendant._id))
+	})
+	return descendants
+}
+
+// Function to search, retrieve ancestors, descendants
+export const searchAndRetrieveAncestorsAndDescendants = (
+	allCategories,
+	matchingCategories
+) => {
+	// Retrieve all ancestors and descendants
+	let categoryMap = new Map()
+
+	matchingCategories.forEach(category => {
+		// Add the category itself
+		categoryMap.set(category._id, category)
+
+		// // Add ancestors
+		const ancestors = findAncestors(allCategories, category)
+		ancestors.forEach(ancestor =>
+			categoryMap.set(ancestor._id, ancestor)
+		)
+
+		// // Add descendants
+		const descendants = findDescendants(allCategories, category._id)
+		descendants.forEach(descendant =>
+			categoryMap.set(descendant._id, descendant)
+		)
+	})
+
+	// Convert the Map back to an Array for processing
+	const allCategoriesArray = Array.from(categoryMap.values())
+
+	return allCategoriesArray
 }
 
 export const formatCategoriesForHeader = (
