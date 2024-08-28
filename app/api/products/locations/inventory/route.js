@@ -61,8 +61,6 @@ export const GET = async request => {
 				productsQuery,
 			])
 
-		console.log(allInventory)
-
 		allInventory = allInventory.map(item => ({
 			_id: item.product._id,
 			title: item.product.title,
