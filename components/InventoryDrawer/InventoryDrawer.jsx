@@ -28,8 +28,8 @@ import {
 } from '@/redux/features/drawer/drawerSlice'
 import {
 	selectAllLocations,
-	selectAllInventory,
 	selectCurrLocation,
+	selectAllProducts,
 } from '@/redux/features/inventory/inventorySlice'
 import {
 	addInventory,
@@ -70,7 +70,7 @@ const InventoryDrawer = () => {
 	const isEditing = useSelector(getEditState)
 	const isLoading = useSelector(getDrawerLoadingState)
 	const inventory = useSelector(getDrawerData)
-	const products = useSelector(selectAllInventory)
+	const products = useSelector(selectAllProducts)
 	const locations = useSelector(selectAllLocations)
 	const currentLocation = useSelector(selectCurrLocation)
 
