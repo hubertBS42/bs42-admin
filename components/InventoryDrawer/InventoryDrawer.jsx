@@ -30,6 +30,7 @@ import {
 	selectAllLocations,
 	selectCurrLocation,
 	selectAllProducts,
+	selectAllInventory,
 } from '@/redux/features/inventory/inventorySlice'
 import {
 	addInventory,
@@ -70,9 +71,16 @@ const InventoryDrawer = () => {
 	const isEditing = useSelector(getEditState)
 	const isLoading = useSelector(getDrawerLoadingState)
 	const inventory = useSelector(getDrawerData)
-	const products = useSelector(selectAllProducts)
+	const availableProducts = useSelector(selectAllProducts)
+	const allInventory = useSelector(selectAllInventory)
 	const locations = useSelector(selectAllLocations)
 	const currentLocation = useSelector(selectCurrLocation)
+
+	const data = isEditing ? allInventory : availableProducts
+	const formatted = data.map(product => ({
+		label: product.title,
+		value: product._id,
+	}))
 
 	const location = locations.find(
 		location => location._id === currentLocation
@@ -173,10 +181,7 @@ const InventoryDrawer = () => {
 									name='product'
 									label='Product'
 									accepter={InputPicker}
-									data={products.map(product => ({
-										label: product.title,
-										value: product._id,
-									}))}
+									data={formatted}
 									error={formError.product}
 									readOnly={isEditing}
 								/>
