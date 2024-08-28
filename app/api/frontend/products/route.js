@@ -1,5 +1,6 @@
 import Product from '@/models/Product'
 import Brand from '@/models/Brand'
+import Location from '@/models/Location'
 import Category from '@/models/Category'
 import { connectToDB } from '@/utils/database'
 import Setting from '@/models/Setting'
@@ -8,6 +9,7 @@ import {
 	findIdsOfCategoryAndChildrenBySlug,
 	groupCategories1,
 } from '@/utils/functions'
+import Inventory from '@/models/Inventory'
 
 export const GET = async request => {
 	const { searchParams } = new URL(request.url)
@@ -162,16 +164,32 @@ export const GET = async request => {
 				},
 			})
 			.select(
-				'title slug brand sellPrice resellerPrice images countInStock category unitsSold rating onSale featured discount isActive createdAt'
+				'title slug brand sellPrice resellerPrice images category rating onSale featured discount isActive createdAt'
 			)
 			.lean()
 
 		const getCountQuery = Product.count(productsQuery)
 
-		const [products, count] = await Promise.all([
+		let [products, count] = await Promise.all([
 			fetchProductsQuery,
 			getCountQuery,
 		])
+
+		const productIds = products.map(product => product._id)
+
+		const inventory = await Inventory.find({
+			product: { $in: productIds },
+		}).populate({ path: 'location', model: 'Location' })
+
+		products = products.map(product => {
+			const matchingItems = inventory.filter(
+				item => item.product.toString() === product._id.toString()
+			)
+			return {
+				...product,
+				inventory: matchingItems || [],
+			}
+		})
 
 		return new Response(
 			JSON.stringify({
