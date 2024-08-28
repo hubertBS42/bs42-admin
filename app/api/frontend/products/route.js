@@ -185,6 +185,7 @@ export const GET = async request => {
 			const matchingItems = inventory.filter(
 				item => item.product.toString() === product._id.toString()
 			)
+
 			return {
 				...product,
 				inventory: matchingItems || [],

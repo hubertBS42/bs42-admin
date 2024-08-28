@@ -1,8 +1,10 @@
 import Product from '@/models/Product'
 import Category from '@/models/Category'
+import Location from '@/models/Location'
 import Brand from '@/models/Brand'
 import { connectToDB } from '@/utils/database'
 import { NextResponse } from 'next/server'
+import Inventory from '@/models/Inventory'
 
 //GET
 export const GET = async (request, { params }) => {
@@ -10,7 +12,7 @@ export const GET = async (request, { params }) => {
 	try {
 		await connectToDB()
 
-		const product = await Product.findOne({ slug })
+		let product = await Product.findOne({ slug })
 			.populate({
 				path: 'brand',
 				model: 'Brand',
@@ -29,6 +31,18 @@ export const GET = async (request, { params }) => {
 				}),
 				{ status: 404 }
 			)
+		}
+
+		const inventory = await Inventory.find({
+			product: product._id,
+		}).populate({ path: 'location', model: 'Location' })
+
+		console.log(inventory)
+
+		if (inventory.length > 0) {
+			product = { ...product.toObject(), inventory }
+		} else {
+			product = { ...product.toObject(), inventory: [] }
 		}
 
 		return new NextResponse(
