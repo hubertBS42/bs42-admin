@@ -5,7 +5,6 @@ mongoose.plugin(slug)
 
 const ProductSchema = new mongoose.Schema(
 	{
-		sku: { type: String },
 		title: { type: String, trim: true, required: true, index: true },
 		slug: { type: String, slug: 'title', unique: true },
 		brand: {
@@ -32,7 +31,6 @@ const ProductSchema = new mongoose.Schema(
 				url: { type: String, required: true },
 			},
 		],
-		countInStock: { type: Number, trim: true, default: 0 },
 		category: {
 			type: mongoose.Schema.Types.ObjectId,
 			ref: 'Category',
@@ -61,7 +59,6 @@ const ProductSchema = new mongoose.Schema(
 				index: { type: String },
 			},
 		],
-		unitsSold: { type: Number, default: 0 },
 		rating: { type: Number, trim: true, default: 0 },
 		onSale: { type: Boolean, default: false },
 		featured: { type: Boolean, default: false },

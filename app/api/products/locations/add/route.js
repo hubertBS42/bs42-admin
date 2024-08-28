@@ -4,10 +4,28 @@ import { NextResponse } from 'next/server'
 
 export const POST = async request => {
 	const data = await request.json()
-
+	let preparedData
 	try {
 		await connectToDB()
-		const newLocation = await Location.create(data)
+		const locations = await Location.find({})
+
+		if (locations.length === 0) {
+			preparedData = { ...data, isDefault: true }
+		}
+
+		if (locations.length > 0 && data.isDefault) {
+			await Location.findOneAndUpdate(
+				{ isDefault: true },
+				{ isDefault: false }
+			)
+			preparedData = data
+		}
+
+		if (locations.length > 0 && !data.isDefault) {
+			preparedData = data
+		}
+
+		const newLocation = await Location.create(preparedData)
 
 		if (!newLocation) throw new Error('Failed to add location.')
 

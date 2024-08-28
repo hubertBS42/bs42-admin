@@ -52,7 +52,6 @@ import FAQs from '../FAQs/FAQs'
 const { StringType, ArrayType, NumberType } = Schema.Types
 
 const model = Schema.Model({
-	sku: StringType(),
 	title: StringType().isRequired('This field is required'),
 	brand: StringType().isRequired('This field is required'),
 	condition: StringType().isRequired('This field is required'),
@@ -64,7 +63,6 @@ const model = Schema.Model({
 		1,
 		'You need to upload at least 1 image of the product.'
 	),
-	countInStock: NumberType(),
 	description: StringType(),
 	discount: NumberType(),
 })
@@ -78,7 +76,6 @@ const ProductsDrawer = ({ currentRate }) => {
 	const [filesToBeDeleted, setFilesToBeDeleted] = useState([])
 
 	const [formValue, setFormValue] = useState({
-		sku: '',
 		title: '',
 		brand: '',
 		condition: 'new',
@@ -88,7 +85,6 @@ const ProductsDrawer = ({ currentRate }) => {
 		isQuantityPreset: false,
 		quantityPresets: [],
 		images: [],
-		countInStock: 0,
 		category: '',
 		tags: [],
 		description: '',
@@ -117,7 +113,6 @@ const ProductsDrawer = ({ currentRate }) => {
 			setFormValue(prev => {
 				return {
 					...prev,
-					sku: product.sku,
 					title: product.title,
 					brand: product?.brand?._id || null,
 					condition: product.condition,
@@ -127,7 +122,6 @@ const ProductsDrawer = ({ currentRate }) => {
 					isQuantityPreset: product.isQuantityPreset,
 					quantityPresets: product.quantityPresets || [],
 					images: product.images,
-					countInStock: product.countInStock,
 					category: product.category?._id || product.category,
 					tags: product.tags,
 					description: product.description,
@@ -143,7 +137,6 @@ const ProductsDrawer = ({ currentRate }) => {
 			})
 		} else {
 			setFormValue({
-				sku: '',
 				title: '',
 				brand: '',
 				condition: 'new',
@@ -153,7 +146,6 @@ const ProductsDrawer = ({ currentRate }) => {
 				isQuantityPreset: false,
 				quantityPresets: [],
 				images: [],
-				countInStock: 0,
 				category: '',
 				tags: [],
 				description: '',
@@ -264,17 +256,6 @@ const ProductsDrawer = ({ currentRate }) => {
 							}
 							bordered
 						>
-							<Row style={{ marginBottom: '1.4em' }}>
-								<Col xs={24}>
-									<Field
-										name='sku'
-										label='SKU'
-										accepter={Input}
-										error={formError.sku}
-									/>
-								</Col>
-							</Row>
-
 							<Row style={{ marginBottom: '1.2em' }}>
 								<Col xs={24}>
 									<Field
@@ -348,18 +329,6 @@ const ProductsDrawer = ({ currentRate }) => {
 										label='Tags'
 										accepter={TagInput}
 										error={formError.tags}
-									/>
-								</Col>
-							</Row>
-
-							<Row style={{ marginBottom: '1.2em' }}>
-								<Col xs={24}>
-									<Field
-										name='countInStock'
-										label='Count in stock'
-										accepter={InputNumber}
-										error={formError.countInStock}
-										min={0}
 									/>
 								</Col>
 							</Row>

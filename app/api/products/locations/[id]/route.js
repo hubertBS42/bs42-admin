@@ -1,32 +1,36 @@
 import Location from '@/models/Location'
-import Product from '@/models/Product'
 import { connectToDB } from '@/utils/database'
 import { NextResponse } from 'next/server'
 
 //PATCH
 export const PATCH = async (request, { params }) => {
 	const data = await request.json()
+	const updates = Object.keys(data)
 
 	try {
 		await connectToDB()
 
-		const location = await Location.findByIdAndUpdate(params.id, data, {
-			new: true,
-		})
-			.select('_id')
-			.lean()
-
-		if (location) {
-			return new NextResponse(
-				JSON.stringify({
-					status: 'success',
-					data: location,
-					message: 'Location updated successfully.',
-				}),
-				{ status: 200 }
+		if (data.isDefault) {
+			await Location.findOneAndUpdate(
+				{ isDefault: true },
+				{ isDefault: false }
 			)
 		}
+
+		let location = await Location.findById(params.id)
+		updates.forEach(update => (location[update] = data[update]))
+
+		await location.save()
+
+		return new NextResponse(
+			JSON.stringify({
+				status: 'success',
+				message: 'Location updated successfully.',
+			}),
+			{ status: 200 }
+		)
 	} catch (error) {
+		console.log(error)
 		return new NextResponse(
 			JSON.stringify({
 				status: 'error',
@@ -42,19 +46,16 @@ export const DELETE = async (request, { params }) => {
 	try {
 		await connectToDB()
 
-		const products = await Product.find({ location: params.id })
+		await Location.findByIdAndDelete(params.id)
 
-		const queries = []
-
-		products.forEach(product => {
-			queries.push(
-				Product.findByIdAndUpdate(product._id, { location: null })
-			)
+		const lastAddedLocation = await Location.findOne().sort({
+			createdAt: -1,
 		})
 
-		queries.push(Location.findByIdAndDelete(params.id))
-
-		await Promise.all(queries)
+		if (lastAddedLocation) {
+			lastAddedLocation.isDefault = true
+			await lastAddedLocation.save()
+		}
 
 		return new NextResponse(
 			JSON.stringify({

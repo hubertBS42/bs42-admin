@@ -9,8 +9,8 @@ const SupplierSchema = new mongoose.Schema(
 			firstName: { type: String, trim: true },
 			lastName: { type: String, trim: true },
 			email: { type: String, trim: true },
-			phone1: { type: String, trim: true },
-			phone2: { type: String, trim: true },
+			primaryPhone: { type: String, trim: true },
+			secondaryPhone: { type: String, trim: true },
 			fax: { type: String, trim: true },
 		},
 		address: {

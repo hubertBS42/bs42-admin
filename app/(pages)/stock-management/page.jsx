@@ -1,30 +1,35 @@
 'use client'
 
-// import BrandsTable from '@/components/BrandsTable/BrandsTable'
-// import BrandsDrawer from '@/components/BrandsDrawer/BrandsDrawer'
-// import {
-// 	deleteBrand,
-// 	loadBrands,
-// } from '@/redux/features/brands/brandsActions'
+import InventoryTable from '@/components/InventoryTable/InventoryTable'
+import {
+	deleteInventory,
+	loadInventory,
+	loadProducts,
+} from '@/redux/features/inventory/inventoryActions'
 import styles from './page.module.scss'
 
 import { useEffect } from 'react'
 import DeleteModal from '@/components/DeleteModal/DeleteModal'
+import InventoryDrawer from '@/components/InventoryDrawer/InventoryDrawer'
+import { useSelector } from 'react-redux'
+import { selectCurrLocation } from '@/redux/features/inventory/inventorySlice'
 
-const BrandsPage = () => {
-	// const handleDelete = async data => {
-	// 	await deleteBrand(data)
-	// }
+const StockManagementPage = () => {
+	const location = useSelector(selectCurrLocation)
 
-	// useEffect(() => {
-	// 	loadBrands()
-	// }, [])
+	const handleDelete = async data => {
+		await deleteInventory(data, location)
+	}
+
+	useEffect(() => {
+		loadInventory()
+	}, [])
 	return (
 		<div className={styles.mainWrapper}>
-			{/* <BrandsTable />
-			<BrandsDrawer />
-			<DeleteModal handleDelete={handleDelete} /> */}
+			<InventoryTable />
+			<InventoryDrawer />
+			<DeleteModal handleDelete={handleDelete} />
 		</div>
 	)
 }
-export default BrandsPage
+export default StockManagementPage

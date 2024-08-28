@@ -31,7 +31,6 @@ import {
 	getEditState,
 	setDrawerClose,
 } from '@/redux/features/drawer/drawerSlice'
-import { formatData } from '@/utils/functions'
 import TextArea from '../TextArea/TextArea'
 
 const { StringType, ObjectType } = Schema.Types
@@ -45,8 +44,8 @@ const model = Schema.Model({
 		firstName: StringType(),
 		lastName: StringType(),
 		email: StringType(),
-		phone1: StringType(),
-		phone2: StringType(),
+		primaryPhone: StringType(),
+		secondaryPhone: StringType(),
 		fax: StringType(),
 	}),
 	address: ObjectType().shape({
@@ -77,8 +76,8 @@ const SuppliersDrawer = () => {
 			firstName: '',
 			lastName: '',
 			email: '',
-			phone1: '',
-			phone2: '',
+			primaryPhone: '',
+			secondaryPhone: '',
 			fax: '',
 		},
 		address: {
@@ -110,8 +109,8 @@ const SuppliersDrawer = () => {
 						firstName: supplier.contact.firstName,
 						lastName: supplier.contact.lastName,
 						email: supplier.contact.email,
-						phone1: supplier.contact.phone1,
-						phone2: supplier.contact.phone2,
+						primaryPhone: supplier.contact.primaryPhone,
+						secondaryPhone: supplier.contact.secondaryPhone,
 						fax: supplier.contact.fax,
 					},
 					address: {
@@ -135,8 +134,8 @@ const SuppliersDrawer = () => {
 					firstName: '',
 					lastName: '',
 					email: '',
-					phone1: '',
-					phone2: '',
+					primaryPhone: '',
+					secondaryPhone: '',
 					fax: '',
 				},
 				address: {
@@ -288,18 +287,18 @@ const SuppliersDrawer = () => {
 										<Row style={{ marginBottom: '1.4em' }}>
 											<Col xs={12}>
 												<Field
-													name='contact.phone1'
-													label='Phone 1'
+													name='contact.primaryPhone'
+													label='Primary number'
 													accepter={Input}
-													error={formError?.contact?.phone1}
+													error={formError?.contact?.primaryPhone}
 												/>
 											</Col>
 											<Col xs={12}>
 												<Field
-													name='contact.phone2'
-													label='Phone 2'
+													name='contact.secondaryPhone'
+													label='Secondary number'
 													accepter={Input}
-													error={formError?.contact?.phone2}
+													error={formError?.contact?.secondaryPhone}
 												/>
 											</Col>
 										</Row>

@@ -26,7 +26,11 @@ const DeleteModal = ({ handleDelete }) => {
 			</Modal.Header>
 			<Modal.Body style={{ textAlign: 'center' }}>
 				Are you sure you want to delete &apos;
-				{data?.title || data?.name || data?.firstName || data?.label}
+				{data?.title ||
+					data?.name ||
+					data?.firstName ||
+					data?.label ||
+					data?.product?.title}
 				&apos;? This cannot be undone.
 			</Modal.Body>
 			<Modal.Footer>

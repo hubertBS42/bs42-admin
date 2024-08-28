@@ -9,6 +9,7 @@ import {
 	Panel,
 	Row,
 	Schema,
+	Stack,
 	Toggle,
 	Uploader,
 } from 'rsuite'
@@ -54,6 +55,7 @@ const LocationsDrawer = () => {
 		town: '',
 		region: '',
 		digitalAddress: '',
+		isDefault: false,
 		isActive: true,
 	})
 
@@ -75,6 +77,7 @@ const LocationsDrawer = () => {
 					town: location.town,
 					region: location.region,
 					digitalAddress: location.digitalAddress,
+					isDefault: location.isDefault,
 					isActive: location.isActive,
 				}
 			})
@@ -86,6 +89,7 @@ const LocationsDrawer = () => {
 				town: '',
 				region: '',
 				digitalAddress: '',
+				isDefault: false,
 				isActive: true,
 			})
 		}
@@ -144,7 +148,22 @@ const LocationsDrawer = () => {
 					model={model}
 					disabled={isLoading}
 				>
-					<CustomToggle accepter={Toggle} name='isActive' label='Active' />
+					<Stack
+						justifyContent='space-between'
+						style={{ marginBottom: '1.2em' }}
+					>
+						<CustomToggle
+							accepter={Toggle}
+							name='isActive'
+							label='Active'
+						/>
+						<CustomToggle
+							accepter={Toggle}
+							name='isDefault'
+							label='Default'
+							disabled={isEditing && location?.isDefault}
+						/>
+					</Stack>
 
 					<Panel bordered>
 						<Row style={{ marginBottom: '1.4em' }}>

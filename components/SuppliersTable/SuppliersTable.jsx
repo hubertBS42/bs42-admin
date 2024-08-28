@@ -109,6 +109,24 @@ const SuppliersTable = () => {
 						<Cell dataKey='name' />
 					</Column>
 
+					<Column flexGrow={1} verticalAlign='middle'>
+						<HeaderCell>Contact name</HeaderCell>
+						<Cell>
+							{rowData => {
+								if (rowData.contact.firstName || rowData.contact.lastName) {
+									return `${rowData?.contact?.firstName} ${rowData?.contact?.lastName}`
+								} else {
+									return 'N/A'
+								}
+							}}
+						</Cell>
+					</Column>
+
+					<Column flexGrow={1} verticalAlign='middle'>
+						<HeaderCell>Contact number</HeaderCell>
+						<Cell>{rowData => rowData.contact.primaryPhone || 'N/A'}</Cell>
+					</Column>
+
 					<Column flexGrow={1} sortable verticalAlign='middle'>
 						<HeaderCell>Status</HeaderCell>
 						<Cell dataKey='isActive'>

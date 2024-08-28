@@ -20,6 +20,7 @@ import { store } from '@/redux/store'
 const { dispatch } = store
 
 export const loadLocations = async () => {
+	dispatch(setLoading(true))
 	const {
 		status,
 		message,
@@ -42,6 +43,8 @@ export const sortLocations = async (
 	sortColumn,
 	sortType
 ) => {
+	dispatch(setLoading(true))
+
 	const {
 		status,
 		message,
@@ -60,6 +63,8 @@ export const sortLocations = async (
 }
 
 export const limitLocations = async limit => {
+	dispatch(setLoading(true))
+
 	const {
 		status,
 		message,
@@ -81,6 +86,8 @@ export const paginateLocations = async (
 	sortColumn,
 	sortType
 ) => {
+	dispatch(setLoading(true))
+
 	const {
 		status,
 		message,

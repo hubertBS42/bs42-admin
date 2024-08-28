@@ -10,25 +10,28 @@ export const GET = async request => {
 
 	try {
 		await connectToDB()
-		const locations = await Location.find()
+		const locationsQuery = Location.find()
 			.collation({ locale: 'en' })
 			.limit(limit * 1)
 			.skip((page - 1) * limit)
 			.sort({ [field]: sort })
 			.lean()
 
-		const count = await Location.count()
+		const locationsCountQuery = Location.count()
 
-		const data = {
-			locations,
-			count,
-		}
+		const [locations, count] = await Promise.all([
+			locationsQuery,
+			locationsCountQuery,
+		])
 
 		return new Response(
 			JSON.stringify({
 				status: 'success',
 				message: null,
-				data,
+				data: {
+					locations,
+					count,
+				},
 			}),
 			{
 				status: 200,
