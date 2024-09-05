@@ -4,7 +4,7 @@ import Location from '@/models/Location'
 import Brand from '@/models/Brand'
 import { connectToDB } from '@/utils/database'
 import { NextResponse } from 'next/server'
-import Inventory from '@/models/Inventory'
+import StockLevel from '@/models/StockLevel'
 
 //GET
 export const GET = async (request, { params }) => {
@@ -33,11 +33,9 @@ export const GET = async (request, { params }) => {
 			)
 		}
 
-		const inventory = await Inventory.find({
+		const inventory = await StockLevel.find({
 			product: product._id,
 		}).populate({ path: 'location', model: 'Location' })
-
-		console.log(inventory)
 
 		if (inventory.length > 0) {
 			product = { ...product.toObject(), inventory }

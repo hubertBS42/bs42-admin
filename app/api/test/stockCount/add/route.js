@@ -1,4 +1,4 @@
-import Inventory from '@/models/Inventory'
+import StockLevel from '@/models/StockLevel'
 import { connectToDB } from '@/utils/database'
 import { NextResponse } from 'next/server'
 
@@ -1769,7 +1769,7 @@ export const POST = async request => {
 		let count = 0
 
 		inventoryData.forEach(async item => {
-			await Inventory.create(item)
+			await StockLevel.create(item)
 			count++
 		})
 

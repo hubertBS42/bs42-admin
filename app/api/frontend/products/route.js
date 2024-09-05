@@ -9,7 +9,7 @@ import {
 	findIdsOfCategoryAndChildrenBySlug,
 	groupCategories1,
 } from '@/utils/functions'
-import Inventory from '@/models/Inventory'
+import StockLevel from '@/models/StockLevel'
 
 export const GET = async request => {
 	const { searchParams } = new URL(request.url)
@@ -177,7 +177,7 @@ export const GET = async request => {
 
 		const productIds = products.map(product => product._id)
 
-		const inventory = await Inventory.find({
+		const stockLevels = await StockLevel.find({
 			product: { $in: productIds },
 		}).populate({ path: 'location', model: 'Location' })
 
