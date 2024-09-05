@@ -32,6 +32,10 @@ import {
 	setDrawerClose,
 } from '@/redux/features/drawer/drawerSlice'
 import TextArea from '../TextArea/TextArea'
+import {
+	displayValidationError,
+	processFormErrors,
+} from '@/utils/functions'
 
 const { StringType, ObjectType } = Schema.Types
 
@@ -72,6 +76,10 @@ const SuppliersDrawer = () => {
 		vatID: '',
 		name: '',
 		notes: '',
+		website: {
+			company: '',
+			alibaba: '',
+		},
 		contact: {
 			firstName: '',
 			lastName: '',
@@ -97,31 +105,36 @@ const SuppliersDrawer = () => {
 	const supplier = useSelector(getDrawerData)
 
 	const updateForm = supplier => {
+		setFormError({})
 		if (isEditing) {
 			setFormValue(prev => {
 				return {
 					...prev,
-					accountID: supplier.accountID,
-					vatID: supplier.vatID,
-					name: supplier.name,
-					notes: supplier.notes,
+					accountID: supplier?.accountID || '',
+					vatID: supplier?.vatID || '',
+					name: supplier?.name || '',
+					notes: supplier?.notes || '',
+					website: {
+						company: supplier?.website?.company || '',
+						alibaba: supplier?.website?.alibaba || '',
+					},
 					contact: {
-						firstName: supplier.contact.firstName,
-						lastName: supplier.contact.lastName,
-						email: supplier.contact.email,
-						primaryPhone: supplier.contact.primaryPhone,
-						secondaryPhone: supplier.contact.secondaryPhone,
-						fax: supplier.contact.fax,
+						firstName: supplier?.contact?.firstName || '',
+						lastName: supplier?.contact?.lastName || '',
+						email: supplier?.contact?.email || '',
+						primaryPhone: supplier?.contact?.primaryPhone || '',
+						secondaryPhone: supplier?.contact?.secondaryPhone || '',
+						fax: supplier?.contact?.fax || '',
 					},
 					address: {
-						line1: supplier.address.line1,
-						line2: supplier.address.line2,
-						townCity: supplier.address.townCity,
-						stateCounty: supplier.address.stateCounty,
-						country: supplier.address.country,
-						postCode: supplier.address.postCode,
+						line1: supplier?.address?.line1 || '',
+						line2: supplier?.address?.line2 || '',
+						townCity: supplier?.address?.townCity || '',
+						stateCounty: supplier?.address?.stateCounty || '',
+						country: supplier?.address?.country || '',
+						postCode: supplier?.address?.postCode || '',
 					},
-					isActive: supplier.isActive,
+					isActive: supplier?.isActive || true,
 				}
 			})
 		} else {
@@ -130,6 +143,10 @@ const SuppliersDrawer = () => {
 				vatID: '',
 				name: '',
 				notes: '',
+				website: {
+					company: '',
+					alibaba: '',
+				},
 				contact: {
 					firstName: '',
 					lastName: '',
@@ -173,6 +190,7 @@ const SuppliersDrawer = () => {
 			onClose={() => dispatch(setDrawerClose())}
 			onEnter={() => updateForm(supplier)}
 			backdrop='static'
+			size='lg'
 		>
 			<Drawer.Header style={{ paddingRight: '1.2em' }}>
 				<Drawer.Title>{isEditing ? 'Edit' : 'Add'} Supplier</Drawer.Title>
@@ -199,7 +217,10 @@ const SuppliersDrawer = () => {
 				<Form
 					ref={formRef}
 					onChange={setFormValue}
-					onCheck={setFormError}
+					onCheck={e => {
+						const data = processFormErrors(e, formError)
+						setFormError(data)
+					}}
 					formValue={formValue}
 					model={model}
 					disabled={isLoading}
@@ -214,7 +235,7 @@ const SuppliersDrawer = () => {
 									name='accountID'
 									label='Account ID'
 									accepter={Input}
-									error={formError.accountID}
+									error={displayValidationError(formError?.accountID)}
 								/>
 							</Col>
 						</Row>
@@ -225,7 +246,7 @@ const SuppliersDrawer = () => {
 									name='vatID'
 									label='VAT ID'
 									accepter={Input}
-									error={formError.vatID}
+									error={displayValidationError(formError?.vatID)}
 								/>
 							</Col>
 						</Row>
@@ -236,7 +257,7 @@ const SuppliersDrawer = () => {
 									name='name'
 									label='Name'
 									accepter={Input}
-									error={formError.name}
+									error={displayValidationError(formError?.name)}
 								/>
 							</Col>
 						</Row>
@@ -251,7 +272,9 @@ const SuppliersDrawer = () => {
 													name='contact.firstName'
 													label='First name'
 													accepter={Input}
-													error={formError?.contact?.firstName}
+													error={displayValidationError(
+														formError?.contact?.object?.firstName
+													)}
 												/>
 											</Col>
 											<Col xs={12}>
@@ -259,7 +282,9 @@ const SuppliersDrawer = () => {
 													name='contact.lastName'
 													label='Last name'
 													accepter={Input}
-													error={formError?.contact?.lastName}
+													error={displayValidationError(
+														formError?.contact?.object?.lastName
+													)}
 												/>
 											</Col>
 										</Row>
@@ -270,7 +295,9 @@ const SuppliersDrawer = () => {
 													name='contact.email'
 													label='Email'
 													accepter={Input}
-													error={formError?.contact?.email}
+													error={displayValidationError(
+														formError?.contact?.object?.email
+													)}
 												/>
 											</Col>
 
@@ -279,7 +306,9 @@ const SuppliersDrawer = () => {
 													name='contact.fax'
 													label='Fax'
 													accepter={Input}
-													error={formError?.contact?.fax}
+													error={displayValidationError(
+														formError?.contact?.object?.fax
+													)}
 												/>
 											</Col>
 										</Row>
@@ -290,7 +319,9 @@ const SuppliersDrawer = () => {
 													name='contact.primaryPhone'
 													label='Primary number'
 													accepter={Input}
-													error={formError?.contact?.primaryPhone}
+													error={displayValidationError(
+														formError?.contact?.object?.primaryPhone
+													)}
 												/>
 											</Col>
 											<Col xs={12}>
@@ -298,7 +329,9 @@ const SuppliersDrawer = () => {
 													name='contact.secondaryPhone'
 													label='Secondary number'
 													accepter={Input}
-													error={formError?.contact?.secondaryPhone}
+													error={displayValidationError(
+														formError?.contact?.object?.secondaryPhone
+													)}
 												/>
 											</Col>
 										</Row>
@@ -310,7 +343,9 @@ const SuppliersDrawer = () => {
 													name='address.line1'
 													label='Address line 1'
 													accepter={Input}
-													error={formError?.address?.line1}
+													error={displayValidationError(
+														formError?.address?.object?.line1
+													)}
 												/>
 											</Col>
 											<Col xs={12}>
@@ -318,7 +353,9 @@ const SuppliersDrawer = () => {
 													name='address.line2'
 													label='Address line 2'
 													accepter={Input}
-													error={formError?.address?.line2}
+													error={displayValidationError(
+														formError?.address?.object?.line2
+													)}
 												/>
 											</Col>
 										</Row>
@@ -329,7 +366,9 @@ const SuppliersDrawer = () => {
 													name='address.townCity'
 													label='Town or City'
 													accepter={Input}
-													error={formError?.address?.townCity}
+													error={displayValidationError(
+														formError?.address?.object?.townCity
+													)}
 												/>
 											</Col>
 
@@ -338,7 +377,9 @@ const SuppliersDrawer = () => {
 													name='address.stateCounty'
 													label='State or County'
 													accepter={Input}
-													error={formError?.address?.stateCounty}
+													error={displayValidationError(
+														formError?.address?.object?.stateCounty
+													)}
 												/>
 											</Col>
 										</Row>
@@ -350,7 +391,9 @@ const SuppliersDrawer = () => {
 													label='Country'
 													accepter={InputPicker}
 													data={formattedCountries}
-													error={formError?.address?.country}
+													error={displayValidationError(
+														formError?.address?.object?.country
+													)}
 												/>
 											</Col>
 											<Col xs={12}>
@@ -358,20 +401,49 @@ const SuppliersDrawer = () => {
 													name='address.postCode'
 													label='Post code'
 													accepter={Input}
-													error={formError?.address?.postCode}
+													error={displayValidationError(
+														formError?.address?.object?.postCode
+													)}
 												/>
 											</Col>
 										</Row>
 									</Tabs.Tab>
-									<Tabs.Tab eventKey='3' title='Transactions'></Tabs.Tab>
-									<Tabs.Tab eventKey='4' title='Notes'>
+									<Tabs.Tab eventKey='3' title='Website'>
+										<Row style={{ marginBottom: '1.4em' }}>
+											<Col xs={24}>
+												<Field
+													name='website.company'
+													label='Company URL'
+													accepter={Input}
+													error={displayValidationError(
+														formError?.website?.object?.company
+													)}
+												/>
+											</Col>
+										</Row>
+
+										<Row>
+											<Col xs={24}>
+												<Field
+													name='website.alibaba'
+													label='Alibaba URL'
+													accepter={Input}
+													error={displayValidationError(
+														formError?.website?.object?.alibaba
+													)}
+												/>
+											</Col>
+										</Row>
+									</Tabs.Tab>
+									<Tabs.Tab eventKey='4' title='Transactions'></Tabs.Tab>
+									<Tabs.Tab eventKey='5' title='Notes'>
 										<Row>
 											<Col xs={24}>
 												<Field
 													name='notes'
 													label='Notes'
 													accepter={TextArea}
-													error={formError.notes}
+													error={displayValidationError(formError?.notes)}
 													value={formValue.notes}
 												/>
 											</Col>

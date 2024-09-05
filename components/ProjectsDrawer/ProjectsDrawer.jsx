@@ -12,20 +12,11 @@ import {
 	Row,
 	Schema,
 	SelectPicker,
-	Stack,
-	Toggle,
-	Uploader,
 } from 'rsuite'
 import CloseIcon from '@rsuite/icons/Close'
 import CheckIcon from '@rsuite/icons/Check'
-import CustomToggle from '../CustomToggle/CustomToggle'
 import Field from '../Field/Field'
 import { useDispatch, useSelector } from 'react-redux'
-
-// import {
-// 	createSlide,
-// 	updateSlide,
-// } from '@/redux/features/slides/slidesActions'
 
 import {
 	getDrawerData,
@@ -35,10 +26,7 @@ import {
 	setDrawerClose,
 } from '@/redux/features/drawer/drawerSlice'
 
-import ImagesUploader from '../ImagesUploader/ImagesUploader'
-import TextArea from '../TextArea/TextArea'
 import { useLocation } from '@/hooks/useLocation'
-import ProjectCardImageUploader from '../ProjectCardImageUploader/ProjectCardImageUploader'
 import SingleImageUploader from '../SingleImageUploader/SingleImageUploader'
 import MultimediaUploader from '../MultimediaUploader/MultimediaUploader'
 import {
@@ -63,12 +51,6 @@ const model = Schema.Model({
 	),
 })
 
-// const posData = []
-
-// for (let index = 0; index < 100; index++) {
-// 	posData.push({ label: index, value: index })
-// }
-
 const ProjectsDrawer = () => {
 	const dispatch = useDispatch()
 	const formRef = useRef()
@@ -91,7 +73,9 @@ const ProjectsDrawer = () => {
 	const [regions, towns, handleRegion, clearTowns] = useLocation()
 
 	const updateForm = project => {
+		setFormError({})
 		if (isEditing) {
+			if (project?.region) handleRegion(project?.region)
 			setFormValue(prev => {
 				return {
 					...prev,
@@ -224,7 +208,7 @@ const ProjectsDrawer = () => {
 									error={formError.media}
 									project={project}
 									defaultFileList={
-										project ? project.media.map(item => item.thumbnail) : []
+										project ? project?.media?.map(item => item.thumbnail) : []
 									}
 									label='Media'
 									setFormValue={setFormValue}

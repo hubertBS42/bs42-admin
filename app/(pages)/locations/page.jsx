@@ -1,19 +1,39 @@
 'use client'
 
 import LocationsTable from '@/components/LocationsTable/LocationsTable'
-import LocationsDrawer from '@/components/LocationsDrawer/LocationsDrawer'
-import {
-	deleteLocation,
-	loadLocations,
-} from '@/redux/features/locations/locationsActions'
+import { loadLocations } from '@/redux/features/locations/locationsActions'
 import styles from './page.module.scss'
 
 import { useEffect } from 'react'
 import DeleteModal from '@/components/DeleteModal/DeleteModal'
+import { useDispatch } from 'react-redux'
+import { toast } from 'react-toastify'
+import { fetcher } from '@/utils/functions'
+import {
+	setModalClose,
+	setModalLoading,
+} from '@/redux/features/modal/modalSlice'
 
-const BrandsPage = () => {
+const LocationsPage = () => {
+	const dispatch = useDispatch()
+
 	const handleDelete = async data => {
-		await deleteLocation(data)
+		dispatch(setModalLoading(true))
+
+		const { status, message } = await fetcher(
+			`/api/locations/${data._id}`,
+			{
+				method: 'DELETE',
+			}
+		)
+
+		dispatch(setModalClose())
+
+		if (status === 'failed') return toast.error(message)
+		if (status === 'success') {
+			toast.success(message)
+			loadLocations()
+		}
 	}
 
 	useEffect(() => {
@@ -22,9 +42,8 @@ const BrandsPage = () => {
 	return (
 		<div className={styles.mainWrapper}>
 			<LocationsTable />
-			<LocationsDrawer />
 			<DeleteModal handleDelete={handleDelete} />
 		</div>
 	)
 }
-export default BrandsPage
+export default LocationsPage

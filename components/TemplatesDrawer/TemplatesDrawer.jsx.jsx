@@ -36,6 +36,10 @@ import {
 import TextArea from '../TextArea/TextArea'
 import TextEditor from '../TextEditor/TextEditor'
 import { selectAllCredentials } from '@/redux/features/credentials/credentialsSlice'
+import {
+	displayValidationError,
+	processFormErrors,
+} from '@/utils/functions'
 
 const { StringType, ObjectType, ArrayType } = Schema.Types
 
@@ -80,6 +84,7 @@ const TemplatesDrawer = () => {
 	})
 
 	const updateForm = template => {
+		setFormError({})
 		if (isEditing) {
 			setFormValue(prev => {
 				return {
@@ -166,7 +171,10 @@ const TemplatesDrawer = () => {
 					ref={formRef}
 					nestedField
 					onChange={setFormValue}
-					onCheck={setFormError}
+					onCheck={e => {
+						const data = processFormErrors(e, formError)
+						setFormError(data)
+					}}
 					formValue={formValue}
 					model={model}
 					disabled={isLoading}
@@ -187,7 +195,7 @@ const TemplatesDrawer = () => {
 										name='label'
 										label='Label'
 										accepter={Input}
-										error={formError.label}
+										error={displayValidationError(formError?.label)}
 										disabled={isEditing}
 									/>
 								</Col>
@@ -199,7 +207,7 @@ const TemplatesDrawer = () => {
 										name='description'
 										label='Description'
 										accepter={TextArea}
-										error={formError.description}
+										error={displayValidationError(formError?.description)}
 										value={formValue.description}
 									/>
 								</Col>
@@ -215,7 +223,7 @@ const TemplatesDrawer = () => {
 												name='admins.sender'
 												label='Sender'
 												accepter={InputPicker}
-												error={formError?.admins?.sender}
+												error={displayValidationError(formError?.admins?.sender)}
 												data={formattedCredentials}
 											/>
 										</Col>
@@ -226,7 +234,9 @@ const TemplatesDrawer = () => {
 												name='admins.recipients'
 												label='Email recipients'
 												accepter={TagInput}
-												error={formError?.admins?.recipients}
+												error={displayValidationError(
+													formError?.admins?.recipients
+												)}
 											/>
 										</Col>
 									</Row>
@@ -236,7 +246,7 @@ const TemplatesDrawer = () => {
 												name='admins.subject'
 												label='Email subject'
 												accepter={Input}
-												error={formError?.admins?.subject}
+												error={displayValidationError(formError?.admins?.subject)}
 											/>
 										</Col>
 									</Row>
@@ -246,7 +256,7 @@ const TemplatesDrawer = () => {
 												name='admins.message'
 												label='Email message'
 												accepter={TextEditor}
-												error={formError?.admins?.message}
+												error={displayValidationError(formError?.admins?.message)}
 												value={template ? template?.admins?.message : ''}
 											/>
 										</Col>
@@ -259,7 +269,7 @@ const TemplatesDrawer = () => {
 												name='users.sender'
 												label='Sender'
 												accepter={InputPicker}
-												error={formError?.users?.sender}
+												error={displayValidationError(formError?.users?.sender)}
 												data={formattedCredentials}
 											/>
 										</Col>
@@ -270,7 +280,7 @@ const TemplatesDrawer = () => {
 												name='users.subject'
 												label='Email subject'
 												accepter={Input}
-												error={formError?.users?.subject}
+												error={displayValidationError(formError?.users?.subject)}
 											/>
 										</Col>
 									</Row>
@@ -280,7 +290,7 @@ const TemplatesDrawer = () => {
 												name='users.message'
 												label='Email message'
 												accepter={TextEditor}
-												error={formError?.users?.message}
+												error={displayValidationError(formError?.users?.message)}
 												value={template ? template?.users?.message : ''}
 											/>
 										</Col>

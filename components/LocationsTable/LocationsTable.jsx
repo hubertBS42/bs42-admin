@@ -32,6 +32,8 @@ import {
 import { setModalOpen } from '@/redux/features/modal/modalSlice'
 import { setDrawerOpen } from '@/redux/features/drawer/drawerSlice'
 import Status from '../Status/Status'
+import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 
 const { Column, HeaderCell, Cell } = Table
 
@@ -42,6 +44,7 @@ const LocationsTable = () => {
 	const [sortColumn, setSortColumn] = useState('createdAt')
 	const [limit, setLimit] = useState(10)
 	const [page, setPage] = useState(1)
+	const router = useRouter()
 
 	const locations = useSelector(selectAllLocations)
 	const count = useSelector(getLocationsCount)
@@ -78,7 +81,7 @@ const LocationsTable = () => {
 			<Panel
 				header={
 					<Stack justifyContent='space-between'>
-						<span>Locations List</span>
+						<span>Location List</span>
 						<Stack spacing={10}>
 							<TableSearch handleSearch={handleSearch} />
 							<IconButton
@@ -86,7 +89,8 @@ const LocationsTable = () => {
 								circle
 								size='sm'
 								appearance='primary'
-								onClick={() => dispatch(setDrawerOpen({ mode: 'add' }))}
+								as={Link}
+								href='/locations/new'
 							/>
 						</Stack>
 					</Stack>
@@ -108,15 +112,16 @@ const LocationsTable = () => {
 						<Cell dataKey='name' />
 					</Column>
 
-					<Column flexGrow={1} fixed sortable verticalAlign='middle'>
-						<HeaderCell>Region</HeaderCell>
-						<Cell dataKey='region' />
-					</Column>
-
-					<Column flexGrow={1} fixed sortable verticalAlign='middle'>
-						<HeaderCell>Town</HeaderCell>
-						<Cell dataKey='town' />
-					</Column>
+					{/* <Column flexGrow={1} fixed sortable verticalAlign='middle'>
+						<HeaderCell>Website</HeaderCell>
+						<Cell>
+							{rowData => (
+								<a href={rowData.website} target='_blank'>
+									{rowData.website}
+								</a>
+							)}
+						</Cell>
+					</Column> */}
 
 					<Column flexGrow={1} sortable verticalAlign='middle'>
 						<HeaderCell>Status</HeaderCell>
@@ -140,9 +145,11 @@ const LocationsTable = () => {
 								<>
 									<Button
 										appearance='link'
-										onClick={() =>
-											dispatch(setDrawerOpen({ mode: 'edit', data: rowData }))
-										}
+										onClick={() => {
+											router.refresh()
+										}}
+										as={Link}
+										href={`/locations/${rowData._id}`}
 										style={{ padding: 0, marginRight: '.7em' }}
 									>
 										<EditIcon />

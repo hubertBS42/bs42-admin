@@ -37,8 +37,8 @@ import { selectAllBrands } from '@/redux/features/brands/brandsSlice'
 import { selectAllCategories } from '@/redux/features/categories/categoriesSlice'
 import TextEditor from '../TextEditor/TextEditor'
 import {
-	formatCategoriesForTreePicker,
 	formatData,
+	formatForTreePicker,
 	roundMoney,
 } from '@/utils/functions'
 import QuantityPresets from '../QuantityPresets/QuantityPresets'
@@ -106,9 +106,10 @@ const ProductsDrawer = ({ currentRate }) => {
 	let brands = useSelector(selectAllBrands)
 	brands = formatData(brands)
 	let categories = useSelector(selectAllCategories)
-	categories = formatCategoriesForTreePicker(categories)
+	categories = formatForTreePicker(categories)
 
 	const updateForm = product => {
+		setFormError({})
 		if (isEditing) {
 			setFormValue(prev => {
 				return {

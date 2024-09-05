@@ -11,6 +11,7 @@ import {
 } from 'rsuite'
 import TrashIcon from '@rsuite/icons/Trash'
 import { useLocation } from '@/hooks/useLocation'
+import { useEffect } from 'react'
 
 const ShippingAddressPanel = ({
 	address,
@@ -21,6 +22,10 @@ const ShippingAddressPanel = ({
 	i,
 }) => {
 	const [regions, towns, handleRegion, clearTowns] = useLocation()
+
+	useEffect(() => {
+		if (address?.region) handleRegion(address?.region)
+	}, [])
 
 	const errorsObject = errors.length > 0 ? errors[i]?.object : null
 
@@ -168,7 +173,6 @@ const ShippingAddressPanel = ({
 						value={address.town}
 						data={towns}
 						style={{ marginTop: '.3em' }}
-						disabled={towns.length === 0}
 						block
 					/>
 					{errorsObject && errorsObject.town.hasError && (

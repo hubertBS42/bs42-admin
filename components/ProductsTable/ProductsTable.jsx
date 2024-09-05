@@ -16,10 +16,7 @@ import EditIcon from '@rsuite/icons/Edit'
 import PlusIcon from '@rsuite/icons/Plus'
 
 import { useState } from 'react'
-import {
-	formatCategoriesForTreePicker,
-	formatDate,
-} from '@/utils/functions'
+import { formatDate, formatForTreePicker } from '@/utils/functions'
 import { useDispatch, useSelector } from 'react-redux'
 
 import {
@@ -52,7 +49,7 @@ const ProductsTable = () => {
 	const count = useSelector(getProductsCount)
 	const loading = useSelector(getProductsLoadingState)
 	let categories = useSelector(selectAllCategories)
-	categories = formatCategoriesForTreePicker(categories)
+	categories = formatForTreePicker(categories)
 
 	const handleSortColumn = async (sortColumn, sortType) => {
 		sortProducts(limit, page, sortColumn, sortType)
@@ -102,7 +99,7 @@ const ProductsTable = () => {
 				bodyFill
 			>
 				<Table
-					height={500}
+					autoHeight
 					data={products}
 					sortColumn={sortColumn}
 					sortType={sortType}
@@ -111,7 +108,7 @@ const ProductsTable = () => {
 					wordWrap='break-word'
 					style={{ fontSize: '13px' }}
 				>
-					<Column flexGrow={2} fixed sortable verticalAlign='middle'>
+					<Column flexGrow={3} fixed sortable verticalAlign='middle'>
 						<HeaderCell>Title</HeaderCell>
 						<Cell dataKey='title' />
 					</Column>
@@ -129,12 +126,12 @@ const ProductsTable = () => {
 						</Cell>
 					</Column>
 
-					<Column flexGrow={1} fixed sortable verticalAlign='middle'>
+					{/* <Column flexGrow={1} fixed sortable verticalAlign='middle'>
 						<HeaderCell>Brand</HeaderCell>
 						<Cell dataKey='brand'>
 							{rowData => rowData?.brand?.name || 'Not selected'}
 						</Cell>
-					</Column>
+					</Column> */}
 
 					<Column flexGrow={1} sortable verticalAlign='middle'>
 						<HeaderCell>Status</HeaderCell>

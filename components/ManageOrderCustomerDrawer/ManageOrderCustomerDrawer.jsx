@@ -24,6 +24,10 @@ import {
 	setDrawerClose,
 } from '@/redux/features/drawer/drawerSlice'
 import { useLocation } from '@/hooks/useLocation'
+import {
+	displayValidationError,
+	processFormErrors,
+} from '@/utils/functions'
 
 const { StringType, ObjectType } = Schema.Types
 
@@ -122,7 +126,14 @@ const ManageOrderCustomerDrawer = ({
 	const customer = useSelector(getDrawerData)
 
 	const updateForm = customer => {
+		setFormError({})
 		if (isEditing) {
+			if (customer?.billing?.region)
+				handleBillingRegion(customer?.billing?.region)
+
+			if (customer?.shipping?.region)
+				handleShippingRegion(customer?.shipping?.region)
+
 			setFormValue(prev => {
 				return {
 					...prev,
@@ -240,7 +251,10 @@ const ManageOrderCustomerDrawer = ({
 					nestedField
 					ref={formRef}
 					onChange={setFormValue}
-					onCheck={setFormError}
+					onCheck={e => {
+						const data = processFormErrors(e, formError)
+						setFormError(data)
+					}}
 					formValue={formValue}
 					model={model}
 				>
@@ -252,7 +266,9 @@ const ManageOrderCustomerDrawer = ({
 										name='contact.firstName'
 										label='First name'
 										accepter={Input}
-										error={formError?.contact?.firstName}
+										error={displayValidationError(
+											formError?.contact?.object?.firstName
+										)}
 										readOnly={isEditing}
 									/>
 								</Col>
@@ -261,7 +277,9 @@ const ManageOrderCustomerDrawer = ({
 										name='contact.lastName'
 										label='Last name'
 										accepter={Input}
-										error={formError?.contact?.lastName}
+										error={displayValidationError(
+											formError?.contact?.object?.lastName
+										)}
 										readOnly={isEditing}
 									/>
 								</Col>
@@ -273,7 +291,9 @@ const ManageOrderCustomerDrawer = ({
 										name='contact.email'
 										label='Email'
 										accepter={Input}
-										error={formError?.contact?.email}
+										error={displayValidationError(
+											formError?.contact?.object?.email
+										)}
 										readOnly={isEditing}
 									/>
 								</Col>
@@ -282,7 +302,9 @@ const ManageOrderCustomerDrawer = ({
 										name='contact.phone'
 										label='Phone'
 										accepter={Input}
-										error={formError?.contact?.phone}
+										error={displayValidationError(
+											formError?.contact?.object?.phone
+										)}
 										readOnly={isEditing}
 									/>
 								</Col>
@@ -296,7 +318,9 @@ const ManageOrderCustomerDrawer = ({
 										name='billing.firstName'
 										label='First name'
 										accepter={Input}
-										error={formError?.billing?.firstName}
+										error={displayValidationError(
+											formError?.billing?.object?.firstName
+										)}
 									/>
 								</Col>
 								<Col xs={12}>
@@ -304,7 +328,9 @@ const ManageOrderCustomerDrawer = ({
 										name='billing.lastName'
 										label='Last name'
 										accepter={Input}
-										error={formError?.billing?.lastName}
+										error={displayValidationError(
+											formError?.billing?.object?.lastName
+										)}
 									/>
 								</Col>
 							</Row>
@@ -315,7 +341,9 @@ const ManageOrderCustomerDrawer = ({
 										name='billing.email'
 										label='Email'
 										accepter={Input}
-										error={formError?.billing?.email}
+										error={displayValidationError(
+											formError?.billing?.object?.email
+										)}
 									/>
 								</Col>
 							</Row>
@@ -326,7 +354,9 @@ const ManageOrderCustomerDrawer = ({
 										name='billing.region'
 										label='Region'
 										accepter={InputPicker}
-										error={formError?.billing?.region}
+										error={displayValidationError(
+											formError?.billing?.object?.region
+										)}
 										data={billingRegions}
 										onSelect={value => handleBillingRegion(value)}
 										onChange={() => {
@@ -347,9 +377,10 @@ const ManageOrderCustomerDrawer = ({
 										name='billing.town'
 										label='Town'
 										accepter={InputPicker}
-										error={formError?.billing?.town}
+										error={displayValidationError(
+											formError?.billing?.object?.town
+										)}
 										data={billingTowns}
-										disabled={billingTowns.length === 0}
 									/>
 								</Col>
 							</Row>
@@ -360,7 +391,9 @@ const ManageOrderCustomerDrawer = ({
 										name='billing.address'
 										label='Address'
 										accepter={Input}
-										error={formError?.billing?.address}
+										error={displayValidationError(
+											formError?.billing?.object?.address
+										)}
 									/>
 								</Col>
 							</Row>
@@ -373,7 +406,9 @@ const ManageOrderCustomerDrawer = ({
 											name='shipping.firstName'
 											label='First name'
 											accepter={Input}
-											error={formError?.shipping?.firstName}
+											error={displayValidationError(
+												formError?.shipping?.object?.firstName
+											)}
 										/>
 									</Col>
 									<Col xs={12}>
@@ -381,7 +416,9 @@ const ManageOrderCustomerDrawer = ({
 											name='shipping.lastName'
 											label='Last name'
 											accepter={Input}
-											error={formError?.shipping?.lastName}
+											error={displayValidationError(
+												formError?.shipping?.object?.lastName
+											)}
 										/>
 									</Col>
 								</Row>
@@ -392,7 +429,9 @@ const ManageOrderCustomerDrawer = ({
 											name='shipping.phone'
 											label='Phone'
 											accepter={Input}
-											error={formError?.shipping?.phone}
+											error={displayValidationError(
+												formError?.shipping?.object?.phone
+											)}
 										/>
 									</Col>
 								</Row>
@@ -403,7 +442,9 @@ const ManageOrderCustomerDrawer = ({
 											name='shipping.region'
 											label='Region'
 											accepter={InputPicker}
-											error={formError?.shipping?.region}
+											error={displayValidationError(
+												formError?.shipping?.object?.region
+											)}
 											data={shippingRegions}
 											onSelect={value => handleShippingRegion(value)}
 											onChange={() => {
@@ -424,9 +465,10 @@ const ManageOrderCustomerDrawer = ({
 											name='shipping.town'
 											label='Town'
 											accepter={InputPicker}
-											error={formError?.shipping?.town}
+											error={displayValidationError(
+												formError?.shipping?.object?.town
+											)}
 											data={shippingTowns}
-											disabled={shippingTowns.length === 0}
 										/>
 									</Col>
 								</Row>
@@ -437,7 +479,9 @@ const ManageOrderCustomerDrawer = ({
 											name='shipping.address'
 											label='Address'
 											accepter={Input}
-											error={formError?.shipping?.address}
+											error={displayValidationError(
+												formError?.shipping?.object?.address
+											)}
 										/>
 									</Col>
 								</Row>

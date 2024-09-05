@@ -1,18 +1,35 @@
 import mongoose from 'mongoose'
-import slug from 'mongoose-slug-updater'
-
-mongoose.plugin(slug)
 
 const LocationSchema = new mongoose.Schema(
 	{
-		name: { type: String, required: true, trim: true, unique: true },
-		slug: { type: String, slug: 'name', unique: true },
-		phone: { type: String, required: true, trim: true },
-		address: { type: String, required: true, trim: true },
-		town: { type: String, required: true, trim: true },
-		region: { type: String, required: true, trim: true },
-		digitalAddress: { type: String, trim: true },
-		isDefault: { type: Boolean, default: false },
+		name: { type: String, required: true },
+		type: {
+			type: String,
+			enum: ['facility', 'section', 'aisle', 'shelf', 'slot'],
+			required: true,
+		},
+		address: {
+			address: String,
+			town: String,
+			region: String,
+			digitalAddress: String,
+		},
+		parent: {
+			type: mongoose.Schema.Types.ObjectId,
+			ref: 'Location',
+			default: null,
+		},
+		capacity: Number,
+		length: Number,
+		contact: {
+			firstName: String,
+			lastName: String,
+			phone: String,
+			email: String,
+		},
+		description: String,
+		level: { type: Number },
+		isDefault: { type: Boolean },
 		isActive: { type: Boolean, default: true },
 	},
 	{ timestamps: true }

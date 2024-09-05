@@ -3,7 +3,7 @@ import categoriesReducer from './features/categories/categoriesSlice'
 import brandsReducer from './features/brands/brandsSlice'
 import locationsReducer from './features/locations/locationsSlice'
 import suppliersReducer from './features/suppliers/suppliersSlice'
-import inventoryReducer from './features/inventory/inventorySlice'
+import stockLevelsReducer from './features/stockLevels/stockLevelsSlice'
 import blogsReducer from './features/blogs/blogsSlice'
 import slidesReducer from './features/slides/slidesSlice'
 import projectsReducer from './features/projects/projectsSlice'
@@ -28,7 +28,7 @@ export const store = configureStore({
 		brands: brandsReducer,
 		locations: locationsReducer,
 		suppliers: suppliersReducer,
-		inventory: inventoryReducer,
+		stockLevels: stockLevelsReducer,
 		blogs: blogsReducer,
 		slides: slidesReducer,
 		projects: projectsReducer,

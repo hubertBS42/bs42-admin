@@ -20,12 +20,13 @@ import { store } from '@/redux/store'
 const { dispatch } = store
 
 export const loadLocations = async () => {
+	dispatch(setLocations([]))
 	dispatch(setLoading(true))
 	const {
 		status,
 		message,
 		data: { locations, count },
-	} = await fetcher('/api/products/locations')
+	} = await fetcher('/api/locations')
 
 	dispatch(setLoading(false))
 
@@ -35,6 +36,22 @@ export const loadLocations = async () => {
 
 	dispatch(setLocations(locations))
 	dispatch(setLocationsCount(count))
+}
+
+export const loadStorage = async () => {
+	dispatch(setLocations([]))
+	dispatch(setLoading(true))
+	const { status, message, data } = await fetcher(
+		'/api/locations/storage'
+	)
+
+	dispatch(setLoading(false))
+
+	if (status === 'error') {
+		return toast.error('Failed to load data.') //message site admin about error
+	}
+
+	dispatch(setLocations(data))
 }
 
 export const sortLocations = async (
@@ -50,7 +67,7 @@ export const sortLocations = async (
 		message,
 		data: { locations },
 	} = await fetcher(
-		`/api/products/locations?limit=${limit}&page=${page}&sortBy=${sortColumn}&sort=${sortType}`
+		`/api/locations?limit=${limit}&page=${page}&sortBy=${sortColumn}&sort=${sortType}`
 	)
 
 	dispatch(setLoading(false))
@@ -69,7 +86,7 @@ export const limitLocations = async limit => {
 		status,
 		message,
 		data: { locations },
-	} = await fetcher(`/api/products/locations?limit=${limit}`)
+	} = await fetcher(`/api/locations?limit=${limit}`)
 
 	dispatch(setLoading(false))
 
@@ -93,7 +110,7 @@ export const paginateLocations = async (
 		message,
 		data: { locations },
 	} = await fetcher(
-		`/api/products/locations?limit=${limit}&page=${value}&sortBy=${sortColumn}&sort=${sortType}`
+		`/api/locations?limit=${limit}&page=${value}&sortBy=${sortColumn}&sort=${sortType}`
 	)
 	dispatch(setLoading(false))
 
@@ -112,9 +129,7 @@ export const searchLocations = async (query, limit, page) => {
 			status,
 			message,
 			data: { locations },
-		} = await fetcher(
-			`/api/products/locations?limit=${limit}&page=${page}`
-		)
+		} = await fetcher(`/api/locations?limit=${limit}&page=${page}`)
 
 		dispatch(setLoading(false))
 
@@ -130,7 +145,7 @@ export const searchLocations = async (query, limit, page) => {
 		status,
 		message,
 		data: locations,
-	} = await fetcher(`/api/products/locations/search?q=${query}`)
+	} = await fetcher(`/api/locations/search?q=${query}`)
 
 	dispatch(setLoading(false))
 
@@ -141,21 +156,33 @@ export const searchLocations = async (query, limit, page) => {
 	dispatch(setLocations(locations))
 }
 
-export const createLocation = async data => {
-	dispatch(setDrawerLoading(true))
+export const createLocation = async (data, router) => {
+	const {
+		status,
+		message,
+		data: location,
+	} = await fetcher('/api/locations/add', {
+		method: 'POST',
+		body: JSON.stringify(data),
+		headers: {
+			'Content-type': 'application/json; charset=UTF-8',
+		},
+	})
 
-	const { status: existsStatus, message: existsMessage } =
-		await fetcher(
-			`/api/products/locations/checkExists?name=${data.name}`
-		)
-
-	if (existsStatus === 'failed') {
-		dispatch(setDrawerLoading(false))
-		return toast.error(existsMessage)
+	if (status === 'success') {
+		router.push(`/locations/${location._id}`)
+		toast.success('Location created successfully.')
+		return
 	}
 
+	toast.error('Failed to create Location.')
+}
+
+export const createStorage = async data => {
+	dispatch(setDrawerLoading(true))
+
 	const { status, message } = await fetcher(
-		'/api/products/locations/add',
+		'/api/locations/storage/add',
 		{
 			method: 'POST',
 			body: JSON.stringify(data),
@@ -167,31 +194,40 @@ export const createLocation = async data => {
 	dispatch(setDrawerClose())
 
 	if (status === 'success') {
-		toast.success('Location added.')
-		loadLocations()
+		toast.success('Location updated successfully.')
+		loadStorage()
 		return
 	}
 
 	toast.error('Failed to add Location.')
 }
 
-export const updateLocation = async (location, data) => {
-	dispatch(setDrawerLoading(true))
-
-	if (location.name !== data.name) {
-		const { status: existsStatus, message: existsMessage } =
-			await fetcher(
-				`/api/products/locations/checkExists?name=${data.name}`
-			)
-
-		if (existsStatus === 'failed') {
-			dispatch(setDrawerLoading(false))
-			return toast.error(existsMessage)
+export const updateLocation = async (location, data, router) => {
+	const { status, message } = await fetcher(
+		`/api/locations/${location._id}`,
+		{
+			method: 'PATCH',
+			body: JSON.stringify(data),
+			headers: {
+				'Content-type': 'application/json; charset=UTF-8',
+			},
 		}
+	)
+
+	if (status === 'success') {
+		router.push('/locations')
+		toast.success(message)
+		return
 	}
 
+	toast.error('Failed to update location.')
+}
+
+export const updateStorage = async (storage, data) => {
+	dispatch(setDrawerLoading(true))
+
 	const { status, message } = await fetcher(
-		`/api/products/locations/${location._id}`,
+		`/api/locations/storage/${storage.id}`,
 		{
 			method: 'PATCH',
 			body: JSON.stringify(data),
@@ -205,18 +241,18 @@ export const updateLocation = async (location, data) => {
 
 	if (status === 'success') {
 		toast.success(message)
-		loadLocations()
+		loadStorage()
 		return
 	}
 
-	toast.error('Failed to update location.')
+	toast.error('Failed to update storage.')
 }
 
 export const deleteLocation = async location => {
 	dispatch(setModalLoading(true))
 
 	const { status, message } = await fetcher(
-		`/api/products/locations/${location._id}`,
+		`/api/locations/${location.id}`,
 		{
 			method: 'DELETE',
 		}
@@ -227,6 +263,25 @@ export const deleteLocation = async location => {
 	if (status === 'failed') return toast.error(message)
 	if (status === 'success') {
 		toast.success(message)
-		loadLocations()
+		loadStorage()
+	}
+}
+
+export const deleteStorage = async storage => {
+	dispatch(setModalLoading(true))
+
+	const { status, message } = await fetcher(
+		`/api/locations/storage/${storage.id}`,
+		{
+			method: 'DELETE',
+		}
+	)
+
+	dispatch(setModalClose())
+
+	if (status === 'failed') return toast.error(message)
+	if (status === 'success') {
+		toast.success(message)
+		loadStorage()
 	}
 }

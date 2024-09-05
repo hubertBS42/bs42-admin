@@ -26,7 +26,7 @@ export const loadSuppliers = async () => {
 		status,
 		message,
 		data: { suppliers, count },
-	} = await fetcher('/api/products/suppliers')
+	} = await fetcher('/api/suppliers')
 
 	dispatch(setLoading(false))
 
@@ -51,7 +51,7 @@ export const sortSuppliers = async (
 		message,
 		data: { suppliers },
 	} = await fetcher(
-		`/api/products/suppliers?limit=${limit}&page=${page}&sortBy=${sortColumn}&sort=${sortType}`
+		`/api/suppliers?limit=${limit}&page=${page}&sortBy=${sortColumn}&sort=${sortType}`
 	)
 
 	dispatch(setLoading(false))
@@ -70,7 +70,7 @@ export const limitSuppliers = async limit => {
 		status,
 		message,
 		data: { suppliers },
-	} = await fetcher(`/api/products/suppliers?limit=${limit}`)
+	} = await fetcher(`/api/suppliers?limit=${limit}`)
 
 	dispatch(setLoading(false))
 
@@ -94,7 +94,7 @@ export const paginateSuppliers = async (
 		message,
 		data: { suppliers },
 	} = await fetcher(
-		`/api/products/suppliers?limit=${limit}&page=${value}&sortBy=${sortColumn}&sort=${sortType}`
+		`/api/suppliers?limit=${limit}&page=${value}&sortBy=${sortColumn}&sort=${sortType}`
 	)
 	dispatch(setLoading(false))
 
@@ -113,9 +113,7 @@ export const searchSuppliers = async (query, limit, page) => {
 			status,
 			message,
 			data: { suppliers },
-		} = await fetcher(
-			`/api/products/suppliers?limit=${limit}&page=${page}`
-		)
+		} = await fetcher(`/api/suppliers?limit=${limit}&page=${page}`)
 
 		dispatch(setLoading(false))
 
@@ -131,7 +129,7 @@ export const searchSuppliers = async (query, limit, page) => {
 		status,
 		message,
 		data: suppliers,
-	} = await fetcher(`/api/products/suppliers/search?q=${query}`)
+	} = await fetcher(`/api/suppliers/search?q=${query}`)
 
 	dispatch(setLoading(false))
 
@@ -146,25 +144,20 @@ export const createSupplier = async data => {
 	dispatch(setDrawerLoading(true))
 
 	const { status: existsStatus, message: existsMessage } =
-		await fetcher(
-			`/api/products/suppliers/checkExists?name=${data.name}`
-		)
+		await fetcher(`/api/suppliers/checkExists?name=${data.name}`)
 
 	if (existsStatus === 'failed') {
 		dispatch(setDrawerLoading(false))
 		return toast.error(existsMessage)
 	}
 
-	const { status, message } = await fetcher(
-		'/api/products/suppliers/add',
-		{
-			method: 'POST',
-			body: JSON.stringify(data),
-			headers: {
-				'Content-type': 'application/json; charset=UTF-8',
-			},
-		}
-	)
+	const { status, message } = await fetcher('/api/suppliers/add', {
+		method: 'POST',
+		body: JSON.stringify(data),
+		headers: {
+			'Content-type': 'application/json; charset=UTF-8',
+		},
+	})
 	dispatch(setDrawerClose())
 
 	if (status === 'success') {
@@ -181,9 +174,7 @@ export const updateSupplier = async (supplier, data) => {
 
 	if (supplier.name !== data.name) {
 		const { status: existsStatus, message: existsMessage } =
-			await fetcher(
-				`/api/products/suppliers/checkExists?name=${data.name}`
-			)
+			await fetcher(`/api/suppliers/checkExists?name=${data.name}`)
 
 		if (existsStatus === 'failed') {
 			dispatch(setDrawerLoading(false))
@@ -192,7 +183,7 @@ export const updateSupplier = async (supplier, data) => {
 	}
 
 	const { status, message } = await fetcher(
-		`/api/products/suppliers/${supplier._id}`,
+		`/api/suppliers/${supplier._id}`,
 		{
 			method: 'PATCH',
 			body: JSON.stringify(data),
@@ -217,7 +208,7 @@ export const deleteSupplier = async supplier => {
 	dispatch(setModalLoading(true))
 
 	const { status, message } = await fetcher(
-		`/api/products/suppliers/${supplier._id}`,
+		`/api/suppliers/${supplier._id}`,
 		{
 			method: 'DELETE',
 		}

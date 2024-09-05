@@ -75,6 +75,7 @@ const CurrenciesDrawer = () => {
 	})
 
 	const updateForm = currency => {
+		setFormError({})
 		if (isEditing) {
 			setFormValue(prev => {
 				return {

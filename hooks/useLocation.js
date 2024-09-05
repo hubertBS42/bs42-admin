@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { geoData } from '@/utils/data'
 
-export const useLocation = () => {
+export const useLocation = region => {
 	const [towns, setTowns] = useState([])
 	const [regions, setRegions] = useState([])
 

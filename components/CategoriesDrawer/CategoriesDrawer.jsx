@@ -31,7 +31,7 @@ import {
 } from '@/redux/features/drawer/drawerSlice'
 
 import {
-	formatCategoriesForTreePicker,
+	formatForTreePicker,
 	getDisabledItems,
 } from '@/utils/functions'
 import { selectAllCategories } from '@/redux/features/categories/categoriesSlice'
@@ -56,7 +56,6 @@ const CategoriesDrawer = () => {
 	const formRef = useRef()
 	const [formError, setFormError] = useState({})
 	const [imagesToBeDeleted, setImagesToBeDeleted] = useState([])
-	const [categories, setCategories] = useState([])
 	const [formValue, setFormValue] = useState({
 		name: '',
 		parent: null,
@@ -69,10 +68,10 @@ const CategoriesDrawer = () => {
 	const isEditing = useSelector(getEditState)
 	const isLoading = useSelector(getDrawerLoadingState)
 	const category = useSelector(getDrawerData)
+	const categories = useSelector(selectAllCategories)
+	const [disabledCategories, setDisabledCategories] = useState([])
 
-	let formattedCategories = formatCategoriesForTreePicker(
-		useSelector(selectAllCategories)
-	)
+	let formattedCategories = formatForTreePicker(categories)
 
 	formattedCategories.unshift({
 		key: '0',
@@ -80,16 +79,13 @@ const CategoriesDrawer = () => {
 		value: null,
 	})
 
-	const disabledCategories = getDisabledItems(
-		useSelector(selectAllCategories)
-	)
-
 	const updateForm = category => {
 		if (isEditing) {
-			formattedCategories = formattedCategories.filter(
-				formattedCategory => formattedCategory.value !== category.id
-			)
-			setCategories(formattedCategories)
+			setFormError({})
+			const data = getDisabledItems(categories, category.id)
+
+			setDisabledCategories(data)
+
 			setFormValue(prev => {
 				return {
 					...prev,
@@ -101,7 +97,7 @@ const CategoriesDrawer = () => {
 				}
 			})
 		} else {
-			setCategories(formattedCategories)
+			setDisabledCategories([])
 			setFormValue({
 				name: '',
 				parent: null,
@@ -196,7 +192,7 @@ const CategoriesDrawer = () => {
 									defaultExpandAll
 									accepter={CustomTreePicker}
 									error={formError.parent}
-									data={categories}
+									data={formattedCategories}
 									disabledItemValues={disabledCategories}
 								/>
 							</Col>

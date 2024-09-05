@@ -5,7 +5,6 @@ import { Form } from 'rsuite'
 // eslint-disable-next-line react/display-name
 const Field = React.forwardRef((props, ref) => {
 	const { name, message, label, accepter, error, ...rest } = props
-
 	return (
 		<Form.Group
 			controlId={name}

@@ -69,6 +69,7 @@ const ServersDrawer = () => {
 	const server = useSelector(getDrawerData)
 
 	const updateForm = server => {
+		setFormError({})
 		if (isEditing) {
 			setFormValue(prev => {
 				return {

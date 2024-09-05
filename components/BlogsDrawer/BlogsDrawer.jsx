@@ -108,6 +108,7 @@ const BlogsDrawer = () => {
 	const blog = useSelector(getDrawerData)
 
 	const updateForm = blog => {
+		setFormError({})
 		if (isEditing) {
 			setFormValue(prev => {
 				return {

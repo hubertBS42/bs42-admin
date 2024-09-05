@@ -5,6 +5,10 @@ const SupplierSchema = new mongoose.Schema(
 		accountID: { type: String, trim: true },
 		vatID: { type: String, trim: true },
 		name: { type: String, required: true, trim: true },
+		website: {
+			company: { type: String, trim: true },
+			alibaba: { type: String, trim: true },
+		},
 		contact: {
 			firstName: { type: String, trim: true },
 			lastName: { type: String, trim: true },

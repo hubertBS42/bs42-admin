@@ -40,7 +40,12 @@ import {
 import ImagesUploader from '../ImagesUploader/ImagesUploader'
 import TextArea from '../TextArea/TextArea'
 import { selectAllRoles } from '@/redux/features/roles/rolesSlice'
-import { formatData, generatePassword } from '@/utils/functions'
+import {
+	displayValidationError,
+	formatData,
+	generatePassword,
+	processFormErrors,
+} from '@/utils/functions'
 import DeliveryAddresses from '../DeliveryAddresses/DeliveryAddresses'
 import GeneratePasswordField from '../GeneratePasswordField/GeneratePasswordField'
 import { useLocation } from '@/hooks/useLocation'
@@ -128,9 +133,7 @@ const UsersDrawer = () => {
 			phone: StringType(),
 			website: StringType(),
 			region: StringType(),
-			town: formValue.company.region
-				? StringType().isRequired('You must provide a town.')
-				: StringType(),
+			town: StringType(),
 			address: StringType(),
 			digitalAddress: StringType(),
 		}),
@@ -179,7 +182,13 @@ const UsersDrawer = () => {
 	const roles = formatData(useSelector(selectAllRoles))
 
 	const updateForm = user => {
+		setFormError({})
 		if (isEditing) {
+			if (user?.billing?.region)
+				handleBillingRegion(user?.billing?.region)
+
+			if (user?.company?.region)
+				handleCompanyRegion(user?.company?.region)
 			setFormValue(prev => {
 				return {
 					...prev,
@@ -349,7 +358,10 @@ const UsersDrawer = () => {
 				<Form
 					ref={formRef}
 					onChange={setFormValue}
-					onCheck={setFormError}
+					onCheck={e => {
+						const data = processFormErrors(e, formError)
+						setFormError(data)
+					}}
 					formValue={formValue}
 					model={model}
 					disabled={isLoading}
@@ -384,7 +396,7 @@ const UsersDrawer = () => {
 									name='firstName'
 									label='First name'
 									accepter={Input}
-									error={formError.firstName}
+									error={displayValidationError(formError?.firstName)}
 								/>
 							</Col>
 
@@ -393,7 +405,7 @@ const UsersDrawer = () => {
 									name='lastName'
 									label='Last name'
 									accepter={Input}
-									error={formError.lastName}
+									error={displayValidationError(formError?.lastName)}
 								/>
 							</Col>
 						</Row>
@@ -404,7 +416,7 @@ const UsersDrawer = () => {
 									name='email'
 									label='Email'
 									accepter={Input}
-									error={formError.email}
+									error={displayValidationError(formError?.email)}
 								/>
 							</Col>
 							<Col xs={12}>
@@ -424,7 +436,7 @@ const UsersDrawer = () => {
 									name='phone1'
 									label='Primary phone'
 									accepter={Input}
-									error={formError.phone1}
+									error={displayValidationError(formError?.phone1)}
 								/>
 							</Col>
 
@@ -433,7 +445,7 @@ const UsersDrawer = () => {
 									name='phone2'
 									label='Secondary phone'
 									accepter={Input}
-									error={formError.phone2}
+									error={displayValidationError(formError?.phone2)}
 								/>
 							</Col>
 						</Row>
@@ -444,7 +456,7 @@ const UsersDrawer = () => {
 									name='role'
 									label='Role'
 									accepter={SelectPicker}
-									error={formError.role}
+									error={displayValidationError(formError?.role)}
 									data={roles}
 								/>
 							</Col>
@@ -456,7 +468,7 @@ const UsersDrawer = () => {
 									name='notes'
 									label='Notes'
 									accepter={TextArea}
-									error={formError.description}
+									error={displayValidationError(formError?.notes)}
 									value={formValue.description}
 								/>
 							</Col>
@@ -467,7 +479,7 @@ const UsersDrawer = () => {
 								<ImagesUploader
 									name='profileImg'
 									accepter={Uploader}
-									error={formError.profileImg}
+									error={displayValidationError(formError?.profileImg)}
 									multiple
 									listType='picture'
 									action='//jsonplaceholder.typicode.com/posts/'
@@ -496,7 +508,9 @@ const UsersDrawer = () => {
 									name='company.name'
 									label='Name'
 									accepter={Input}
-									error={formError?.company?.name}
+									error={displayValidationError(
+										formError?.company?.object?.name
+									)}
 								/>
 							</Col>
 							<Col xs={12}>
@@ -504,7 +518,9 @@ const UsersDrawer = () => {
 									name='company.phone'
 									label='Phone'
 									accepter={Input}
-									error={formError?.company?.phone}
+									error={displayValidationError(
+										formError?.company?.object?.phone
+									)}
 								/>
 							</Col>
 						</Row>
@@ -515,7 +531,9 @@ const UsersDrawer = () => {
 									name='company.website'
 									label='Website'
 									accepter={Input}
-									error={formError?.company?.website}
+									error={displayValidationError(
+										formError?.company?.object?.website
+									)}
 								/>
 							</Col>
 						</Row>
@@ -526,7 +544,9 @@ const UsersDrawer = () => {
 									name='company.region'
 									label='Region'
 									accepter={InputPicker}
-									error={formError?.company?.region}
+									error={displayValidationError(
+										formError?.company?.object?.region
+									)}
 									data={companyRegions}
 									onSelect={value => handleCompanyRegion(value)}
 									onChange={() => {
@@ -547,9 +567,10 @@ const UsersDrawer = () => {
 									name='company.town'
 									label='Town'
 									accepter={InputPicker}
-									error={formError?.company?.town}
+									error={displayValidationError(
+										formError?.company?.object?.town
+									)}
 									data={companyTowns}
-									disabled={companyTowns.length === 0}
 								/>
 							</Col>
 						</Row>
@@ -560,7 +581,9 @@ const UsersDrawer = () => {
 									name='company.address'
 									label='Address'
 									accepter={Input}
-									error={formError?.company?.address}
+									error={displayValidationError(
+										formError?.company?.object?.address
+									)}
 								/>
 							</Col>
 						</Row>
@@ -584,7 +607,9 @@ const UsersDrawer = () => {
 											name='billing.firstName'
 											label='First name'
 											accepter={Input}
-											error={formError?.billing?.firstName}
+											error={displayValidationError(
+												formError?.billing?.object?.firstName
+											)}
 										/>
 									</Col>
 
@@ -593,7 +618,9 @@ const UsersDrawer = () => {
 											name='billing.lastName'
 											label='Last name'
 											accepter={Input}
-											error={formError?.billing?.lastName}
+											error={displayValidationError(
+												formError?.billing?.object?.lastName
+											)}
 										/>
 									</Col>
 								</Row>
@@ -604,7 +631,9 @@ const UsersDrawer = () => {
 											name='billing.email'
 											label='Email'
 											accepter={Input}
-											error={formError?.billing?.email}
+											error={displayValidationError(
+												formError?.billing?.object?.email
+											)}
 										/>
 									</Col>
 								</Row>
@@ -615,7 +644,9 @@ const UsersDrawer = () => {
 											name='billing.region'
 											label='Region'
 											accepter={InputPicker}
-											error={formError?.billing?.region}
+											error={displayValidationError(
+												formError?.billing?.object?.region
+											)}
 											data={billingRegions}
 											onSelect={value => handleBillingRegion(value)}
 											onChange={() => {
@@ -636,9 +667,10 @@ const UsersDrawer = () => {
 											name='billing.town'
 											label='Town'
 											accepter={InputPicker}
-											error={formError?.billing?.town}
+											error={displayValidationError(
+												formError?.billing?.object?.town
+											)}
 											data={billingTowns}
-											disabled={billingTowns.length === 0}
 										/>
 									</Col>
 								</Row>
@@ -649,7 +681,9 @@ const UsersDrawer = () => {
 											name='billing.address'
 											label='Address'
 											accepter={Input}
-											error={formError?.billing?.address}
+											error={displayValidationError(
+												formError?.billing?.object?.address
+											)}
 										/>
 									</Col>
 								</Row>

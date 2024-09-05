@@ -15,6 +15,7 @@ const removeLastLetter = word => {
 
 export const generatePageTitle = () => {
 	let pathname = usePathname()
+
 	if (pathname === '/') {
 		pathname = 'dashboard'
 	}
@@ -57,8 +58,29 @@ export const formatData = data => {
 	}))
 }
 
-export const getDisabledItems = data => {
-	return data?.filter(item => !item.isActive).map(item => item._id)
+// function to find descendants of a category
+export const findLocationDescendants = (locations, parentId) => {
+	const descendants = locations.filter(
+		l => l?.parent?._id.toString() === parentId
+	)
+	descendants.forEach(descendant => {
+		descendants.push(
+			...findLocationDescendants(locations, descendant._id.toString())
+		)
+	})
+	return descendants
+}
+
+export const getDisabledItems = (items, parentId) => {
+	const disabledItems = items
+		.filter(item => item.parent === parentId)
+		.map(item => item._id)
+	disabledItems.forEach(item => {
+		disabledItems.push(...getDisabledItems(items, item))
+	})
+
+	disabledItems.push(parentId)
+	return disabledItems
 }
 
 export const formatCategoriesForTable = (
@@ -76,6 +98,26 @@ export const formatCategoriesForTable = (
 			isActive: category.isActive,
 			createdAt: category.createdAt,
 			children: formatCategoriesForTable(categories, category._id),
+		}))
+}
+
+export const formatLocationsForTable = (locations, parent = null) => {
+	return locations
+		.filter(location => location?.parent?._id === parent)
+		.map(location => ({
+			id: location._id,
+			name: location.name,
+			type: location.type,
+			address: location.address,
+			parent: location.parent,
+			capacity: location.capicity,
+			length: location.length,
+			contact: location.contact,
+			description: location.description,
+			level: location.level,
+			isActive: location.isActive,
+			createdAt: location.createdAt,
+			children: formatLocationsForTable(locations, location._id),
 		}))
 }
 
@@ -159,12 +201,22 @@ export const formatCategoriesForTreePicker = (
 	categories,
 	parent = null
 ) => {
-	return categories
+	const data = categories
 		.filter(category => category.parent === parent)
 		.map(category => ({
 			value: category._id,
 			label: category.name,
 			children: formatCategoriesForTreePicker(categories, category._id),
+		}))
+}
+
+export const formatForTreePicker = (items, parent = null) => {
+	return items
+		.filter(item => item.parent === parent)
+		.map(item => ({
+			value: item._id,
+			label: item.name,
+			children: formatForTreePicker(items, item._id),
 		}))
 }
 
@@ -593,4 +645,73 @@ export const getVideoThumbnailBlob = file => {
 			reject(error)
 		})
 	})
+}
+
+const populateParents = async doc => {
+	if (!doc || !doc.parent) return doc
+
+	const populatedDoc = await doc.populate('parent')
+	populatedDoc.parent = await populateParents(populatedDoc.parent)
+
+	return populatedDoc
+}
+
+export const getPopulatedDocs = async docs => {
+	const populatedDocs = await Promise.all(
+		docs.map(async doc => {
+			return await populateParents(doc)
+		})
+	)
+
+	return populatedDocs
+}
+
+export const displayValidationError = arg => {
+	if (!arg) return null
+	if (typeof arg === 'string') return arg
+	if (arg.hasError) return arg.errorMessage
+}
+
+export const processFormErrors = (e, formError) => {
+	const parentKeys = Object.keys(e) //grab parent keys from error object
+	let preparedData = { ...formError } // copy formError object into new object
+
+	parentKeys.forEach(parentKey => {
+		// loop through each parent key and update individual properties of
+		// the new object based on the parentKey
+		if (
+			typeof e[parentKey] === 'string' ||
+			!e[parentKey].hasOwnProperty('object')
+		) {
+			// handle non-nested fields
+			preparedData[parentKey] = e[parentKey]
+		}
+
+		if (e[parentKey].hasOwnProperty('object')) {
+			// handle nested fields
+
+			const childKeys = Object.keys(e[parentKey].object) // grab the keys of children
+
+			if (!preparedData[parentKey]) {
+				// create an empty object within the new object if it doesn't exist
+				preparedData[parentKey] = {}
+			}
+
+			// set a hasError property on the empty object and set the value
+			// if there is already a hasError property, update it
+			// preparedData[parentKey].hasError = e[parentKey].hasError
+
+			if (!preparedData[parentKey].object) {
+				// if the object does not contain a property named object, set it to an empty object
+				preparedData[parentKey].object = {}
+			}
+
+			childKeys.forEach(childKey => {
+				preparedData[parentKey].object[childKey] =
+					e[parentKey].object[childKey]
+			})
+		}
+	})
+
+	return preparedData
 }

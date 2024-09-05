@@ -78,6 +78,7 @@ const SlidesDrawer = () => {
 	const slide = useSelector(getDrawerData)
 
 	const updateForm = slide => {
+		setFormError({})
 		if (isEditing) {
 			setFormValue(prev => {
 				return {

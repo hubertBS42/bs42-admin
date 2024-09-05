@@ -66,6 +66,7 @@ const BrandsDrawer = () => {
 	const brand = useSelector(getDrawerData)
 
 	const updateForm = brand => {
+		setFormError({})
 		if (isEditing) {
 			setFormValue(prev => {
 				return {
