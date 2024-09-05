@@ -182,7 +182,7 @@ export const GET = async request => {
 		}).populate({ path: 'location', model: 'Location' })
 
 		products = products.map(product => {
-			const matchingItems = inventory.filter(
+			const matchingItems = stockLevels.filter(
 				item => item.product.toString() === product._id.toString()
 			)
 
