@@ -11,7 +11,7 @@ export const GET = async request => {
 			.collation({ locale: 'en' })
 			.sort({ title: 'asc' })
 			.select('title')
-			.lean()
+			.lean({ autopopulate: false })
 
 		return new Response(
 			JSON.stringify({

@@ -11,7 +11,9 @@ export const GET = async request => {
 
 		const queryRegx = new RegExp(query, 'i')
 
-		const allCategories = await Category.find().lean()
+		const allCategories = await Category.find().lean({
+			autopopulate: false,
+		})
 
 		const filteredCategories = await Category.find({
 			$or: [{ name: { $regex: queryRegx } }],
@@ -22,7 +24,7 @@ export const GET = async request => {
 			// 	model: 'Category',
 			// 	select: 'name',
 			// })
-			.lean()
+			.lean({ autopopulate: false })
 
 		return new Response(
 			JSON.stringify({

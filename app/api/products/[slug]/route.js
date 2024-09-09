@@ -13,14 +13,14 @@ export const GET = async (request, { params }) => {
 		await connectToDB()
 
 		let product = await Product.findOne({ slug })
-			.populate({
-				path: 'brand',
-				model: 'Brand',
-			})
-			.populate({
-				path: 'category',
-				model: 'Category',
-			})
+		// .populate({
+		// 	path: 'brand',
+		// 	model: 'Brand',
+		// })
+		// .populate({
+		// 	path: 'category',
+		// 	model: 'Category',
+		// })
 
 		if (!product) {
 			return new NextResponse(
@@ -100,6 +100,16 @@ export const DELETE = async (request, { params }) => {
 		const deleted = await Product.findOneAndDelete({ slug })
 
 		if (deleted) {
+			const stockEntries = await StockLevel.find({
+				product: deleted._id,
+			})
+
+			if (stockEntries.length > 0) {
+				stockEntries.forEach(async entry => {
+					await StockLevel.findByIdAndDelete(entry._id)
+				})
+			}
+
 			return new NextResponse(
 				JSON.stringify({
 					status: 'success',

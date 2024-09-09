@@ -15,18 +15,16 @@ export const GET = async request => {
 			title: { $regex: queryRegx },
 		})
 			.sort({ title: 'asc' })
-			.populate({
-				path: 'brand',
-				model: 'Brand',
-				select: 'name slug',
-			})
-			.populate({
-				path: 'category',
-				model: 'Category',
-				select: 'name slug',
-			})
+			// .populate({
+			// 	path: 'brand',
+			// 	select: 'name slug',
+			// })
+			// .populate({
+			// 	path: 'category',
+			// 	select: 'name slug',
+			// })
 			.select('title slug brand images category isActive createdAt')
-			.lean()
+			.lean({ autopopulate: true })
 
 		return new Response(
 			JSON.stringify({

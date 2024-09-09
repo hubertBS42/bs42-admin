@@ -10,6 +10,7 @@ const ProductSchema = new mongoose.Schema(
 		brand: {
 			type: mongoose.Schema.Types.ObjectId,
 			ref: 'Brand',
+			autopopulate: true,
 		},
 		condition: { type: String, default: 'new' },
 		buyPrice: { type: Number, trim: true, default: 0 },
@@ -34,6 +35,7 @@ const ProductSchema = new mongoose.Schema(
 		category: {
 			type: mongoose.Schema.Types.ObjectId,
 			ref: 'Category',
+			autopopulate: true,
 		},
 		tags: [{ type: String, trim: true }],
 		description: { type: String, trim: true },
@@ -67,6 +69,8 @@ const ProductSchema = new mongoose.Schema(
 	},
 	{ timestamps: true }
 )
+
+ProductSchema.plugin(require('mongoose-autopopulate'))
 
 export default mongoose.models.Product ||
 	mongoose.model('Product', ProductSchema)

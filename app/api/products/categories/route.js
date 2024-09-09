@@ -16,13 +16,13 @@ export const GET = async request => {
 			.limit(limit * 1)
 			.skip((page - 1) * limit)
 			.sort({ [field]: sort })
-			.lean()
+			.lean({ autopopulate: false })
 
 		const fetchAllCategoriesQuery = Category.find()
 			.collation({ locale: 'en' })
 			.sort({ name: 'asc' })
 			// .select('name parent isActive')
-			.lean()
+			.lean({ autopopulate: false })
 
 		const getCountQuery = Category.count()
 

@@ -141,32 +141,32 @@ export const GET = async request => {
 			.limit(limit * 1)
 			.skip((page - 1) * limit)
 			.sort({ [field]: order })
-			.populate({
-				path: 'brand',
-				model: 'Brand',
-				select: 'name',
-			})
-			.populate({
-				path: 'category',
-				model: 'Category',
-				select: 'name parent',
-				populate: {
-					path: 'parent',
-					select: 'name parent',
-					populate: {
-						path: 'parent',
-						select: 'name parent',
-						populate: {
-							path: 'parent',
-							select: 'name',
-						},
-					},
-				},
-			})
+			// .populate({
+			// 	path: 'brand',
+			// 	model: 'Brand',
+			// 	select: 'name',
+			// })
+			// .populate({
+			// 	path: 'category',
+			// 	model: 'Category',
+			// 	select: 'name parent',
+			// 	populate: {
+			// 		path: 'parent',
+			// 		select: 'name parent',
+			// 		populate: {
+			// 			path: 'parent',
+			// 			select: 'name parent',
+			// 			populate: {
+			// 				path: 'parent',
+			// 				select: 'name',
+			// 			},
+			// 		},
+			// 	},
+			// })
 			.select(
 				'title slug brand sellPrice resellerPrice images category rating onSale featured discount isActive createdAt'
 			)
-			.lean()
+			.lean({ autopopulate: true })
 
 		const getCountQuery = Product.count(productsQuery)
 

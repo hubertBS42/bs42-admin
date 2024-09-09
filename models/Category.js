@@ -12,6 +12,7 @@ const CategorySchema = new mongoose.Schema(
 			type: mongoose.Schema.Types.ObjectId,
 			ref: 'Category',
 			default: null,
+			autopopulate: { select: 'name parent' },
 		},
 		images: [
 			{
@@ -23,6 +24,8 @@ const CategorySchema = new mongoose.Schema(
 	},
 	{ timestamps: true }
 )
+
+CategorySchema.plugin(require('mongoose-autopopulate'))
 
 // CategorySchema.virtual('products', {
 // 	ref: 'Product',

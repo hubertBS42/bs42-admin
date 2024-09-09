@@ -15,8 +15,8 @@ export const GET = async request => {
 		const fetchCategoriesQuery = Category.find({ isActive: true })
 			.collation({ locale: 'en' })
 			.sort({ createdAt: 'desc' })
-			.select('title')
-			.lean()
+			.select('name')
+			.lean({ autopopulate: false })
 
 		const [categories, brands] = await Promise.all([
 			fetchCategoriesQuery,

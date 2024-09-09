@@ -42,7 +42,11 @@ export const DELETE = async (request, { params }) => {
 	try {
 		await connectToDB()
 
-		const products = await Product.find({ brand: params.id })
+		const products = await Product.find(
+			{ brand: params.id },
+			{},
+			{ autopopulate: false }
+		)
 
 		const queries = []
 

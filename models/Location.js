@@ -18,6 +18,7 @@ const LocationSchema = new mongoose.Schema(
 			type: mongoose.Schema.Types.ObjectId,
 			ref: 'Location',
 			default: null,
+			autopopulate: true,
 		},
 		capacity: Number,
 		length: Number,
@@ -34,6 +35,8 @@ const LocationSchema = new mongoose.Schema(
 	},
 	{ timestamps: true }
 )
+
+LocationSchema.plugin(require('mongoose-autopopulate'))
 
 const Location =
 	mongoose.models.Location ||

@@ -11,7 +11,7 @@ export const GET = async request => {
 			.collation({ locale: 'en' })
 			.sort({ name: 'asc' })
 			.select('name slug parent images isActive')
-			.lean()
+			.lean({ autopopulate: false })
 
 		const fetchBrandsQuery = Brand.find()
 			.collation({ locale: 'en' })

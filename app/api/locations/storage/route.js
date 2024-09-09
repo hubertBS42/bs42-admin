@@ -9,11 +9,11 @@ export const GET = async (request, { params }) => {
 	try {
 		await connectToDB()
 
-		const docs = await Location.find({
+		const storage = await Location.find({
 			type: { $in: ['section', 'aisle', 'shelf', 'slot'] },
 		})
 
-		const storage = await getPopulatedDocs(docs)
+		// const storage = await getPopulatedDocs(docs)
 
 		return new NextResponse(
 			JSON.stringify({

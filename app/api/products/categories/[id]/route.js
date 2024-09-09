@@ -9,7 +9,7 @@ export const GET = async (request, { params }) => {
 
 		const category = await Category.findById(params.id)
 			.collation({ locale: 'en' })
-			.lean()
+			.lean({ autopopulate: false })
 
 		if (!category) {
 			return new Response(
@@ -58,7 +58,7 @@ export const PATCH = async (request, { params }) => {
 			new: true,
 		})
 			.select('_id')
-			.lean()
+			.lean({ autopopulate: false })
 
 		if (category) {
 			return new NextResponse(
@@ -88,8 +88,16 @@ export const DELETE = async (request, { params }) => {
 
 		await Category.findByIdAndDelete(params.id)
 
-		const childrenQuery = await Category.find({ parent: params.id })
-		const productsQuery = await Product.find({ category: params.id })
+		const childrenQuery = await Category.find(
+			{ parent: params.id },
+			{},
+			{ autopopulate: false }
+		)
+		const productsQuery = await Product.find(
+			{ category: params.id },
+			{},
+			{ autopopulate: false }
+		)
 
 		const [children, products] = await Promise.all([
 			childrenQuery,

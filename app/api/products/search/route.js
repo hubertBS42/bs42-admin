@@ -16,21 +16,21 @@ export const GET = async request => {
 			$or: [{ title: { $regex: queryRegx } }],
 		})
 			.sort({ createdAt: 'desc' })
-			.populate({
-				path: 'brand',
-				model: 'Brand',
-				select: 'name slug',
-			})
-			.populate({
-				path: 'category',
-				model: 'Category',
-				select: 'name slug',
-			})
+			// .populate({
+			// 	path: 'brand',
+			// 	model: 'Brand',
+			// 	select: 'name slug',
+			// })
+			// .populate({
+			// 	path: 'category',
+			// 	model: 'Category',
+			// 	select: 'name slug',
+			// })
 			// .select(
 			// 	'title slug brand images category sellPrice isActive createdAt countInStock condition'
 			// )
 
-			.lean()
+			.lean({ autopopulate: true })
 
 		return new Response(
 			JSON.stringify({
