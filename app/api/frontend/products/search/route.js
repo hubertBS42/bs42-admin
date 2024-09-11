@@ -33,7 +33,7 @@ export const GET = async request => {
 			product: { $in: productIds },
 			location: defaultLocation,
 		})
-			.select('product count location')
+			.select('product count location sku')
 			.lean({ autopopulate: false })
 
 		const formattedProducts = products.map(product => {
@@ -42,9 +42,9 @@ export const GET = async request => {
 			)
 
 			if (match) {
-				return { ...product, count: match.count }
+				return { ...product, count: match.count, sku: match.sku }
 			} else {
-				return { ...product, count: 0 }
+				return { ...product, count: 0, sku: '' }
 			}
 		})
 

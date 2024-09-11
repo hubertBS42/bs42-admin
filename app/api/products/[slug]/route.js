@@ -32,12 +32,13 @@ export const GET = async (request, { params }) => {
 			product: product._id,
 			location: defaultLocation,
 		})
-			.select('product count location')
+			.select('product count location sku')
 			.lean({ autopopulate: false })
 
 		const formattedProduct = {
 			...product,
 			count: stock?.count || 0,
+			sku: stock?.sku || '',
 		}
 
 		if (!product) {
