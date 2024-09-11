@@ -12,15 +12,33 @@ export const GET = async (request, { params }) => {
 	try {
 		await connectToDB()
 
-		let product = await Product.findOne({ slug })
-		// .populate({
-		// 	path: 'brand',
-		// 	model: 'Brand',
-		// })
-		// .populate({
-		// 	path: 'category',
-		// 	model: 'Category',
-		// })
+		const defaultLocationQuery = Location.findOne({
+			isDefault: true,
+			type: 'facility',
+		})
+			.select('_id')
+			.lean({ autopopulate: false })
+
+		const productQuery = Product.findOne({ slug }).lean({
+			autopopulate: true,
+		})
+
+		let [defaultLocation, product] = await Promise.all([
+			defaultLocationQuery,
+			productQuery,
+		])
+
+		const stock = await StockLevel.findOne({
+			product: product._id,
+			location: defaultLocation,
+		})
+			.select('product count location')
+			.lean({ autopopulate: false })
+
+		const formattedProduct = {
+			...product,
+			count: stock?.count || 0,
+		}
 
 		if (!product) {
 			return new NextResponse(
@@ -33,19 +51,9 @@ export const GET = async (request, { params }) => {
 			)
 		}
 
-		const inventory = await StockLevel.find({
-			product: product._id,
-		}).populate({ path: 'location', model: 'Location' })
-
-		if (inventory.length > 0) {
-			product = { ...product.toObject(), inventory }
-		} else {
-			product = { ...product.toObject(), inventory: [] }
-		}
-
 		return new NextResponse(
 			JSON.stringify({
-				product,
+				product: formattedProduct,
 			}),
 			{ status: 200 }
 		)

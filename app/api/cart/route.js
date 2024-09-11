@@ -5,6 +5,7 @@ import Category from '@/models/Category'
 import { connectToDB } from '@/utils/database'
 import jwt from 'jsonwebtoken'
 import { combineCartItems } from '@/utils/functions'
+import Location from '@/models/Location'
 
 export const GET = async request => {
 	const { searchParams } = new URL(request.url)
@@ -17,6 +18,33 @@ export const GET = async request => {
 
 	try {
 		await connectToDB()
+
+		// const defaultLocationQuery = await Location.findOne({
+		// 	isDefault: true,
+		// })
+		// 	.select('_id')
+		// 	.lean({ autopopulate: false })
+
+		// const productIds = products.map(product => product._id)
+
+		// const stock = await StockLevel.find({
+		// 	product: { $in: productIds },
+		// 	location: defaultLocation,
+		// })
+		// 	.select('product count location')
+		// 	.lean({ autopopulate: false })
+
+		// const formattedProducts = products.map(product => {
+		// 	const match = stock.find(
+		// 		item => item.product.toString() === product._id.toString()
+		// 	)
+
+		// 	if (match) {
+		// 		return { ...product, count: match.count }
+		// 	} else {
+		// 		return { ...product, count: 0 }
+		// 	}
+		// })
 
 		if (!userID && cartToken) {
 			jwt.verify(cartToken, 'abc123')
