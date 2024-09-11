@@ -3,6 +3,7 @@ import Brand from '@/models/Brand'
 import Category from '@/models/Category'
 import { connectToDB } from '@/utils/database'
 import Currency from '@/models/Currency'
+import Rate from '@/models/Rate'
 
 export const GET = async request => {
 	const { searchParams } = new URL(request.url)
@@ -72,11 +73,20 @@ export const GET = async request => {
 			fetchBrandsQuery,
 		])
 
+		let currentRate
+
+		if (currency.isCustomRate) {
+			currentRate = currency.customRate
+		} else {
+			currentRate = await Rate.findOne({ currency: currency._id })
+				.sort({ createdAt: -1 })
+				.limit(1)
+			currentRate = currentRate.rate
+		}
+
 		const data = {
 			products,
-			currentRate: currency.isCustomRate
-				? currency.customRate
-				: currency.history[0].rate,
+			currentRate,
 			disabledProducts,
 			count,
 			categories,

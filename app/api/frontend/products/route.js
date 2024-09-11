@@ -7,9 +7,12 @@ import Setting from '@/models/Setting'
 import {
 	convertToDollar,
 	findIdsOfCategoryAndChildrenBySlug,
+	findLocationDescendants,
 	groupCategories1,
 } from '@/utils/functions'
 import StockLevel from '@/models/StockLevel'
+import Rate from '@/models/Rate'
+import Currency from '@/models/Currency'
 
 export const GET = async request => {
 	const { searchParams } = new URL(request.url)
@@ -76,14 +79,17 @@ export const GET = async request => {
 		await connectToDB()
 
 		if (minPrice || maxPrice) {
-			const {
-				exchangeRate: { currentRate },
-			} = await Setting.findOne()
-				.sort({ createdAt: -1 })
-				.select('exchangeRate.currentRate')
-				.lean()
+			const currency = await Currency.findOne({ isActive: true }).lean()
 
-			rate = currentRate
+			if (currency.isCustomRate) {
+				rate = currency.customRate
+			} else {
+				rate = await Rate.findOne({ currency })
+					.sort({ createdAt: -1 })
+					.limit(1)
+
+				rate = rate.rate
+			}
 		}
 
 		if (category) {
@@ -168,33 +174,42 @@ export const GET = async request => {
 			)
 			.lean({ autopopulate: true })
 
+		const defaultLocationQuery = Location.findOne({ isDefault: true })
+			.select('_id')
+			.lean({ autopopulate: false })
+
 		const getCountQuery = Product.count(productsQuery)
 
-		let [products, count] = await Promise.all([
+		let [products, count, defaultLocation] = await Promise.all([
 			fetchProductsQuery,
 			getCountQuery,
+			defaultLocationQuery,
 		])
 
 		const productIds = products.map(product => product._id)
 
-		const stockLevels = await StockLevel.find({
+		const stock = await StockLevel.find({
 			product: { $in: productIds },
-		}).populate({ path: 'location', model: 'Location' })
+			location: defaultLocation,
+		})
+			.select('product count location')
+			.lean({ autopopulate: false })
 
-		products = products.map(product => {
-			const matchingItems = stockLevels.filter(
+		const formattedProducts = products.map(product => {
+			const match = stock.find(
 				item => item.product.toString() === product._id.toString()
 			)
 
-			return {
-				...product,
-				inventory: matchingItems || [],
+			if (match) {
+				return { ...product, count: match.count }
+			} else {
+				return { ...product, count: 0 }
 			}
 		})
 
 		return new Response(
 			JSON.stringify({
-				products,
+				products: formattedProducts,
 				count,
 			}),
 			{

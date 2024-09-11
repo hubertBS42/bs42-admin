@@ -48,6 +48,7 @@ import {
 	updateProduct,
 } from '@/redux/features/products/productsActions'
 import FAQs from '../FAQs/FAQs'
+import { getCurrentRate } from '@/redux/features/products/productsSlice'
 
 const { StringType, ArrayType, NumberType } = Schema.Types
 
@@ -67,7 +68,7 @@ const model = Schema.Model({
 	discount: NumberType(),
 })
 
-const ProductsDrawer = ({ currentRate }) => {
+const ProductsDrawer = () => {
 	const dispatch = useDispatch()
 
 	const formRef = useRef()
@@ -107,6 +108,7 @@ const ProductsDrawer = ({ currentRate }) => {
 	brands = formatData(brands)
 	let categories = useSelector(selectAllCategories)
 	categories = formatForTreePicker(categories)
+	let currentRate = useSelector(getCurrentRate)
 
 	const updateForm = product => {
 		setFormError({})
