@@ -4,6 +4,7 @@ import StockLevel from '@/models/StockLevel'
 import Brand from '@/models/Brand'
 import Category from '@/models/Category'
 import { connectToDB } from '@/utils/database'
+import { findLocationDescendants } from '@/utils/functions'
 
 export const GET = async request => {
 	const { searchParams } = new URL(request.url)
@@ -16,13 +17,28 @@ export const GET = async request => {
 	try {
 		await connectToDB()
 
-		const locations = await Location.find({ type: 'facility' }).select(
-			'name isDefault'
-		)
+		const locations = await Location.find().lean({ autopopulate: true })
 
 		if (location === 'default') {
-			location = locations.find(loc => loc.isDefault)._id
+			location = locations.find(
+				loc => loc.isDefault && loc.type === 'facility'
+			)._id
 		}
+
+		// let storage = locations.filter(location =>
+		// 	['section', 'aisle', 'shelf', 'slot'].includes(location.type)
+		// )
+
+		let storage = findLocationDescendants(
+			locations,
+			location.toString()
+		)
+
+		const locationObj = locations.find(
+			l => l._id.toString() === location.toString()
+		)
+
+		storage.push(locationObj)
 
 		const limitedStockLevelsQuery = StockLevel.find({ location })
 			.populate({
@@ -83,7 +99,10 @@ export const GET = async request => {
 					limitedStockLevels,
 					allStockLevels,
 					available: unassigned,
-					locations,
+					locations: locations.filter(
+						location => location.type === 'facility'
+					),
+					storage,
 					count,
 				},
 			}),

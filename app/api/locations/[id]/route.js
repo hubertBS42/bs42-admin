@@ -101,8 +101,6 @@ export const DELETE = async (request, { params }) => {
 			createdAt: -1,
 		})
 
-		console.log(lastAddedLocation)
-
 		if (lastAddedLocation) {
 			lastAddedLocation.isDefault = true
 			await lastAddedLocation.save()

@@ -7,6 +7,7 @@ import {
 	setProducts,
 	setLimitedStockLevels,
 	setAllStockLevels,
+	setStorage,
 } from './stockLevelsSlice'
 import { toast } from 'react-toastify'
 import {
@@ -34,6 +35,7 @@ export const loadStockLevels = async (location = 'default') => {
 			allStockLevels,
 			available,
 			count,
+			storage,
 			locations,
 		},
 	} = await fetcher(`/api/stockLevels?location=${location}`)
@@ -54,6 +56,7 @@ export const loadStockLevels = async (location = 'default') => {
 
 	dispatch(setLimitedStockLevels(limitedStockLevels))
 	dispatch(setAllStockLevels(allStockLevels))
+	dispatch(setStorage(storage))
 	dispatch(setProducts(available))
 	dispatch(setLocations(locations))
 	dispatch(setCurrLocation(currLocation))
@@ -238,6 +241,6 @@ export const deleteStockLevel = async (stockLevels, location) => {
 	if (status === 'failed') return toast.error(message)
 	if (status === 'success') {
 		toast.success(message)
-		loadStockLevels(stockLevels)
+		loadStockLevels(location)
 	}
 }

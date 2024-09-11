@@ -2,13 +2,11 @@ import { toast } from 'react-toastify'
 import {
 	setCurrencies,
 	setLoading,
-	setLimitedCurrencies,
 	setCurrenciesCount,
 } from './currenciesSlice'
 import { store } from '@/redux/store'
 import { fetcher } from '@/utils/functions'
 import { setModalClose, setModalLoading } from '../modal/modalSlice'
-import { setLimitedResources } from '../resources/resourcesSlice'
 import {
 	setDrawerClose,
 	setDrawerLoading,

@@ -3,6 +3,7 @@ import { createSlice } from '@reduxjs/toolkit'
 const initialState = {
 	limitedStockLevels: [],
 	allStockLevels: [],
+	storage: [],
 	locations: [],
 	products: [],
 	currLocation: '',
@@ -25,6 +26,9 @@ const stockLevelsSlice = createSlice({
 		setProducts: (state, action) => {
 			state.products = action.payload
 		},
+		setStorage: (state, action) => {
+			state.storage = action.payload
+		},
 		setLocations: (state, action) => {
 			state.locations = action.payload
 		},
@@ -45,6 +49,7 @@ export const selectLimitedStockLevels = state =>
 	state.stockLevels.limitedStockLevels
 export const selectAllStockLevels = state =>
 	state.stockLevels.allStockLevels
+export const getStorage = state => state.stockLevels.storage
 export const selectAllProducts = state => state.stockLevels.products
 export const selectAllLocations = state => state.stockLevels.locations
 export const selectCurrLocation = state =>
@@ -56,6 +61,7 @@ export const getStockLevelsLoadingState = state =>
 export const {
 	setLimitedStockLevels,
 	setAllStockLevels,
+	setStorage,
 	setLocations,
 	setProducts,
 	setCurrLocation,

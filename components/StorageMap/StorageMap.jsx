@@ -56,7 +56,7 @@ const StorageMap = ({ id }) => {
 						isTree
 						defaultExpandAllRows
 						autoHeight
-						rowKey='name'
+						rowKey='id'
 						data={formattedLocations}
 						shouldUpdateScroll={true}
 						renderTreeToggle={(icon, rowData) => {

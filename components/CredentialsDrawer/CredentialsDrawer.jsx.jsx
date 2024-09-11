@@ -109,6 +109,7 @@ const CredentialsDrawer = () => {
 	}
 
 	const updateForm = credential => {
+		setTestEmailOpen(false)
 		setFormError({})
 		if (isEditing) {
 			setFormValue(prev => {

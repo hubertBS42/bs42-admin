@@ -263,7 +263,7 @@ export const deleteLocation = async location => {
 	if (status === 'failed') return toast.error(message)
 	if (status === 'success') {
 		toast.success(message)
-		loadStorage()
+		loadLocations()
 	}
 }
 

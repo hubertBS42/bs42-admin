@@ -103,15 +103,15 @@ const BlogsTable = () => {
 					loading={loading}
 					wordWrap='break-word'
 				>
-					<Column flexGrow={1} fixed sortable verticalAlign='middle'>
+					<Column flexGrow={2} fixed sortable verticalAlign='middle'>
 						<HeaderCell>Title</HeaderCell>
 						<Cell dataKey='title' />
 					</Column>
 
-					<Column flexGrow={2} fixed sortable verticalAlign='middle'>
+					{/* <Column flexGrow={2} fixed sortable verticalAlign='middle'>
 						<HeaderCell>Excerpt</HeaderCell>
 						<Cell dataKey='excerpt' />
-					</Column>
+					</Column> */}
 
 					<Column flexGrow={1} fixed sortable verticalAlign='middle'>
 						<HeaderCell>Author</HeaderCell>

@@ -20,35 +20,36 @@ export const GET = async request => {
 
 		if (!userID && cartToken) {
 			jwt.verify(cartToken, 'abc123')
-			const guestCart = await Cart.findOne({ token: cartToken })
-				.select('items user token')
-				.populate({
-					path: 'items.product',
-					model: 'Product',
-					select:
-						'images title brand category sellPrice countInStock slug',
-					populate: [
-						{
-							path: 'brand',
-						},
-						{
-							path: 'category',
-							select: 'name parent',
-							populate: {
-								path: 'parent',
-								select: 'name parent',
-								populate: {
-									path: 'parent',
-									select: 'name parent',
-									populate: {
-										path: 'parent',
-										select: 'name',
-									},
-								},
-							},
-						},
-					],
-				})
+			const guestCart = await Cart.findOne({ token: cartToken }).select(
+				'items user token'
+			)
+			// .populate({
+			// 	path: 'items.product',
+			// 	model: 'Product',
+			// 	select:
+			// 		'images title brand category sellPrice countInStock slug',
+			// 	populate: [
+			// 		{
+			// 			path: 'brand',
+			// 		},
+			// 		{
+			// 			path: 'category',
+			// 			select: 'name parent',
+			// 			populate: {
+			// 				path: 'parent',
+			// 				select: 'name parent',
+			// 				populate: {
+			// 					path: 'parent',
+			// 					select: 'name parent',
+			// 					populate: {
+			// 						path: 'parent',
+			// 						select: 'name',
+			// 					},
+			// 				},
+			// 			},
+			// 		},
+			// 	],
+			// })
 
 			if (!guestCart)
 				throw new Error('A cart belonging to this guest does not exist.')
@@ -56,87 +57,90 @@ export const GET = async request => {
 		}
 
 		if (userID && !cartToken) {
-			const userCart = await Cart.findOne({ user: userID })
-				.select('items user token')
-				.populate({
-					path: 'items.product',
-					model: 'Product',
-					select:
-						'images title brand category sellPrice countInStock slug',
-					populate: [
-						{
-							path: 'brand',
-						},
-						{
-							path: 'category',
-							populate: {
-								path: 'parent',
-								populate: {
-									path: 'parent',
-									populate: {
-										path: 'parent',
-									},
-								},
-							},
-						},
-					],
-				})
+			const userCart = await Cart.findOne({ user: userID }).select(
+				'items user token'
+			)
+			// .populate({
+			// 	path: 'items.product',
+			// 	model: 'Product',
+			// 	select:
+			// 		'images title brand category sellPrice countInStock slug',
+			// 	populate: [
+			// 		{
+			// 			path: 'brand',
+			// 		},
+			// 		{
+			// 			path: 'category',
+			// 			populate: {
+			// 				path: 'parent',
+			// 				populate: {
+			// 					path: 'parent',
+			// 					populate: {
+			// 						path: 'parent',
+			// 					},
+			// 				},
+			// 			},
+			// 		},
+			// 	],
+			// })
 
 			data = userCart
 		}
 
 		if (userID && cartToken) {
-			const userCart = await Cart.findOne({ user: userID })
-				.select('items user token')
-				.populate({
-					path: 'items.product',
-					model: 'Product',
-					select:
-						'images title brand category sellPrice countInStock slug',
-					populate: [
-						{
-							path: 'brand',
-						},
-						{
-							path: 'category',
-							populate: {
-								path: 'parent',
-								populate: {
-									path: 'parent',
-									populate: {
-										path: 'parent',
-									},
-								},
-							},
-						},
-					],
-				})
+			const userCart = await Cart.findOne({ user: userID }).select(
+				'items user token'
+			)
+			// .populate({
+			// 	path: 'items.product',
+			// 	model: 'Product',
+			// 	select:
+			// 		'images title brand category sellPrice countInStock slug',
+			// 	populate: [
+			// 		{
+			// 			path: 'brand',
+			// 		},
+			// 		{
+			// 			path: 'category',
+			// 			populate: {
+			// 				path: 'parent',
+			// 				populate: {
+			// 					path: 'parent',
+			// 					populate: {
+			// 						path: 'parent',
+			// 					},
+			// 				},
+			// 			},
+			// 		},
+			// 	],
+			// })
 
-			const guestCart = await Cart.findOne({ token: cartToken })
-				.select('items user token')
-				.populate({
-					path: 'items.product',
-					model: 'Product',
-					select:
-						'images title brand category sellPrice countInStock slug',
-					populate: [
-						{
-							path: 'brand',
-						},
-						{
-							path: 'category',
-							populate: {
-								path: 'parent',
-								populate: {
-									path: 'parent',
-									populate: {
-										path: 'parent',
-									},
-								},
-							},
-						},
-					],
-				})
+			const guestCart = await Cart.findOne({ token: cartToken }).select(
+				'items user token'
+			)
+			// .populate({
+			// 	path: 'items.product',
+			// 	model: 'Product',
+			// 	select:
+			// 		'images title brand category sellPrice countInStock slug',
+			// 	populate: [
+			// 		{
+			// 			path: 'brand',
+			// 		},
+			// 		{
+			// 			path: 'category',
+			// 			populate: {
+			// 				path: 'parent',
+			// 				populate: {
+			// 					path: 'parent',
+			// 					populate: {
+			// 						path: 'parent',
+			// 					},
+			// 				},
+			// 			},
+			// 		},
+			// 	],
+			// })
 
 			if (!guestCart)
 				throw new Error('A cart belonging to this guest does not exist.')

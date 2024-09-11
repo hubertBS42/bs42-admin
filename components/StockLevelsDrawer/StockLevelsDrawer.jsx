@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react'
 import {
 	Button,
+	Cascader,
 	Col,
 	Drawer,
 	Form,
@@ -28,11 +29,13 @@ import {
 	selectCurrLocation,
 	selectAllProducts,
 	selectAllStockLevels,
+	getStorage,
 } from '@/redux/features/stockLevels/stockLevelsSlice'
 import {
 	addStockLevel,
 	updateStockLevel,
 } from '@/redux/features/stockLevels/stockLevelsActions'
+import { formatForTreePicker } from '@/utils/functions'
 
 const { StringType, NumberType } = Schema.Types
 
@@ -71,6 +74,8 @@ const StockLevelsDrawer = () => {
 	const allStockLevels = useSelector(selectAllStockLevels)
 	const locations = useSelector(selectAllLocations)
 	const currentLocation = useSelector(selectCurrLocation)
+	let storage = useSelector(getStorage)
+	storage = formatForTreePicker(storage)
 
 	const data = isEditing ? allStockLevels : availableProducts
 	const formatted = data.map(product => ({
@@ -100,7 +105,7 @@ const StockLevelsDrawer = () => {
 			setFormValue({
 				location: currentLocation,
 				product: '',
-				storage: '',
+				storage: currentLocation,
 				sku: '',
 				count: 1,
 				min: 1,
@@ -133,7 +138,7 @@ const StockLevelsDrawer = () => {
 		>
 			<Drawer.Header style={{ paddingRight: '1.2em' }}>
 				<Drawer.Title>
-					{isEditing ? 'Edit' : 'Add'} Item to {location}
+					{isEditing ? 'Edit item at' : 'Add item to'} {location}
 				</Drawer.Title>
 				<Drawer.Actions>
 					<Button
@@ -230,6 +235,23 @@ const StockLevelsDrawer = () => {
 									}
 								/>
 							</Col> */}
+						</Row>
+
+						<Row>
+							<Col xs={24}>
+								{storage && (
+									<Field
+										name='storage'
+										label='Storage'
+										accepter={Cascader}
+										error={formError.storage}
+										parentSelectable
+										block
+										data={storage}
+										cleanable={false}
+									/>
+								)}
+							</Col>
 						</Row>
 					</Panel>
 				</Form>

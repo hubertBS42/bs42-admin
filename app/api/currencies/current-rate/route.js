@@ -1,4 +1,5 @@
 import Currency from '@/models/Currency'
+import Rate from '@/models/Rate'
 import { connectToDB } from '@/utils/database'
 
 export const GET = async request => {
@@ -8,13 +9,19 @@ export const GET = async request => {
 
 		const currency = await Currency.findOne({ isActive: true }).lean()
 
-		const rate = currency.isCustomRate
-			? currency.customRate
-			: currency.history[0].rate
+		let rate
+
+		if (currency.isCustomRate) {
+			rate = currency.customRate
+		} else {
+			rate = await Rate.findOne({ currency })
+				.sort({ createdAt: -1 })
+				.limit(1)
+		}
 
 		return new Response(
 			JSON.stringify({
-				rate,
+				rate: rate.rate,
 			}),
 			{
 				status: 200,

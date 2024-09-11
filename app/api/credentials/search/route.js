@@ -9,12 +9,13 @@ export const GET = async request => {
 	try {
 		await connectToDB()
 
+		const queryRegx = new RegExp(query, 'i')
+
 		const credentials = await Credential.find({
 			$or: [
-				{ label: { $regex: query, $options: 'i' } },
-				{ user: { $regex: query, $options: 'i' } },
-				{ fromEmail: { $regex: query, $options: 'i' } },
-				{ description: { $regex: query, $options: 'i' } },
+				{ label: { $regex: queryRegx } },
+				{ user: { $regex: queryRegx } },
+				{ description: { $regex: queryRegx } },
 			],
 		})
 			.sort({ createdAt: 'desc' })

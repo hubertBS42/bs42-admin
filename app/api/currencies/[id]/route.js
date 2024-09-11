@@ -10,15 +10,17 @@ export const PATCH = async (request, { params }) => {
 	try {
 		await connectToDB()
 
-		const currency = await Currency.findById(id)
+		await Currency.findByIdAndUpdate(id, data)
 
-		for (const key in data) {
-			if (Object.hasOwnProperty.call(data, key)) {
-				currency[key] = data[key]
-			}
-		}
+		// const currency = await Currency.findById(id)
 
-		await currency.save()
+		// for (const key in data) {
+		// 	if (Object.hasOwnProperty.call(data, key)) {
+		// 		currency[key] = data[key]
+		// 	}
+		// }
+
+		// await currency.save()
 
 		return new NextResponse(
 			JSON.stringify({

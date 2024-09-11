@@ -23,6 +23,7 @@ import { useRouter } from 'next/navigation'
 import StorageMap from '../StorageMap/StorageMap'
 import {
 	deleteLocation,
+	deleteStorage,
 	loadStorage,
 	updateLocation,
 } from '@/redux/features/locations/locationsActions'
@@ -105,7 +106,7 @@ const LocationForm = ({ location }) => {
 	}
 
 	const handleDelete = async data => {
-		await deleteLocation(data)
+		await deleteStorage(data)
 	}
 
 	return (

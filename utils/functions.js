@@ -212,7 +212,9 @@ export const formatCategoriesForTreePicker = (
 
 export const formatForTreePicker = (items, parent = null) => {
 	return items
-		.filter(item => item.parent === parent)
+		.filter(
+			item => item.parent === parent || item.parent?._id === parent
+		)
 		.map(item => ({
 			value: item._id,
 			label: item.name,
@@ -402,6 +404,38 @@ export const filterRatesByDateRange = (rates, startDate, endDate) => {
 	}, {})
 
 	return Object.values(filteredRates)
+}
+
+export const filterRates = rates => {
+	// Step 1: Group rates by day (e.g., '2023-09-01')
+	const groupedRates = rates.reduce((acc, rate) => {
+		const date = rate.createdAt.split('T')[0] // Extract the date part of the timestamp
+		if (!acc[date]) {
+			acc[date] = []
+		}
+		acc[date].push(rate)
+		return acc
+	}, {})
+
+	// Step 2: For each date, sort the rates by timestamp and get the latest rate
+	const latestRates = Object.keys(groupedRates).map(date => {
+		// Sort the rates for each day by timestamp in descending order (latest first)
+		const sortedRates = groupedRates[date].sort(
+			(a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+		)
+
+		// Return the latest rate (first in sorted array)
+		return sortedRates[0]
+	})
+
+	const formatted = latestRates.map(rate => {
+		return {
+			...rate,
+			createdAt: format(rate.createdAt, 'yyyy-MM-dd'),
+		}
+	})
+
+	return formatted
 }
 
 export const replacePlaceholders = (inputString, values) => {

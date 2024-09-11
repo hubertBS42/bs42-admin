@@ -141,28 +141,20 @@ const StorageDrawer = ({ id }) => {
 	}
 
 	const handleChange = type => {
+		let preparedData = {
+			name: isEditing ? location.name : '',
+			description: isEditing ? location.description : '',
+			type,
+			level: null,
+			length: null,
+			capacity: null,
+			parent: null,
+		}
+
 		if (type === 'section') {
 			setParents([])
 			setParentLabel('')
-			setFormValue({
-				name: '',
-				type,
-				description: '',
-				level: null,
-				length: null,
-				parent: id,
-				capacity: null,
-			})
-		} else {
-			setFormValue({
-				name: '',
-				type,
-				description: '',
-				level: null,
-				length: null,
-				parent: null,
-				capacity: null,
-			})
+			preparedData = { ...preparedData, parent: id }
 		}
 
 		if (type === 'aisle') {
@@ -191,6 +183,35 @@ const StorageDrawer = ({ id }) => {
 			setParents(data)
 			setParentLabel('Shelf')
 		}
+
+		setFormValue(preparedData)
+
+		// if (type === 'section') {
+		// 	preparedData = {...prepatedData, }
+		// }
+		// if (type === 'section') {
+		// 	setParents([])
+		// 	setParentLabel('')
+		// 	setFormValue({
+		// 		name: location.name,
+		// 		type,
+		// 		description: '',
+		// 		level: null,
+		// 		length: null,
+		// 		parent: id,
+		// 		capacity: null,
+		// 	})
+		// } else {
+		// 	setFormValue({
+		// 		name: location.name,
+		// 		type,
+		// 		description: '',
+		// 		level: null,
+		// 		length: null,
+		// 		parent: null,
+		// 		capacity: null,
+		// 	})
+		// }
 	}
 
 	const handleSubmit = async () => {

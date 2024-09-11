@@ -42,19 +42,7 @@ export const DELETE = async (request, { params }) => {
 	try {
 		await connectToDB()
 
-		const products = await Product.find({ supplier: params.id })
-
-		const queries = []
-
-		products.forEach(product => {
-			queries.push(
-				Product.findByIdAndUpdate(product._id, { supplier: null })
-			)
-		})
-
-		queries.push(Supplier.findByIdAndDelete(params.id))
-
-		await Promise.all(queries)
+		await Supplier.findByIdAndDelete(params.id)
 
 		return new NextResponse(
 			JSON.stringify({
@@ -64,6 +52,7 @@ export const DELETE = async (request, { params }) => {
 			{ status: 200 }
 		)
 	} catch (error) {
+		console.log(error)
 		return new NextResponse(
 			JSON.stringify({
 				status: 'error',

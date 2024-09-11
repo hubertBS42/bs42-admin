@@ -54,6 +54,7 @@ const CurrenciesTable = () => {
 		setCurrency(data)
 		setOpen(true)
 	}
+
 	const handleClose = () => setOpen(false)
 
 	const handleSortColumn = async (sortColumn, sortType) => {
@@ -105,7 +106,8 @@ const CurrenciesTable = () => {
 				bodyFill
 			>
 				<Table
-					height={500}
+					// height={500}
+					autoHeight
 					data={currencies}
 					sortColumn={sortColumn}
 					sortType={sortType}
@@ -209,7 +211,7 @@ const CurrenciesTable = () => {
 					<Modal.Title>Exchange Rate History</Modal.Title>
 				</Modal.Header>
 				<Modal.Body>
-					<CurrencyRateHistory currencyData={currency} />
+					<CurrencyRateHistory currency={currency} />
 				</Modal.Body>
 			</Modal>
 		</div>

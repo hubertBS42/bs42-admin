@@ -1,4 +1,5 @@
 import Currency from '@/models/Currency'
+import Rate from '@/models/Rate'
 import { connectToDB } from '@/utils/database'
 import { fetcher } from '@/utils/functions'
 import { configMailer, fetchTemplate } from '@/utils/mailer'
@@ -33,9 +34,13 @@ export const GET = async request => {
 
 		const formattedDate = format(date, 'yyyy-MM-dd HH:mm:ss')
 
-		currency.history.unshift({ rate: rates.GHS })
+		await Rate.create({
+			rate: rates.GHS,
+			currency: currency._id,
+		})
+		// currency.history.unshift({ rate: rates.GHS })
 
-		await currency.save()
+		// await currency.save()
 
 		return new Response(
 			JSON.stringify({

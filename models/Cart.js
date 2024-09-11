@@ -14,6 +14,9 @@ const CartSchema = new mongoose.Schema(
 				product: {
 					type: mongoose.Schema.Types.ObjectId,
 					ref: 'Product',
+					autopopulate: {
+						select: 'images title brand category sellPrice slug',
+					},
 				},
 				quantity: { type: Number, default: 1 },
 			},
@@ -22,6 +25,8 @@ const CartSchema = new mongoose.Schema(
 	},
 	{ timestamps: true }
 )
+
+CartSchema.plugin(require('mongoose-autopopulate'))
 
 CartSchema.methods.genSessionToken = async function () {
 	const cart = this

@@ -11,20 +11,21 @@ export const GET = async request => {
 	try {
 		await connectToDB()
 
-		const profile = await fetchTemplate('contact-us')
+		// const profile = await fetchTemplate('contact-us')
 
-		const { transporter, mailOptions } = await configMailer({
-			variables: { firstName: 'Hubert' },
-			group: 'admins',
-			profile,
-		})
+		// const { transporter, mailOptions } = await configMailer({
+		// 	variables: { firstName: 'Hubert' },
+		// 	group: 'admins',
+		// 	profile,
+		// })
 
-		await transporter.sendMail(mailOptions)
+		// await transporter.sendMail(mailOptions)
 
 		return new Response(
 			JSON.stringify({
 				status: 'success',
 				message: null,
+				data: newData,
 			}),
 			{
 				status: 200,

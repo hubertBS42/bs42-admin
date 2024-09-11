@@ -24,7 +24,7 @@ export const GET = async request => {
 				model: 'Brand',
 				select: 'name createdAt',
 			})
-			.lean()
+			.lean({ autopopulate: true })
 
 		const fetchCurrencyQuery = Currency.findOne({
 			isActive: true,
@@ -40,7 +40,7 @@ export const GET = async request => {
 				model: 'Brand',
 				select: 'name createdAt',
 			})
-			.lean()
+			.lean({ autopopulate: true })
 
 		const getCountQuery = Product.count()
 
@@ -48,7 +48,7 @@ export const GET = async request => {
 			.collation({ locale: 'en' })
 			.sort({ name: 'asc' })
 			.select('name parent isActive createdAt')
-			.lean()
+			.lean({ autopopulate: true })
 
 		const fetchBrandsQuery = Brand.find()
 			.collation({ locale: 'en' })

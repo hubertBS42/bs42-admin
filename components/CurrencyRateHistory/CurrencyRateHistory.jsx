@@ -1,5 +1,5 @@
 'use client'
-import { filterRatesByDateRange } from '@/utils/functions'
+import { fetcher, filterRates } from '@/utils/functions'
 import {
 	Chart as ChartJS,
 	LineElement,
@@ -11,10 +11,11 @@ import {
 } from 'chart.js'
 
 import 'chartjs-adapter-date-fns'
-import { format, subDays } from 'date-fns'
-import { useState } from 'react'
+import { subDays } from 'date-fns'
+import { useEffect, useState } from 'react'
 import { Line } from 'react-chartjs-2'
-import { DateRangePicker, Stack } from 'rsuite'
+import { toast } from 'react-toastify'
+import { DateRangePicker, Loader, Stack } from 'rsuite'
 
 ChartJS.register(
 	LineElement,
@@ -25,27 +26,43 @@ ChartJS.register(
 	Legend
 )
 
-const CurrencyRateHistory = ({ currencyData }) => {
+const CurrencyRateHistory = ({ currency }) => {
 	const last7DaysStart = subDays(new Date(), 6) // Start of last 7 days
 	const last7DaysEnd = new Date() // End of last 7 days (today)
+	const [history, setHistory] = useState([])
+	const [currentRate, setCurrentRate] = useState(null)
+	const [isLoading, setIsLoading] = useState(true)
 
 	const [dateRange, setDateRange] = useState([
 		last7DaysStart,
 		last7DaysEnd,
 	])
 
-	const rateHistory = currencyData.history.map(data => {
-		return { date: data.timestamp, rate: data.rate }
-	})
+	useEffect(() => {
+		const loadHistory = async () => {
+			setIsLoading(true)
+			const {
+				status,
+				message,
+				data: { currentRate, history },
+			} = await fetcher(
+				`/api/currencies/${currency._id}/history?start=${dateRange[0]}&end=${dateRange[1]}`
+			)
 
-	const filteredRates = filterRatesByDateRange(
-		rateHistory,
-		dateRange[0],
-		dateRange[1]
-	)
+			setIsLoading(false)
+			if (status === 'error') return toast.error('Failed to load data.')
 
-	const dates = filteredRates.map(data => data.date)
-	const rates = filteredRates.map(data => data.rate)
+			const filteredHistory = filterRates(history)
+
+			setHistory(filteredHistory)
+			setCurrentRate(currentRate)
+		}
+
+		loadHistory()
+	}, [dateRange, currency])
+
+	const dates = history.map(data => data.createdAt)
+	const rates = history.map(data => data.rate)
 
 	const data = {
 		labels: dates,
@@ -77,14 +94,16 @@ const CurrencyRateHistory = ({ currencyData }) => {
 			<Stack justifyContent='space-between' alignItems='center'>
 				<Stack spacing={10}>
 					<span>Currency:</span>
-					{currencyData.abbreviation} ({currencyData.symbol})
+					{currency?.abbreviation} ({currency?.symbol})
 				</Stack>
 
 				<Stack spacing={10}>
 					<span>Current Rate:</span>
-					{currencyData.history.length > 0
-						? currencyData.history[0].rate
-						: 'N/A'}
+					{currentRate
+						? currentRate
+						: isLoading
+						? 'Loading...'
+						: currentRate}
 				</Stack>
 
 				<Stack spacing={10}>
@@ -94,10 +113,14 @@ const CurrencyRateHistory = ({ currencyData }) => {
 						value={dateRange}
 						onChange={setDateRange}
 						cleanable={false}
+						disabled={isLoading}
 					/>
 				</Stack>
 			</Stack>
+
 			<Line data={data} options={options}></Line>
+
+			{isLoading && <Loader center content='loading' />}
 		</>
 	)
 }
