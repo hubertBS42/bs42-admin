@@ -162,17 +162,21 @@ export const updateMessage = async (message, data) => {
 	if (data.status === 'acknowledged') {
 		preparedData = {
 			...data,
-			acknowledgedOn: Date.now(),
-			attendedBy: userID,
+			acknowledgement: {
+				date: message?.acknowledgement?.date || Date.now(),
+				user: message?.acknowledgement?.user?._id || userID,
+			},
 		}
 	}
 
 	if (data.status === 'completed') {
 		preparedData = {
 			...data,
-			acknowledgedOn: Date.now(),
-			completedOn: Date.now(),
-			attendedBy: userID,
+			acknowledgement: {
+				date: message?.acknowledgement?.date || Date.now(),
+				user: message?.acknowledgement?.user?._id || userID,
+			},
+			completedOn: message?.completedOn || Date.now(),
 		}
 	}
 

@@ -68,6 +68,7 @@ const MessagesDrawer = () => {
 		},
 		status: 'pending',
 		completedOn: null,
+		receivedOn: null,
 		comments: [],
 	})
 
@@ -109,21 +110,26 @@ const MessagesDrawer = () => {
 		setFormValue(prev => {
 			return {
 				...prev,
-				subject: message?.subject || '',
-				body: message?.body || '',
+				subject: message?.subject,
+				body: message?.body,
 				sender: {
-					firstName: message?.sender?.firstName || '',
-					lastName: message?.sender?.lastName || '',
-					email: message?.sender?.email || '',
-					phone: message?.sender?.phone || '',
+					firstName: message?.sender?.firstName,
+					lastName: message?.sender?.lastName,
+					email: message?.sender?.email,
+					phone: message?.sender?.phone,
 					companyName: message?.sender?.companyName || '',
 				},
 				acknowledgement: {
-					date: message?.acknowledgement?.date || null,
+					date: message?.acknowledgement?.date
+						? new Date(message?.acknowledgement?.date)
+						: null,
 					user: message?.acknowledgement?.user?._id || null,
 				},
-				status: message?.status || 'pending',
-				completedOn: message?.completedOn || null,
+				status: message?.status,
+				completedOn: message.completedOn
+					? new Date(message.completedOn)
+					: null,
+				receivedOn: new Date(message.createdAt),
 				comments: message?.comments || [],
 			}
 		})
@@ -136,7 +142,9 @@ const MessagesDrawer = () => {
 			return
 		}
 
-		await updateMessage(message, formValue)
+		const { receivedOn, sender, body, subject, ...rest } = formValue
+
+		await updateMessage(message, rest)
 	}
 
 	return (
@@ -178,7 +186,7 @@ const MessagesDrawer = () => {
 					disabled={isLoading}
 					nestedField
 				>
-					<Panel bordered>
+					<Panel header='Status' bordered style={{ marginBottom: '1em' }}>
 						<Row style={{ marginBottom: '1em' }}>
 							<Col xs={24}>
 								<Field
@@ -198,14 +206,42 @@ const MessagesDrawer = () => {
 							</Col>
 						</Row>
 
-						<Row style={{ marginBottom: '1em' }}>
+						<Row>
+							<Col xs={12}>
+								<Field
+									name='receivedOn'
+									label='Received on'
+									accepter={DateInput}
+									readOnly
+									format='yyyy-MM-dd h:mm aa'
+								/>
+							</Col>
+							<Col xs={12}>
+								<Field
+									name='completedOn'
+									label='Completed on'
+									accepter={DateInput}
+									readOnly
+									format='yyyy-MM-dd h:mm aa'
+									placeholder='Pending...'
+								/>
+							</Col>
+						</Row>
+					</Panel>
+
+					<Panel
+						header='Acknowledgement'
+						bordered
+						style={{ marginBottom: '1em' }}
+					>
+						<Row>
 							<Col xs={12}>
 								<Field
 									name='acknowledgement.date'
 									label='Acknowledged at'
 									accepter={DateInput}
 									readOnly
-									format='yyyy-MM-dd hh:mm aa'
+									format='yyyy-MM-dd h:mm aa'
 									placeholder='Pending...'
 								/>
 							</Col>
@@ -215,6 +251,84 @@ const MessagesDrawer = () => {
 									label='Acknowledged by'
 									accepter={InputPicker}
 									data={adminUsers}
+									readOnly
+									placeholder='Pending...'
+								/>
+							</Col>
+						</Row>
+					</Panel>
+
+					<Panel header='Message' bordered style={{ marginBottom: '1em' }}>
+						<Row style={{ marginBottom: '1em' }}>
+							<Col xs={24}>
+								<Field
+									name='subject'
+									label='Subject'
+									accepter={Input}
+									readOnly
+								/>
+							</Col>
+						</Row>
+
+						<Row style={{ marginBottom: '1em' }}>
+							<Col xs={24}>
+								<Field
+									name='body'
+									label='Body'
+									accepter={TextArea}
+									rows={4}
+									readOnly
+								/>
+							</Col>
+						</Row>
+					</Panel>
+
+					<Panel header='Sender' bordered style={{ marginBottom: '1em' }}>
+						<Row style={{ marginBottom: '1em' }}>
+							<Col xs={12}>
+								<Field
+									name='sender.firstName'
+									label='First name'
+									accepter={Input}
+									readOnly
+								/>
+							</Col>
+							<Col xs={12}>
+								<Field
+									name='sender.lastName'
+									label='Last name'
+									accepter={Input}
+									readOnly
+								/>
+							</Col>
+						</Row>
+
+						<Row style={{ marginBottom: '1em' }}>
+							<Col xs={12}>
+								<Field
+									name='sender.email'
+									label='Email'
+									accepter={Input}
+									readOnly
+								/>
+							</Col>
+							<Col xs={12}>
+								<Field
+									name='sender.phone'
+									label='Phone'
+									accepter={Input}
+									readOnly
+								/>
+							</Col>
+						</Row>
+
+						<Row>
+							<Col xs={24}>
+								<Field
+									name='sender.companyName'
+									label='Company name'
+									accepter={Input}
+									readOnly
 								/>
 							</Col>
 						</Row>
