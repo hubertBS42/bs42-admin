@@ -84,7 +84,8 @@ const ApplicationsTable = () => {
 				bodyFill
 			>
 				<Table
-					height={500}
+					// height={500}
+					autoHeight
 					data={applications}
 					sortColumn={sortColumn}
 					sortType={sortType}
@@ -143,7 +144,7 @@ const ApplicationsTable = () => {
 										onClick={() =>
 											dispatch(setDrawerOpen({ mode: 'edit', data: rowData }))
 										}
-										size='lg'
+										style={{ padding: 0 }}
 									>
 										<VisibleIcon />
 									</Button>

@@ -96,7 +96,8 @@ const UsersTable = () => {
 				bodyFill
 			>
 				<Table
-					height={500}
+					// height={500}
+					autoHeight
 					data={users}
 					sortColumn={sortColumn}
 					sortType={sortType}

@@ -278,6 +278,7 @@ const UsersDrawer = () => {
 			setImageToBeDeleted([])
 		} else {
 			//create
+			console.log(formValue)
 			await createUser(formValue)
 		}
 	}
@@ -296,6 +297,8 @@ const UsersDrawer = () => {
 			useUpperCase: true,
 			passwordLength: 10,
 		})
+
+		setFormError(prev => ({ ...prev, password: null }))
 
 		setFormValue(prev => {
 			return { ...prev, password: randPassword }
@@ -423,9 +426,11 @@ const UsersDrawer = () => {
 								<Field
 									name='password'
 									label='Password'
-									accepter={GeneratePasswordField}
+									type='password'
+									accepter={Input}
 									rule={passwordRule}
 									handlePassword={handlePassword}
+									error={displayValidationError(formError?.password)}
 								/>
 							</Col>
 						</Row>

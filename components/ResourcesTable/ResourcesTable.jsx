@@ -95,7 +95,8 @@ const ResourcesTable = () => {
 				bodyFill
 			>
 				<Table
-					height={500}
+					// height={500}
+					autoHeight
 					data={resources}
 					sortColumn={sortColumn}
 					sortType={sortType}

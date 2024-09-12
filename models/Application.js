@@ -96,6 +96,7 @@ ApplicationSchema.pre('save', async function (next) {
 			})
 
 			await transporter.sendMail(mailOptions)
+			console.log('sent')
 		} else {
 			const template = await fetchTemplate(
 				'account-application-rejection'
