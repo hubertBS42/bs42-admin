@@ -17,7 +17,7 @@ export const GET = async request => {
 			.skip((page - 1) * limit)
 			.sort({ [field]: sort })
 			.populate({
-				path: 'attendedBy',
+				path: 'acknowledgement.user',
 				model: 'User',
 			})
 			.populate({

@@ -11,13 +11,19 @@ const MessageSchema = new mongoose.Schema(
 			phone: { type: String, required: true },
 			companyName: { type: String },
 		},
-		acknowledgedOn: { type: Date, default: null },
-		attendedBy: {
-			type: mongoose.Schema.Types.ObjectId,
-			ref: 'User',
-			default: null,
+		acknowledgement: {
+			date: { type: Date, default: null },
+			user: {
+				type: mongoose.Schema.Types.ObjectId,
+				ref: 'User',
+				default: null,
+			},
 		},
-		status: { type: String, default: 'pending' },
+		status: {
+			type: String,
+			enum: ['pending', 'acknowledged', 'completed'],
+			default: 'pending',
+		},
 		completedOn: { type: Date, default: null },
 		comments: [
 			{

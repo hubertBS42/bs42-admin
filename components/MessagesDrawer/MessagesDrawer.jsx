@@ -3,6 +3,7 @@ import { useRef, useState } from 'react'
 import {
 	Button,
 	Col,
+	DateInput,
 	Drawer,
 	Form,
 	Input,
@@ -32,7 +33,12 @@ import {
 } from '@/redux/features/drawer/drawerSlice'
 
 import TextArea from '../TextArea/TextArea'
-import { formatDate } from '@/utils/functions'
+import {
+	formatData,
+	formatDate,
+	genFullName,
+} from '@/utils/functions'
+import { selectAllUsers } from '@/redux/features/users/usersSlice'
 
 const { StringType, ObjectType } = Schema.Types
 
@@ -47,20 +53,78 @@ const MessagesDrawer = () => {
 	const formRef = useRef()
 	const [formError, setFormError] = useState({})
 	const [formValue, setFormValue] = useState({
-		status: '',
+		subject: '',
+		body: '',
+		sender: {
+			firstName: '',
+			lastName: '',
+			email: '',
+			phone: '',
+			companyName: '',
+		},
+		acknowledgement: {
+			date: null,
+			user: null,
+		},
+		status: 'pending',
+		completedOn: null,
 		comments: [],
 	})
 
 	const isOpen = useSelector(getDrawerOpenState)
 	const isLoading = useSelector(getDrawerLoadingState)
 	const message = useSelector(getDrawerData)
+	let users = useSelector(selectAllUsers)
+
+	const sortedUsers = [...users].sort((a, b) => {
+		const firstNameA = a.firstName.toLowerCase()
+		const firstNameB = b.firstName.toLowerCase()
+
+		// Compare first names
+		if (firstNameA < firstNameB) {
+			return -1 // a should come before b in the sorted order
+		}
+		if (firstNameA > firstNameB) {
+			return 1 // a should come after b in the sorted order
+		}
+		return 0 // Names are equal
+	})
+
+	let adminUsers = sortedUsers
+		.filter(user => user.role.title !== 'User')
+		.map(user => {
+			const name =
+				user.lastName === ''
+					? user.firstName
+					: user.firstName + ' ' + user.lastName
+			return {
+				name,
+				_id: user._id,
+			}
+		})
+
+	adminUsers = formatData(adminUsers)
 
 	const updateForm = message => {
 		setFormValue(prev => {
 			return {
 				...prev,
-				status: message.status,
-				comments: message.comments,
+				subject: message?.subject || '',
+				body: message?.body || '',
+				sender: {
+					firstName: message?.sender?.firstName || '',
+					lastName: message?.sender?.lastName || '',
+					email: message?.sender?.email || '',
+					phone: message?.sender?.phone || '',
+					companyName: message?.sender?.companyName || '',
+				},
+				acknowledgement: {
+					date: message?.acknowledgement?.date || null,
+					user: message?.acknowledgement?.user?._id || null,
+				},
+				status: message?.status || 'pending',
+				completedOn: message?.completedOn || null,
+				comments: message?.comments || [],
 			}
 		})
 
@@ -81,7 +145,7 @@ const MessagesDrawer = () => {
 			onClose={() => dispatch(setDrawerClose())}
 			onEnter={() => updateForm(message)}
 			backdrop='static'
-			size='lg'
+			size='md'
 		>
 			<Drawer.Header style={{ paddingRight: '1.2em' }}>
 				<Drawer.Title>Manage Message</Drawer.Title>
@@ -112,27 +176,51 @@ const MessagesDrawer = () => {
 					formValue={formValue}
 					model={model}
 					disabled={isLoading}
+					nestedField
 				>
-					<Row style={{ marginBottom: 10 }}>
-						<Col xs={24}>
-							<Field
-								name='status'
-								label='Status'
-								accepter={SelectPicker}
-								data={[
-									{ label: 'Pending', value: 'pending' },
-									{ label: 'Acknowledged', value: 'acknowledged' },
-									{ label: 'Completed', value: 'completed' },
-								]}
-								disabledItemValues={['pending']}
-								disabled={message?.status === 'completed'}
-								cleanable={false}
-								searchable={false}
-							/>
-						</Col>
-					</Row>
+					<Panel bordered>
+						<Row style={{ marginBottom: '1em' }}>
+							<Col xs={24}>
+								<Field
+									name='status'
+									label='Status'
+									accepter={SelectPicker}
+									data={[
+										{ label: 'Pending', value: 'pending' },
+										{ label: 'Acknowledged', value: 'acknowledged' },
+										{ label: 'Completed', value: 'completed' },
+									]}
+									disabledItemValues={['pending']}
+									disabled={message?.status === 'completed'}
+									cleanable={false}
+									searchable={false}
+								/>
+							</Col>
+						</Row>
 
-					<Panel bordered style={{ marginBottom: '1.4em' }}>
+						<Row style={{ marginBottom: '1em' }}>
+							<Col xs={12}>
+								<Field
+									name='acknowledgement.date'
+									label='Acknowledged at'
+									accepter={DateInput}
+									readOnly
+									format='yyyy-MM-dd hh:mm aa'
+									placeholder='Pending...'
+								/>
+							</Col>
+							<Col xs={12}>
+								<Field
+									name='acknowledgement.user'
+									label='Acknowledged by'
+									accepter={InputPicker}
+									data={adminUsers}
+								/>
+							</Col>
+						</Row>
+					</Panel>
+
+					{/* <Panel bordered style={{ marginBottom: '1.4em' }}>
 						<Row style={{ marginBottom: '1.5em' }}>
 							<Col xs={6}>
 								<Stack direction='column' alignItems='flex-start'>
@@ -338,7 +426,7 @@ const MessagesDrawer = () => {
 								</Stack>
 							</Col>
 						</Row>
-					</Panel>
+					</Panel> */}
 				</Form>
 			</Drawer.Body>
 		</Drawer>
