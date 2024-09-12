@@ -3,6 +3,7 @@ import Brand from '@/models/Brand'
 import Category from '@/models/Category'
 import { connectToDB } from '@/utils/database'
 import StockLevel from '@/models/StockLevel'
+import Location from '@/models/Location'
 export const GET = async request => {
 	const { searchParams } = new URL(request.url)
 	const query = searchParams.get('q')
@@ -12,8 +13,11 @@ export const GET = async request => {
 
 		const queryRegx = new RegExp(query, 'i')
 
-		const products = await Product.find({
-			title: { $regex: queryRegx },
+		const productsQuery = Product.find({
+			$or: [
+				{ title: { $regex: queryRegx } },
+				{ slug: { $regex: queryRegx } },
+			],
 		})
 			.sort({ title: 'asc' })
 			// .populate({
@@ -26,6 +30,18 @@ export const GET = async request => {
 			// })
 			.select('title slug brand images category isActive createdAt')
 			.lean({ autopopulate: true })
+
+		const defaultLocationQuery = Location.findOne({
+			isDefault: true,
+			type: 'facility',
+		})
+			.select('_id')
+			.lean({ autopopulate: false })
+
+		const [products, defaultLocation] = await Promise.all([
+			productsQuery,
+			defaultLocationQuery,
+		])
 
 		const productIds = products.map(product => product._id)
 
@@ -59,6 +75,7 @@ export const GET = async request => {
 			}
 		)
 	} catch (error) {
+		console.log(error)
 		return new Response(
 			JSON.stringify({
 				status: 'error',
