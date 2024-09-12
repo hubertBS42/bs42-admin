@@ -6,6 +6,7 @@ import { connectToDB } from '@/utils/database'
 import jwt from 'jsonwebtoken'
 import { combineCartItems } from '@/utils/functions'
 import Location from '@/models/Location'
+import StockLevel from '@/models/StockLevel'
 
 export const GET = async request => {
 	const { searchParams } = new URL(request.url)
@@ -19,35 +20,8 @@ export const GET = async request => {
 	try {
 		await connectToDB()
 
-		// const defaultLocationQuery = await Location.findOne({
-		// 	isDefault: true,
-		// })
-		// 	.select('_id')
-		// 	.lean({ autopopulate: false })
-
-		// const productIds = products.map(product => product._id)
-
-		// const stock = await StockLevel.find({
-		// 	product: { $in: productIds },
-		// 	location: defaultLocation,
-		// })
-		// 	.select('product count location')
-		// 	.lean({ autopopulate: false })
-
-		// const formattedProducts = products.map(product => {
-		// 	const match = stock.find(
-		// 		item => item.product.toString() === product._id.toString()
-		// 	)
-
-		// 	if (match) {
-		// 		return { ...product, count: match.count }
-		// 	} else {
-		// 		return { ...product, count: 0 }
-		// 	}
-		// })
-
 		if (!userID && cartToken) {
-			jwt.verify(cartToken, 'abc123')
+			// jwt.verify(cartToken, 'abc123')
 			const guestCart = await Cart.findOne({ token: cartToken }).select(
 				'items user token'
 			)
@@ -189,6 +163,63 @@ export const GET = async request => {
 			const saved = await guestCart.save()
 
 			data = saved
+		}
+
+		data = data.toObject()
+
+		if (data.items.length > 0) {
+			const defaultLocation = await Location.findOne({
+				isDefault: true,
+			})
+				.select('_id')
+				.lean({ autopopulate: false })
+
+			const productIds = data.items.map(item =>
+				item.product._id.toString()
+			)
+
+			const stock = await StockLevel.find({
+				product: { $in: productIds },
+				location: defaultLocation,
+			})
+				.select('product count location sku')
+				.lean({ autopopulate: false })
+
+			const formattedCartItems = []
+
+			data.items.forEach(cartItem => {
+				const match = stock.find(
+					stockItem =>
+						stockItem.product.toString() === cartItem.product._id.toString()
+				)
+
+				if (!match || match.count === 0) return
+
+				if (match && match.count < cartItem.quantity) {
+					formattedCartItems.push({
+						...cartItem,
+						product: {
+							...cartItem.product,
+							count: match.count,
+							sku: match.sku,
+						},
+						quantity: match.count,
+					})
+				}
+
+				if (match && match.count > cartItem.quantity) {
+					formattedCartItems.push({
+						...cartItem,
+						product: {
+							...cartItem.product,
+							count: match.count,
+							sku: match.sku,
+						},
+					})
+				}
+			})
+
+			data.items = formattedCartItems
 		}
 
 		return new Response(
