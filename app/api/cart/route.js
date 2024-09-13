@@ -55,7 +55,7 @@ export const GET = async request => {
 
 			if (!guestCart)
 				throw new Error('A cart belonging to this guest does not exist.')
-			data = guestCart
+			data = guestCart.toObject()
 		}
 
 		if (userID && !cartToken) {
@@ -86,7 +86,7 @@ export const GET = async request => {
 			// 	],
 			// })
 
-			data = userCart
+			data = userCart ? userCart.toObject() : null
 		}
 
 		if (userID && cartToken) {
@@ -162,12 +162,10 @@ export const GET = async request => {
 
 			const saved = await guestCart.save()
 
-			data = saved
+			data = saved.toObject()
 		}
 
-		data = data.toObject()
-
-		if (data.items.length > 0) {
+		if (data && data.items.length > 0) {
 			const defaultLocation = await Location.findOne({
 				isDefault: true,
 			})
