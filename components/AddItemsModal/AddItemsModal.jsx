@@ -21,14 +21,18 @@ import { useDispatch, useSelector } from 'react-redux'
 import {
 	Button,
 	Checkbox,
+	HStack,
 	Input,
 	InputGroup,
+	List,
 	Modal,
 	Panel,
 	PanelGroup,
 	Stack,
 	Tag,
+	Text,
 	Tooltip,
+	VStack,
 	Whisper,
 } from 'rsuite'
 
@@ -47,6 +51,28 @@ const AddItemsModal = ({ open, handleClose }) => {
 
 	const loadItems = items => {
 		setSelectedProducts(items)
+	}
+
+	const handleSelected = data => {
+		if (data.count === 0) return
+		const exists = selectedProducts.find(
+			product =>
+				product?.product?._id === data._id || product._id === data._id
+		)
+
+		if (exists) {
+			const filtered = selectedProducts
+				.map(item => {
+					if (item.hasOwnProperty('quantity')) {
+						return item.product
+					}
+					return item
+				})
+				.filter(item => item._id !== data._id)
+			setSelectedProducts(filtered)
+		} else {
+			setSelectedProducts(prev => [...prev, data])
+		}
 	}
 
 	const handleChecked = (checked, data) => {
@@ -93,66 +119,90 @@ const AddItemsModal = ({ open, handleClose }) => {
 						placeholder='Search products'
 						onChange={searchProducts}
 						style={{ width: '100%' }}
+						autoFocus
 					/>
 					<InputGroup.Addon>
 						{loading && <SpinnerIcon spin />}
 					</InputGroup.Addon>
 				</InputGroup>
 
-				<PanelGroup>
+				<VStack
+					alignItems='stretch'
+					spacing={20}
+					style={{ marginTop: '1.5em' }}
+				>
 					{results.length > 0 &&
 						results.map(result => (
-							<Panel key={result.category} header={result.category}>
-								{result.products.map(product => (
-									<Stack
-										key={product._id}
-										style={{ marginBottom: 17 }}
-										justifyContent='space-between'
-									>
-										<Stack spacing={10}>
-											<Checkbox
-												onChange={(value, checked) =>
-													handleChecked(checked, product)
-												}
-												checked={selectedProducts
-													.map(item => item?.product?._id || item._id)
-													.includes(product._id)}
-											/>
-
-											<Stack spacing={15} style={{ fontSize: 13 }}>
-												<div
-													style={{
-														position: 'relative',
-														height: 40,
-														width: 40,
-														objectFit: 'contain',
-													}}
-												>
-													<Image
-														src={product.images[0].url}
-														alt={product.title}
-														fill
-														sizes='(max-width: 768px) 40px, (max-width: 1200px) 40px, 40px'
+							<VStack
+								key={result.category}
+								alignItems='stretch'
+								spacing={10}
+							>
+								<Text weight='semibold' size='lg'>
+									{result.category}
+								</Text>
+								<List hover>
+									{result.products.map(product => (
+										<List.Item
+											onClick={() => handleSelected(product)}
+											key={product._id}
+											style={{
+												display: 'block',
+												cursor: product.count > 0 ? 'pointer' : 'not-allowed',
+												paddingRight: 15,
+											}}
+										>
+											<HStack justifyContent='space-between' alignItems='center'>
+												<HStack>
+													<Checkbox
+														onChange={(value, checked) =>
+															handleChecked(checked, product)
+														}
+														checked={selectedProducts
+															.map(item => item?.product?._id || item._id)
+															.includes(product._id)}
+														disabled={product.count === 0}
+														style={{ pointerEvents: 'none' }}
 													/>
-												</div>
-												<Stack direction='column' alignItems='flex-start'>
-													<span style={{ color: '#6CD6FF' }}>{product.title}</span>
-													<span style={{ fontSize: 11 }}>
-														{product.brand.title}
-													</span>
-												</Stack>
-											</Stack>
-										</Stack>
 
-										<Stack spacing={20}>
-											<span>{product.countInStock} in stock</span>
-											<span>GHS {roundMoney(product.sellPrice * rate)}</span>
-										</Stack>
-									</Stack>
-								))}
-							</Panel>
+													<HStack spacing={15}>
+														<div
+															style={{
+																position: 'relative',
+																height: 40,
+																width: 40,
+																objectFit: 'contain',
+															}}
+														>
+															<Image
+																src={product.images[0].url}
+																alt={product.title}
+																fill
+																sizes='(max-width: 768px) 40px, (max-width: 1200px) 40px, 40px'
+															/>
+														</div>
+
+														<VStack>
+															<span style={{ color: '#6CD6FF', fontSize: 13 }}>
+																{product.title} ({product.count})
+															</span>
+															<span style={{ fontSize: 11 }}>
+																{product.brand.name}
+															</span>
+														</VStack>
+													</HStack>
+												</HStack>
+
+												<span style={{ fontSize: 13 }}>
+													GHS {roundMoney(product.sellPrice * rate)}
+												</span>
+											</HStack>
+										</List.Item>
+									))}
+								</List>
+							</VStack>
 						))}
-				</PanelGroup>
+				</VStack>
 			</Modal.Body>
 			<Modal.Footer>
 				<Stack justifyContent='space-between'>

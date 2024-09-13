@@ -22,9 +22,10 @@ export const useProducts = (defaultProducts, categories) => {
 			try {
 				const { signal } = newController
 				const { data, status, message } = await fetcher(
-					`/api/products/search?q=${query}`,
+					`/api/frontend/products/search?q=${query}`,
 					{ signal }
 				)
+
 				if (status === 'success') {
 					const groupedProducts = groupProductsByTopLevelCategory(
 						data,

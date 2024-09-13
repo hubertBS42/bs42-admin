@@ -48,7 +48,7 @@ export const POST = async request => {
 			invoice: { ...data.invoice, number: invoiceNumber },
 		})
 
-		if (!newOrder) throw new Error('Failed to create order')
+		// if (!newOrder) throw new Error('Failed to create order')
 
 		// const template = await fetchTemplate('order-placed')
 
@@ -117,6 +117,7 @@ export const POST = async request => {
 			{ status: 201 }
 		)
 	} catch (error) {
+		console.log(error)
 		return new NextResponse(
 			JSON.stringify({
 				status: 'error',

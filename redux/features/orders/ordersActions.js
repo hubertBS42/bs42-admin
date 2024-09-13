@@ -190,7 +190,7 @@ export const updateOrder = async (order, data) => {
 	// }
 
 	const { status, message } = await fetcher(
-		`/api/orders/${order._id}`,
+		`/api/orders/${order.orderNumber}`,
 		{
 			method: 'PATCH',
 			body: JSON.stringify(preparedData),

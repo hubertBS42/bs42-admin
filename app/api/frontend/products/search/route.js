@@ -28,7 +28,9 @@ export const GET = async request => {
 			// 	path: 'category',
 			// 	select: 'name slug',
 			// })
-			.select('title slug brand images category isActive createdAt')
+			.select(
+				'title slug brand images sellPrice category isActive createdAt'
+			)
 			.lean({ autopopulate: true })
 
 		const defaultLocationQuery = Location.findOne({

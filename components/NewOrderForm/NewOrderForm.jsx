@@ -381,7 +381,7 @@ const NewOrderForm = ({ handleModalOpen }) => {
 														}
 														style={{ width: 65 }}
 														size='sm'
-														max={item.product.countInStock}
+														max={item.product.count}
 														disabled={isLoading}
 													/>
 

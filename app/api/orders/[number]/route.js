@@ -41,19 +41,22 @@ export const PATCH = async (request, { params }) => {
 	try {
 		await connectToDB()
 
-		let order = await Order.find({ orderNumber: params.number })
+		let order = await Order.findOne({
+			orderNumber: params.number,
+		})
+
 		updates.forEach(update => (order[update] = data[update]))
 
-		if (order) {
-			return new NextResponse(
-				JSON.stringify({
-					status: 'success',
-					data: order,
-					message: 'Order updated successfully.',
-				}),
-				{ status: 200 }
-			)
-		}
+		await order.save()
+
+		return new NextResponse(
+			JSON.stringify({
+				status: 'success',
+				data: order,
+				message: 'Order updated successfully.',
+			}),
+			{ status: 200 }
+		)
 	} catch (error) {
 		return new NextResponse(
 			JSON.stringify({

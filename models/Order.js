@@ -110,7 +110,7 @@ OrderSchema.pre('save', async function (next) {
 	if (order.isModified('status')) {
 		const orderExistsQuery = this.constructor
 			.findOne({
-				_id: { $ne: this._id },
+				orderNumber: this.orderNumber,
 			})
 			.select('_id status')
 			.lean()
@@ -143,7 +143,7 @@ OrderSchema.pre('save', async function (next) {
 			step => step.type === 'cancelled'
 		)
 
-		const cancelledAlready = orderExists.status.find(
+		const cancelledAlready = orderExists?.status.find(
 			step => step.type === 'cancelled'
 		)
 
