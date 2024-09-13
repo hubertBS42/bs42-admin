@@ -3,6 +3,8 @@ import { generateInvoiceNumber } from '@/utils/functions'
 import { configMailer, fetchTemplate } from '@/utils/mailer'
 import { renderToStream } from '@react-pdf/renderer'
 import mongoose from 'mongoose'
+import Location from './Location'
+import StockLevel from './StockLevel'
 
 const OrderSchema = new mongoose.Schema(
 	{
@@ -106,98 +108,83 @@ OrderSchema.pre('save', async function (next) {
 	const order = this
 
 	if (order.isModified('status')) {
-		// const created = order.status.find(step => step.type === 'created')
-		const cancelled = order.status.find(
+		const orderExistsQuery = this.constructor
+			.findOne({
+				_id: { $ne: this._id },
+			})
+			.select('_id status')
+			.lean()
+
+		const defaultLocationQuery = Location.findOne({
+			isDefault: true,
+			type: 'facility',
+		})
+			.select('_id')
+			.lean({ autopopulate: false })
+
+		const [orderExists, defaultLocation] = await Promise.all([
+			orderExistsQuery,
+			defaultLocationQuery,
+		])
+
+		if (!defaultLocation)
+			throw new Error('Could not find a default location.')
+
+		const products = order.products.map(product => ({
+			_id: product.productRef,
+			quantity: product.quantity,
+		}))
+
+		const toBeCreated = order.status.find(
+			step => step.type === 'created'
+		)
+
+		const toBeCancelled = order.status.find(
 			step => step.type === 'cancelled'
 		)
 
-		// if (created) {
-		// 	const timestamp = new Date()
+		const cancelledAlready = orderExists.status.find(
+			step => step.type === 'cancelled'
+		)
 
-		// 	const startOfDay = timestamp
-		// 	startOfDay.setHours(0, 0, 0, 0) // Set to the beginning of the day
+		if (toBeCreated && !orderExists) {
+			const updateQuantityQueries = products.map(product =>
+				StockLevel.findOneAndUpdate(
+					{
+						location: defaultLocation._id,
+						product: product._id,
+					},
+					{ $inc: { count: -product.quantity } }
+				)
+			)
 
-		// 	const endOfDay = timestamp
-		// 	endOfDay.setHours(23, 59, 59, 999) // Set to the end of the day
+			await Promise.all(updateQuantityQueries)
+		}
 
-		// 	const lastOrder = await this.constructor
-		// 		.findOne({
-		// 			'invoice.date': {
-		// 				$gte: startOfDay,
-		// 				$lte: endOfDay,
-		// 			},
-		// 		})
-		// 		.sort({ createdAt: 'desc' }) // Sort by createdAt in descending order
-		// 		.lean()
+		if (toBeCancelled && !cancelledAlready) {
+			const updateQuantityQueries = products.map(product =>
+				StockLevel.findOneAndUpdate(
+					{
+						location: defaultLocation._id,
+						product: product._id,
+					},
+					{ $inc: { count: product.quantity } }
+				)
+			)
 
-		// 	const lastInvoiceNumber = lastOrder?.invoice?.number || 0
+			await Promise.all(updateQuantityQueries)
 
-		// 	const invoiceNumber = generateInvoiceNumber(
-		// 		lastInvoiceNumber,
-		// 		timestamp
-		// 	)
-
-		// 	order.invoice = {
-		// 		number: invoiceNumber,
-		// 		date: timestamp,
-		// 		dueDate: timestamp,
-		// 	}
-
-		// 	const [stream, template] = await Promise.all([
-		// 		renderToStream(<Invoice data={order} />),
-		// 		fetchTemplate('order-created'),
-		// 	])
-
-		// 	const recipients = [
-		// 		{
-		// 			variables: {
-		// 				firstName: order.contact.firstName,
-		// 				orderNumber: order.orderNumber,
-		// 			},
-		// 			toEmail: order.contact.email,
-		// 			group: 'users',
-		// 			template,
-		// 			attachments: [
-		// 				{
-		// 					filename: `invoice_${invoiceNumber}.pdf`,
-		// 					content: stream,
-		// 					contentType: 'application/pdf',
-		// 				},
-		// 			],
-		// 		},
-		// 		{
-		// 			group: 'admins',
-		// 			variables: null,
-		// 			toEmail: null,
-		// 			attachments: null,
-		// 		},
-		// 	]
-
-		// 	recipients.forEach(async group => {
-		// 		const { transporter, mailOptions } = await configMailer({
-		// 			group: group.group,
-		// 			variables: group.variables,
-		// 			toEmail: group.toEmail,
-		// 			attachments: group.attachments,
-		// 			template,
-		// 		})
-
-		// 		await transporter.sendMail(mailOptions)
-		// 	})
-		// }
-
-		if (cancelled) {
-			const template = await fetchTemplate('order-cancelled')
-			const { transporter, mailOptions } = await configMailer({
-				variables: {
-					firstName: order.contact.firstName,
-					orderNumber: order.orderNumber,
-				},
-				toEmail: order.contact.email,
-				group: 'users',
-				template,
-			})
-			await transporter.sendMail(mailOptions)
+			// const template = await fetchTemplate('order-cancelled')
+			// const { transporter, mailOptions } = await configMailer({
+			// 	variables: {
+			// 		firstName: order.contact.firstName,
+			// 		orderNumber: order.orderNumber,
+			// 	},
+			// 	toEmail: order.contact.email,
+			// 	group: 'users',
+			// 	template,
+			// })
+			// await transporter.sendMail(mailOptions)
 		}
 	}
 

@@ -36,15 +36,13 @@ export const GET = async (request, { params }) => {
 //PATCH
 export const PATCH = async (request, { params }) => {
 	const data = await request.json()
+	const updates = Object.keys(data)
 
 	try {
 		await connectToDB()
 
-		const order = await Order.findByIdAndUpdate(params.number, data, {
-			new: true,
-		})
-			.select('_id')
-			.lean()
+		let order = await Order.find({ orderNumber: params.number })
+		updates.forEach(update => (order[update] = data[update]))
 
 		if (order) {
 			return new NextResponse(
