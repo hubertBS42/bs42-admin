@@ -13,7 +13,7 @@ import TableSearch from '../TableSearch/TableSearch'
 import ViewsAuthorizeIcon from '@rsuite/icons/ViewsAuthorize'
 
 import { useState } from 'react'
-import { formatDate } from '@/utils/functions'
+import { formatDate, genFullName } from '@/utils/functions'
 import { useDispatch, useSelector } from 'react-redux'
 
 import {
@@ -114,12 +114,11 @@ const MessagesTable = () => {
 						<HeaderCell>Attended by</HeaderCell>
 						<Cell>
 							{rowData =>
-								rowData.attendedBy
-									? rowData.attendedBy.lastName
-										? rowData.attendedBy.firstName +
-										  ' ' +
-										  rowData.attendedBy.lastName
-										: rowData.attendedBy.firstName
+								rowData.acknowledgement
+									? genFullName(
+											rowData.acknowledgement.user.firstName,
+											rowData.acknowledgement.user.lastName
+									  )
 									: 'N/A'
 							}
 						</Cell>

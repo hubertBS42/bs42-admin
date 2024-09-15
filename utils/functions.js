@@ -438,13 +438,49 @@ export const filterRates = rates => {
 	return formatted
 }
 
-export const replacePlaceholders = (inputString, values) => {
-	return inputString.replace(/\${(.*?)}/g, (match, placeholder) => {
-		// `placeholder` contains the name inside the curly braces
-		// `match` contains the full matched string, including the curly braces
-		return values[placeholder.trim()] || match
+export const hydrateMessage = (message, values) => {
+	return message.replace(/\${(.*?)}/g, (match, placeholder) => {
+		const key = placeholder.trim() // Extract the key from the placeholder
+		const value = values[key] // Get the corresponding value from the provided object
+
+		if (Array.isArray(value)) {
+			// Add inline styles for table, headers, and cells
+			const tableRows = value
+				.map(item => {
+					const product = item.product || 'Unknown Product'
+					const count = item.count || 0
+					return `<tr>
+							<td style="border: 1px solid #dddddd; padding: 8px;">${product}</td>
+							<td style="border: 1px solid #dddddd; padding: 8px; text-align: right;">${count}</td>
+						</tr>`
+				})
+				.join('') // Create table rows for each item
+
+			return `
+				<table style="border-collapse: collapse; width: 100%;">
+					<thead>
+						<tr>
+							<th style="border: 1px solid #dddddd; padding: 8px; background-color: #f2f2f2;">Product</th>
+							<th style="border: 1px solid #dddddd; padding: 8px; background-color: #f2f2f2;">Count</th>
+						</tr>
+					</thead>
+					<tbody>${tableRows}</tbody>
+				</table>
+			`
+		}
+
+		// If it's not an array, return the value or the original match if the value is undefined
+		return value || match
 	})
 }
+
+// export const replacePlaceholders = (inputString, values) => {
+// 	return inputString.replace(/\${(.*?)}/g, (match, placeholder) => {
+// 		// `placeholder` contains the name inside the curly braces
+// 		// `match` contains the full matched string, including the curly braces
+// 		return values[placeholder.trim()] || match
+// 	})
+// }
 
 // Function to generate date-based invoice numbers
 export const generateInvoiceNumber = lastInvoiceNumber => {

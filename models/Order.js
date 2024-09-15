@@ -2,6 +2,8 @@ import Invoice from '@/components/Invoice/Invoice'
 import { generateInvoiceNumber } from '@/utils/functions'
 import { configMailer, fetchTemplate } from '@/utils/mailer'
 import { renderToStream } from '@react-pdf/renderer'
+import Product from './Product'
+import Brand from './Brand'
 import mongoose from 'mongoose'
 import Location from './Location'
 import StockLevel from './StockLevel'
@@ -154,11 +156,31 @@ OrderSchema.pre('save', async function (next) {
 						location: defaultLocation._id,
 						product: product._id,
 					},
-					{ $inc: { count: -product.quantity } }
-				)
+					{ $inc: { count: -product.quantity } },
+					{ new: true }
+				).populate({ path: 'product', select: 'title' })
 			)
 
-			await Promise.all(updateQuantityQueries)
+			const stockLevels = await Promise.all(updateQuantityQueries)
+
+			const lowStockItems = stockLevels.filter(
+				item => item.count <= item.min
+			)
+
+			if (lowStockItems.length > 0) {
+				const template = await fetchTemplate('low-stock')
+				const { transporter, mailOptions } = await configMailer({
+					variables: {
+						items: lowStockItems.map(item => ({
+							title: item.product.title,
+							count: item.count,
+						})),
+					},
+					group: 'admins',
+					template,
+				})
+				await transporter.sendMail(mailOptions)
+			}
 		}
 
 		if (toBeCancelled && !cancelledAlready) {
@@ -173,18 +195,6 @@ OrderSchema.pre('save', async function (next) {
 			)
 
 			await Promise.all(updateQuantityQueries)
-
-			// const template = await fetchTemplate('order-cancelled')
-			// const { transporter, mailOptions } = await configMailer({
-			// 	variables: {
-			// 		firstName: order.contact.firstName,
-			// 		orderNumber: order.orderNumber,
-			// 	},
-			// 	toEmail: order.contact.email,
-			// 	group: 'users',
-			// 	template,
-			// })
-			// await transporter.sendMail(mailOptions)
 		}
 	}
 

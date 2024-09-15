@@ -2,7 +2,7 @@ import Template from '@/models/Template'
 import Server from '@/models/Server'
 import Credential from '@/models/Credential'
 import nodemailer from 'nodemailer'
-import { replacePlaceholders } from './functions'
+import { hydrateMessage } from './functions'
 
 export const fetchTemplate = async slug => {
 	const template = await Template.findOne({
@@ -41,7 +41,7 @@ export const configMailer = async data => {
 		let mailOptions
 
 		if (group === 'admins') {
-			const hydratedMessage = replacePlaceholders(
+			const hydratedMessage = hydrateMessage(
 				template.admins.message,
 				variables
 			)
@@ -64,7 +64,7 @@ export const configMailer = async data => {
 				attachments,
 			}
 		} else {
-			const hydratedMessage = replacePlaceholders(
+			const hydratedMessage = hydrateMessage(
 				template.users.message,
 				variables
 			)
