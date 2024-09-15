@@ -461,7 +461,7 @@ export const hydrateMessage = (message, values) => {
 					<thead>
 						<tr>
 							<th style="border: 1px solid #dddddd; padding: 8px; background-color: #f2f2f2; text-align: left;">Product</th>
-							<th style="border: 1px solid #dddddd; padding: 8px; background-color: #f2f2f2; text-alight: left">Count</th>
+							<th style="border: 1px solid #dddddd; padding: 8px; background-color: #f2f2f2; text-align: left">Count</th>
 						</tr>
 					</thead>
 					<tbody>${tableRows}</tbody>
