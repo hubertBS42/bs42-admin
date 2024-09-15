@@ -447,11 +447,11 @@ export const hydrateMessage = (message, values) => {
 			// Add inline styles for table, headers, and cells
 			const tableRows = value
 				.map(item => {
-					const product = item.product || 'Unknown Product'
+					const product = item.title || 'Unknown Product'
 					const count = item.count || 0
 					return `<tr>
-							<td style="border: 1px solid #dddddd; padding: 8px;">${product}</td>
-							<td style="border: 1px solid #dddddd; padding: 8px; text-align: right;">${count}</td>
+							<td style="border: 1px solid #dddddd; padding: 8px; text-align: left;">${product}</td>
+							<td style="border: 1px solid #dddddd; padding: 8px; text-align: left;">${count}</td>
 						</tr>`
 				})
 				.join('') // Create table rows for each item
@@ -460,8 +460,8 @@ export const hydrateMessage = (message, values) => {
 				<table style="border-collapse: collapse; width: 100%;">
 					<thead>
 						<tr>
-							<th style="border: 1px solid #dddddd; padding: 8px; background-color: #f2f2f2;">Product</th>
-							<th style="border: 1px solid #dddddd; padding: 8px; background-color: #f2f2f2;">Count</th>
+							<th style="border: 1px solid #dddddd; padding: 8px; background-color: #f2f2f2; text-align: left;">Product</th>
+							<th style="border: 1px solid #dddddd; padding: 8px; background-color: #f2f2f2; text-alight: left">Count</th>
 						</tr>
 					</thead>
 					<tbody>${tableRows}</tbody>
