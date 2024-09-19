@@ -17,7 +17,7 @@ const cartSlice = createSlice({
 			const newItems = action.payload
 				.filter(item => !item.hasOwnProperty('quantity'))
 				.map(item => {
-					return { product: item, quantity: 1 }
+					return { product: item, quantity: 1, buyPrice: 0 }
 				})
 
 			state.cartItems = [...oldItems, ...newItems]
@@ -32,6 +32,7 @@ const cartSlice = createSlice({
 			if (product) {
 				product.quantity = action.payload.quantity
 				product.product = action.payload.product
+				product.buyPrice = action.payload?.buyPrice || 0
 				if (product.quantity === 0) {
 					state.cartItems = state.cartItems.filter(
 						item => item.product._id !== action.payload.product._id
@@ -41,6 +42,7 @@ const cartSlice = createSlice({
 				state.cartItems.push({
 					product: action.payload.product,
 					quantity: action.payload.quantity,
+					buyPrice: action.payload?.buyPrice || 0,
 				})
 			}
 		},
@@ -100,7 +102,7 @@ export const totalBuyPriceSelector = createSelector(
 	[cartItems],
 	cartItems =>
 		cartItems.reduce(
-			(total, curr) => (total += curr.quantity * curr.product.buyPrice),
+			(total, curr) => (total += curr.quantity * curr.buyPrice),
 			0
 		)
 )

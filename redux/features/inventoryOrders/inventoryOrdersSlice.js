@@ -15,7 +15,7 @@ const inventoryOrdersSlice = createSlice({
 			state.isLoading = false
 		},
 		setInventoryOrdersCount: (state, action) => {
-			state.inventoryOrders = action.payload
+			state.count = action.payload
 		},
 		setLoading: (state, action) => {
 			state.isLoading = action.payload

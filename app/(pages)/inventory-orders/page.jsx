@@ -1,19 +1,18 @@
 'use client'
 
-// import StockLevelsTable from '@/components/StockLevelsTable/StockLevelsTable'
 import styles from './page.module.scss'
 
 import { useEffect } from 'react'
-import { useSelector } from 'react-redux'
-import { loadStockLevels } from '@/redux/features/stockLevels/stockLevelsActions'
+import InventoryOrdersTable from '@/components/InventoryOrdersTable/InventoryOrdersTable'
+import { loadInventoryOrders } from '@/redux/features/inventoryOrders/inventoryOrdersActions'
 
 const InventoryOrdersPage = () => {
-	// useEffect(() => {
-	// 	loadStockLevels()
-	// }, [])
+	useEffect(() => {
+		loadInventoryOrders()
+	}, [])
 	return (
 		<div className={styles.mainWrapper}>
-			{/* <StockLevelsTable /> */}
+			<InventoryOrdersTable />
 		</div>
 	)
 }

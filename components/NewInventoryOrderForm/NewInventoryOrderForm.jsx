@@ -1,6 +1,6 @@
 'use client'
 import Link from 'next/link'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import SpinnerIcon from '@rsuite/icons/legacy/Spinner'
 import SearchIcon from '@rsuite/icons/Search'
@@ -29,21 +29,30 @@ import {
 } from 'rsuite'
 import { useDispatch, useSelector } from 'react-redux'
 import {
+	emptyCart,
 	modifyItem,
 	removeItem,
 	selectAllCartItems,
 	totalBuyPriceSelector,
 } from '@/redux/features/cart/cartSlice'
 import Image from 'next/image'
-import { roundMoney } from '@/utils/functions'
+import { fetcher, roundMoney } from '@/utils/functions'
 import AddBuyShippingPopover from '../AddBuyShippingPopper/AddBuyShippingPopover'
 import { useSuppliers } from '@/hooks/useSuppliers'
 import InventoryOrderStatusPanel from '../InventoryOrderStatusPanel/InventoryOrderStatusPanel'
 import { createInventoryOrder } from '@/redux/features/inventoryOrders/inventoryOrdersActions'
+import { getSession } from 'next-auth/react'
+import { selectAllCategories } from '@/redux/features/categories/categoriesSlice'
+import { toast } from 'react-toastify'
+import { useRouter } from 'next/navigation'
+import { updateFiles } from '@/utils/azure'
+import SupplierCard from '../SupplierCard/SupplierCard'
 
 const NewInventoryOrderForm = ({ handleModalOpen }) => {
+	const router = useRouter()
 	const [isLoading, setIsLoading] = useState(false)
 	const [suppliers, loading, searchSuppliers] = useSuppliers()
+	const [enableSubmit, setEnableSubmit] = useState(false)
 	const [supplier, setSupplier] = useState(null)
 	const [formValue, setFormValue] = useState({
 		supplier: '',
@@ -57,6 +66,7 @@ const NewInventoryOrderForm = ({ handleModalOpen }) => {
 
 	const items = useSelector(selectAllCartItems)
 	const cartPriceTotal = useSelector(totalBuyPriceSelector)
+	const categories = useSelector(selectAllCategories)
 
 	const dispatch = useDispatch()
 
@@ -65,21 +75,87 @@ const NewInventoryOrderForm = ({ handleModalOpen }) => {
 
 		setIsLoading(true)
 
+		const session = await getSession()
+		const userID = session?.user.id
+		let uploadedFiles = []
+
+		const filesToBeUploaded = formValue.files.map(file => file.blobFile)
+
+		if (filesToBeUploaded.length > 0) {
+			uploadedFiles = await updateFiles(filesToBeUploaded, [])
+		}
+
+		const formattedStatus = formValue.status.map(event => ({
+			type: event,
+			timestamp: new Date().toISOString(),
+		}))
+
+		const fetchCategories = id => {
+			const category = categories.find(category => category._id === id)
+			return [
+				category?.name,
+				category?.parent?.name,
+				category?.parent?.parent?.name,
+			]
+		}
+
 		const preparedData = {
 			...formValue,
 			supplier: supplier._id,
+			user: userID,
+			files: uploadedFiles,
 			products: items.map(item => ({
-				...item,
-				product: item.product._id,
-				price: item.product.buyPrice,
+				productRef: item.product._id,
+				title: item.product.title,
+				brand: { name: item.product.brand.name },
+				category: fetchCategories(item.product.category._id),
+				images: item.product.images,
+				quantity: item.quantity,
+				buyPrice: item.buyPrice,
 			})),
+			status: formattedStatus,
 			subtotal: cartPriceTotal,
 			total: cartPriceTotal + formValue.shippingCost,
 		}
 
-		await createInventoryOrder(preparedData)
+		const {
+			status,
+			message,
+			data: inventoryOrder,
+		} = await fetcher('/api/inventory-orders/add', {
+			method: 'POST',
+			body: JSON.stringify(preparedData),
+			headers: {
+				'Content-type': 'application/json; charset=UTF-8',
+			},
+		})
+
+		if (status === 'success') {
+			router.push(`/inventory-orders/${inventoryOrder.orderNumber}`)
+			toast.success('Inventory order created.')
+			dispatch(emptyCart())
+		} else {
+			console.log(message)
+			toast.error('Failed to create order.')
+		}
+
 		setIsLoading(false)
 	}
+
+	useEffect(() => {
+		const handleEnableSubmit = () => {
+			const productsAdded = items.length > 0
+			const supplierAdded = supplier
+
+			if (productsAdded && supplierAdded) {
+				setEnableSubmit(true)
+			} else {
+				setEnableSubmit(false)
+			}
+		}
+
+		handleEnableSubmit()
+	}, [items, supplier])
 
 	return (
 		<Form disabled={isLoading}>
@@ -153,6 +229,7 @@ const NewInventoryOrderForm = ({ handleModalOpen }) => {
 																modifyItem({
 																	product: item.product,
 																	quantity: Number(value),
+																	buyPrice: item.buyPrice,
 																})
 															)
 														}
@@ -165,17 +242,15 @@ const NewInventoryOrderForm = ({ handleModalOpen }) => {
 													<span>x</span>
 
 													<InputNumber
-														value={item.product.buyPrice}
+														value={item.buyPrice}
 														step={0.1}
 														formatter={value => `$ ${value}`}
 														onChange={value => {
 															dispatch(
 																modifyItem({
-																	product: {
-																		...item.product,
-																		buyPrice: Number(value),
-																	},
+																	product: item.product,
 																	quantity: item.quantity,
+																	buyPrice: Number(value),
 																})
 															)
 														}}
@@ -185,7 +260,7 @@ const NewInventoryOrderForm = ({ handleModalOpen }) => {
 													/>
 
 													<span style={{ display: 'flex', width: 100 }}>
-														${roundMoney(item.product.buyPrice * item.quantity)}
+														${roundMoney(item.buyPrice * item.quantity)}
 													</span>
 
 													<Button
@@ -282,7 +357,6 @@ const NewInventoryOrderForm = ({ handleModalOpen }) => {
 									onChange={files =>
 										setFormValue(prev => ({ ...prev, files }))
 									}
-									onPreview={file => console.log(file)}
 								>
 									<div
 										style={{
@@ -336,98 +410,12 @@ const NewInventoryOrderForm = ({ handleModalOpen }) => {
 								/>
 							</Panel>
 						) : (
-							<PanelGroup bordered>
-								<Panel
-									header={
-										<Stack justifyContent='space-between'>
-											<span>Supplier</span>
-											<Button
-												appearance='link'
-												size='sm'
-												style={{ padding: 0 }}
-												onClick={() => setSupplier(null)}
-												disabled={isLoading}
-											>
-												Discard
-											</Button>
-										</Stack>
-									}
-								>
-									<Stack spacing={17} style={{ fontSize: 15 }}>
-										<div
-											style={{
-												position: 'relative',
-												height: 80,
-												width: 80,
-												objectFit: 'cover',
-												borderRadius: '50%',
-												overflow: 'hidden',
-											}}
-										>
-											<Image
-												src={supplier?.logo?.url || '/images/profile.png'}
-												alt={supplier.name}
-												fill
-												sizes='(max-width: 768px) 80px, (max-width: 1200px) 80px, 80px'
-											/>
-										</div>
-										<Stack direction='column' alignItems='flex-start'>
-											<a
-												target='_blank'
-												style={{ color: '#6CD6FF' }}
-												href={supplier?.website?.company || ''}
-											>
-												{supplier.name}
-											</a>
-											<span style={{ color: '#D4D4D4', fontSize: 13 }}>
-												{supplier?.contact?.email}
-											</span>
-											<span style={{ color: '#D4D4D4', fontSize: 13 }}>
-												{supplier?.contact?.primaryPhone}
-											</span>
-										</Stack>
-									</Stack>
-								</Panel>
-
-								<Panel header='Contact'>
-									<Stack
-										direction='column'
-										alignItems='flex-start'
-										style={{ color: '#D4D4D4', fontSize: 13 }}
-									>
-										<HStack>
-											<AdminIcon />
-											<HStack spacing={3}>
-												<span>{supplier?.contact?.firstName}</span>
-												<span>{supplier?.contact?.lastName}</span>
-											</HStack>
-										</HStack>
-										<HStack>
-											<EmailIcon />
-											<span>{supplier?.contact?.email}</span>
-										</HStack>
-										<HStack>
-											<PhoneIcon />
-											<span>{supplier?.contact?.primaryPhone}</span>
-										</HStack>
-									</Stack>
-								</Panel>
-
-								<Panel header='Address'>
-									<HStack alignItems='flex-start'>
-										<LocationIcon />
-										<VStack
-											style={{ color: '#D4D4D4', fontSize: 13 }}
-											spacing={0}
-										>
-											<span>{supplier?.address?.line1}</span>
-											<span>{supplier?.address?.line2}</span>
-											<span>{supplier?.address?.townCity}</span>
-											<span>{supplier?.address?.country}</span>
-										</VStack>
-									</HStack>
-								</Panel>
-							</PanelGroup>
+							<SupplierCard
+								supplier={supplier}
+								isLoading={isLoading}
+								setSupplier={setSupplier}
+								newOrder
+							/>
 						)}
 
 						<Stack justifyContent='flex-end' style={{ marginTop: '1em' }}>
@@ -435,7 +423,7 @@ const NewInventoryOrderForm = ({ handleModalOpen }) => {
 								<Button
 									appearance='primary'
 									onClick={handleSubmit}
-									// disabled={enableSubmit}
+									disabled={!enableSubmit}
 									loading={isLoading}
 								>
 									Create order

@@ -1,8 +1,5 @@
-import Invoice from '@/components/Invoice/Invoice'
-import Supplier from '@/components/Supplier/Supplier'
-import { generateInvoiceNumber } from '@/utils/functions'
-import { configMailer, fetchTemplate } from '@/utils/mailer'
-import { renderToStream } from '@react-pdf/renderer'
+import Supplier from './Supplier'
+import User from './User'
 import Product from './Product'
 import Brand from './Brand'
 import mongoose from 'mongoose'
@@ -20,12 +17,20 @@ const InventoryOrderSchema = new mongoose.Schema(
 		},
 		products: [
 			{
-				product: {
+				productRef: {
 					type: mongoose.Schema.Types.ObjectId,
 					ref: 'Product',
 				},
+				title: { type: String },
+				brand: {
+					name: { type: String },
+				},
+				category: {
+					type: [String],
+				},
+				images: [{ name: { type: String }, url: { type: String } }],
 				quantity: { type: Number, default: 1 },
-				price: { type: Number },
+				buyPrice: { type: Number },
 			},
 		],
 		files: [

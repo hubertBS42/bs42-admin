@@ -5,6 +5,7 @@ import { Panel, SelectPicker, Stack, Steps } from 'rsuite'
 
 const InventoryOrderStatusPanel = ({
 	status,
+	order = null,
 	setFormValue,
 	editable = true,
 	newOrder = false,
@@ -73,9 +74,12 @@ const InventoryOrderStatusPanel = ({
 							disabledItemValues={disabledSteps}
 							onChange={value => {
 								if (value === 'cancelled') {
-									const data = orderDetails.status.map(event => event.type)
+									const data = order.status.map(event => event.type)
 									data.push('cancelled')
-									setFormValue(prev => ({ ...prev, status: data }))
+									setFormValue(prev => ({
+										...prev,
+										status: data,
+									}))
 								} else {
 									const index = steps.findIndex(step => step.value === value)
 									const data = steps

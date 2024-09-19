@@ -3,10 +3,10 @@ import { getVideoThumbnailBlob } from './functions'
 
 const picturesContainer = 'pictures'
 // const picturesContainer = 'testimages'
-// const filesContainer = 'testfiles'
+const filesContainer = 'testfiles'
 const videosContainer = 'videos'
 // const videosContainer = 'testvideos'
-const filesContainer = 'files'
+// const filesContainer = 'files'
 
 const storageName =
 	process.env.NEXT_PUBLIC_AZURE_STORAGE_RESOURCE_NAME
@@ -85,7 +85,7 @@ const createBlobInVideosContainer = async file => {
 
 const createBlobInFilesContainer = async file => {
 	const ext = file.name.split('.').pop()
-	const originalFileName = file.name
+	const originalFilename = file.name
 	const newFilename = Date.now() + '.' + ext
 
 	// create blobClient for container
@@ -100,7 +100,7 @@ const createBlobInFilesContainer = async file => {
 	// upload file
 	await blobClient.uploadData(file, options)
 
-	return { newFilename, originalFileName }
+	return { newFilename, originalFilename }
 }
 
 export const deleteImages = async files => {
@@ -272,13 +272,15 @@ export const updateFiles = async (toBeUploaded, toBeDeleted) => {
 
 	const data = await Promise.all(queries)
 
-	const files = data.filter(file => typeof file !== 'object')
+	const files = data.filter(
+		file => typeof file.newFilename !== 'object'
+	)
 
 	const formatted = files.map((file, i) => {
 		return {
 			name: file.newFilename,
-			originalName: file.originalFileName,
-			url: `https://${storageName}.blob.core.windows.net/${filesContainer}/${file}`,
+			originalName: file.originalFilename,
+			url: `https://${storageName}.blob.core.windows.net/${filesContainer}/${file.newFilename}`,
 			fileKey: i,
 		}
 	})

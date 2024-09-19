@@ -12,6 +12,7 @@ import {
 	setDrawerLoading,
 } from '../drawer/drawerSlice'
 import { getSession } from 'next-auth/react'
+import { updateFiles } from '@/utils/azure'
 const { dispatch } = store
 
 export const loadInventoryOrders = async () => {
@@ -136,30 +137,33 @@ export const searchInventoryOrders = async (query, limit, page) => {
 export const createInventoryOrder = async data => {
 	const session = await getSession()
 	const userID = session?.user.id
+	let uploadedFiles = []
 
 	const filesToBeUploaded = data.files.map(file => file.blobFile)
 
-	console.log(filesToBeUploaded)
+	if (filesToBeUploaded.length > 0) {
+		uploadedFiles = await updateFiles(filesToBeUploaded, [])
+	}
 
-	let preparedData = { ...data, user: userID }
+	let preparedData = { ...data, user: userID, files: uploadedFiles }
 
-	// const { status, message } = await fetcher(
-	// 	'/api/inventory-orders/add',
-	// 	{
-	// 		method: 'POST',
-	// 		body: JSON.stringify(preparedData),
-	// 		headers: {
-	// 			'Content-type': 'application/json; charset=UTF-8',
-	// 		},
-	// 	}
-	// )
+	const { status, message } = await fetcher(
+		'/api/inventory-orders/add',
+		{
+			method: 'POST',
+			body: JSON.stringify(preparedData),
+			headers: {
+				'Content-type': 'application/json; charset=UTF-8',
+			},
+		}
+	)
 
-	// if (status === 'success') {
-	// 	toast.success('Inventory order created.')
-	// 	return
-	// }
+	if (status === 'success') {
+		toast.success('Inventory order created.')
+		return
+	}
 
-	// toast.error('Failed to create inventory order.')
+	toast.error('Failed to create inventory order.')
 }
 
 export const updateInventoryOrder = async (inventoryOrder, data) => {
