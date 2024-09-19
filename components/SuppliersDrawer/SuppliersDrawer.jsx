@@ -11,6 +11,7 @@ import {
 	Schema,
 	Tabs,
 	Toggle,
+	Uploader,
 } from 'rsuite'
 import CloseIcon from '@rsuite/icons/Close'
 import CheckIcon from '@rsuite/icons/Check'
@@ -36,14 +37,23 @@ import {
 	displayValidationError,
 	processFormErrors,
 } from '@/utils/functions'
+import ImagesUploader from '../ImagesUploader/ImagesUploader'
 
-const { StringType, ObjectType } = Schema.Types
+const { StringType, ObjectType, ArrayType } = Schema.Types
 
 const model = Schema.Model({
 	accountID: StringType(),
 	vatID: StringType(),
 	name: StringType().isRequired('You must provide a name.'),
 	notes: StringType(),
+	website: ObjectType().shape({
+		company: StringType(),
+		alibaba: StringType(),
+	}),
+	logo: ArrayType().minLength(
+		1,
+		'You need to upload at least 1 image.'
+	),
 	contact: ObjectType().shape({
 		firstName: StringType(),
 		lastName: StringType(),
@@ -71,6 +81,7 @@ const SuppliersDrawer = () => {
 	const dispatch = useDispatch()
 	const formRef = useRef()
 	const [formError, setFormError] = useState({})
+	const [imagesToBeDeleted, setImagesToBeDeleted] = useState([])
 	const [formValue, setFormValue] = useState({
 		accountID: '',
 		vatID: '',
@@ -80,6 +91,7 @@ const SuppliersDrawer = () => {
 			company: '',
 			alibaba: '',
 		},
+		logo: [],
 		contact: {
 			firstName: '',
 			lastName: '',
@@ -118,6 +130,7 @@ const SuppliersDrawer = () => {
 						company: supplier?.website?.company || '',
 						alibaba: supplier?.website?.alibaba || '',
 					},
+					logo: supplier.logo ? [supplier.logo] : [],
 					contact: {
 						firstName: supplier?.contact?.firstName || '',
 						lastName: supplier?.contact?.lastName || '',
@@ -147,6 +160,7 @@ const SuppliersDrawer = () => {
 					company: '',
 					alibaba: '',
 				},
+				logo: [],
 				contact: {
 					firstName: '',
 					lastName: '',
@@ -177,11 +191,18 @@ const SuppliersDrawer = () => {
 
 		if (isEditing) {
 			//update
-			await updateSupplier(supplier, formValue)
+			await updateSupplier(supplier, formValue, imagesToBeDeleted)
+			setImagesToBeDeleted([])
 		} else {
 			//create
 			await createSupplier(formValue)
 		}
+	}
+
+	const grabRemovedImages = file => {
+		setImagesToBeDeleted(prev => {
+			return [...prev, file.name]
+		})
 	}
 
 	return (
@@ -258,6 +279,28 @@ const SuppliersDrawer = () => {
 									label='Name'
 									accepter={Input}
 									error={displayValidationError(formError?.name)}
+								/>
+							</Col>
+						</Row>
+
+						<Row>
+							<Col xs={24}>
+								<ImagesUploader
+									name='logo'
+									accepter={Uploader}
+									error={displayValidationError(formError?.logo)}
+									multiple
+									listType='picture'
+									action='//jsonplaceholder.typicode.com/posts/'
+									defaultFileList={
+										isEditing && supplier.logo ? [supplier.logo] : []
+									}
+									autoUpload={false}
+									label='Logo'
+									maxImages={1}
+									noOfImages={formValue.logo.length}
+									disabled={formValue.logo.length === 1}
+									onRemove={grabRemovedImages}
 								/>
 							</Col>
 						</Row>

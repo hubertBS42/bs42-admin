@@ -85,6 +85,7 @@ const createBlobInVideosContainer = async file => {
 
 const createBlobInFilesContainer = async file => {
 	const ext = file.name.split('.').pop()
+	const originalFileName = file.name
 	const newFilename = Date.now() + '.' + ext
 
 	// create blobClient for container
@@ -99,7 +100,7 @@ const createBlobInFilesContainer = async file => {
 	// upload file
 	await blobClient.uploadData(file, options)
 
-	return newFilename
+	return { newFilename, originalFileName }
 }
 
 export const deleteImages = async files => {
@@ -275,7 +276,8 @@ export const updateFiles = async (toBeUploaded, toBeDeleted) => {
 
 	const formatted = files.map((file, i) => {
 		return {
-			name: file,
+			name: file.newFilename,
+			originalName: file.originalFileName,
 			url: `https://${storageName}.blob.core.windows.net/${filesContainer}/${file}`,
 			fileKey: i,
 		}

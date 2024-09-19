@@ -16,7 +16,7 @@ import PasswordField from '../PasswordField/PasswordField'
 import styles from './SigninForm.module.scss'
 import { useSession, signIn } from 'next-auth/react'
 import { useEffect, useRef, useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { toast } from 'react-toastify'
 import Image from 'next/image'
 import logo from 'public/images/logo-collapsed.png'
@@ -35,9 +35,14 @@ const SignInForm = () => {
 	const [loading, setLoading] = useState(false)
 	const { status } = useSession()
 	const router = useRouter()
+	const searchParams = useSearchParams()
+
+	const params = new URLSearchParams(searchParams)
+
+	const redirect_to = params.get('redirect_to') || '/'
 
 	useEffect(() => {
-		if (status === 'authenticated') router.push('/')
+		if (status === 'authenticated') router.push(redirect_to)
 	}, [router, status])
 
 	const [formValue, setFormValue] = useState({
@@ -68,7 +73,7 @@ const SignInForm = () => {
 			setLoading(false)
 			toast.error(status.error.split(':')[1])
 		} else {
-			router.push('/')
+			router.push(redirect_to)
 		}
 	}
 

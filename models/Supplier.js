@@ -9,6 +9,10 @@ const SupplierSchema = new mongoose.Schema(
 			company: { type: String, trim: true },
 			alibaba: { type: String, trim: true },
 		},
+		logo: {
+			name: { type: String },
+			url: { type: String },
+		},
 		contact: {
 			firstName: { type: String, trim: true },
 			lastName: { type: String, trim: true },

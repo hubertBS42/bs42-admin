@@ -16,6 +16,11 @@ import {
 	setModalOpen,
 } from '../modal/modalSlice'
 import { store } from '@/redux/store'
+import {
+	deleteImages,
+	updateImages,
+	uploadImagesToBlob,
+} from '@/utils/azure'
 
 const { dispatch } = store
 
@@ -151,9 +156,18 @@ export const createSupplier = async data => {
 		return toast.error(existsMessage)
 	}
 
+	const blobFile = data.logo[0].blobFile
+
+	let uploadedLogo = await uploadImagesToBlob([blobFile])
+	uploadedLogo = uploadedLogo[0]
+
+	const { logo, ...rest } = data
+
+	const preparedData = { logo: uploadedLogo, ...rest }
+
 	const { status, message } = await fetcher('/api/suppliers/add', {
 		method: 'POST',
-		body: JSON.stringify(data),
+		body: JSON.stringify(preparedData),
 		headers: {
 			'Content-type': 'application/json; charset=UTF-8',
 		},
@@ -169,7 +183,11 @@ export const createSupplier = async data => {
 	toast.error('Failed to add supplier.')
 }
 
-export const updateSupplier = async (supplier, data) => {
+export const updateSupplier = async (
+	supplier,
+	data,
+	imageToBeDeleted
+) => {
 	dispatch(setDrawerLoading(true))
 
 	if (supplier.name !== data.name) {
@@ -182,11 +200,29 @@ export const updateSupplier = async (supplier, data) => {
 		}
 	}
 
+	let uploadedLogo = null
+
+	if (data.logo[0].hasOwnProperty('blobFile')) {
+		const blobFile = data.logo[0].blobFile
+		uploadedLogo = await updateImages([blobFile], imageToBeDeleted)
+		uploadedLogo = uploadedLogo[0]
+	}
+
+	const { logo, ...rest } = data
+
+	let preparedData
+
+	if (!uploadedLogo) {
+		preparedData = rest
+	} else {
+		preparedData = { logo: uploadedLogo, ...rest }
+	}
+
 	const { status, message } = await fetcher(
 		`/api/suppliers/${supplier._id}`,
 		{
 			method: 'PATCH',
-			body: JSON.stringify(data),
+			body: JSON.stringify(preparedData),
 			headers: {
 				'Content-type': 'application/json; charset=UTF-8',
 			},
@@ -206,6 +242,12 @@ export const updateSupplier = async (supplier, data) => {
 
 export const deleteSupplier = async supplier => {
 	dispatch(setModalLoading(true))
+
+	const logo = supplier?.logo?.name
+
+	if (logo) {
+		await deleteImages([logo])
+	}
 
 	const { status, message } = await fetcher(
 		`/api/suppliers/${supplier._id}`,

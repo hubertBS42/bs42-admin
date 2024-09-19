@@ -29,7 +29,7 @@ export const GET = async request => {
 			// 	select: 'name slug',
 			// })
 			.select(
-				'title slug brand images sellPrice category isActive createdAt'
+				'title slug brand images sellPrice buyPrice category isActive createdAt'
 			)
 			.lean({ autopopulate: true })
 

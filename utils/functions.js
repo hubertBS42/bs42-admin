@@ -22,12 +22,28 @@ export const generatePageTitle = () => {
 	const choppedUp = pathname.split('/')
 
 	if (choppedUp.includes('new')) {
-		const firstWord = capitalizeFirstLetter(choppedUp.pop())
+		const words = ['new']
 
-		const capitalized = capitalizeFirstLetter(choppedUp.pop())
-		const secondWord = removeLastLetter(capitalized)
+		if (choppedUp[1].includes('-')) {
+			const wordsArray = choppedUp[1].split('-')
 
-		return `${firstWord} ${secondWord}`
+			wordsArray.forEach((word, i) => {
+				if (i === wordsArray.length - 1) {
+					words.push(removeLastLetter(word))
+					return
+				}
+
+				words.push(word)
+			})
+		} else {
+			words.push(removeLastLetter(choppedUp[1]))
+		}
+
+		const text = words
+			.map(word => capitalizeFirstLetter(word))
+			.join(' ')
+
+		return text
 	}
 
 	if (choppedUp.includes('edit')) {

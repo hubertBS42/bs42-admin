@@ -12,6 +12,7 @@ import usersReducer from './features/users/usersSlice'
 import resourcesReducer from './features/resources/resourcesSlice'
 import rolesReducer from './features/roles/rolesSlice'
 import ordersReducer from './features/orders/ordersSlice'
+import inventoryOrdersReducer from './features/inventoryOrders/inventoryOrdersSlice'
 import applicationsReducer from './features/applications/applicationsSlice'
 import productsReducer from './features/products/productsSlice'
 import currenciesReducer from './features/currencies/currenciesSlice'
@@ -38,6 +39,7 @@ export const store = configureStore({
 		messages: MessagesReducer,
 		users: usersReducer,
 		orders: ordersReducer,
+		inventoryOrders: inventoryOrdersReducer,
 		resources: resourcesReducer,
 		roles: rolesReducer,
 		applications: applicationsReducer,

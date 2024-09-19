@@ -31,6 +31,7 @@ const cartSlice = createSlice({
 
 			if (product) {
 				product.quantity = action.payload.quantity
+				product.product = action.payload.product
 				if (product.quantity === 0) {
 					state.cartItems = state.cartItems.filter(
 						item => item.product._id !== action.payload.product._id
@@ -91,6 +92,15 @@ export const totalPriceSelector = createSelector(
 	cartItems =>
 		cartItems.reduce(
 			(total, curr) => (total += curr.quantity * curr.product.sellPrice),
+			0
+		)
+)
+
+export const totalBuyPriceSelector = createSelector(
+	[cartItems],
+	cartItems =>
+		cartItems.reduce(
+			(total, curr) => (total += curr.quantity * curr.product.buyPrice),
 			0
 		)
 )

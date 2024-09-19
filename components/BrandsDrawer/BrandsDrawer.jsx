@@ -196,7 +196,7 @@ const BrandsDrawer = () => {
 									action='//jsonplaceholder.typicode.com/posts/'
 									defaultFileList={isEditing && brand.logo ? [brand.logo] : []}
 									autoUpload={false}
-									label='Images'
+									label='Logo'
 									maxImages={1}
 									noOfImages={formValue.logo.length}
 									disabled={formValue.logo.length === 1}
