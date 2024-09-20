@@ -72,7 +72,7 @@ export const GET = async request => {
 			? null
 			: searchParams.get('minPrice')
 
-	let productsQuery = {}
+	let productsQuery = { isActive: true }
 	let rate = null
 
 	try {

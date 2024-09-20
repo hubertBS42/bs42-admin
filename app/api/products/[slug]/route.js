@@ -19,9 +19,11 @@ export const GET = async (request, { params }) => {
 			.select('_id')
 			.lean({ autopopulate: false })
 
-		const productQuery = Product.findOne({ slug }).lean({
-			autopopulate: true,
-		})
+		const productQuery = Product.findOne({ slug, isActive: true }).lean(
+			{
+				autopopulate: true,
+			}
+		)
 
 		let [defaultLocation, product] = await Promise.all([
 			defaultLocationQuery,

@@ -18,6 +18,7 @@ export const GET = async request => {
 				{ title: { $regex: queryRegx } },
 				{ slug: { $regex: queryRegx } },
 			],
+			isActive: true,
 		})
 			.sort({ title: 'asc' })
 			// .populate({

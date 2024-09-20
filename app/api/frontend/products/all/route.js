@@ -9,7 +9,7 @@ export const GET = async request => {
 	try {
 		await connectToDB()
 
-		const products = await Product.find()
+		const products = await Product.find({ isActive: true })
 			.collation({ locale: 'en' })
 			// .populate({
 			// 	path: 'brand',

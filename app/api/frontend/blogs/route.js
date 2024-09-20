@@ -45,7 +45,7 @@ export const GET = async request => {
 			break
 	}
 
-	let blogsQuery = {}
+	let blogsQuery = { isActive: true }
 
 	try {
 		await connectToDB()
