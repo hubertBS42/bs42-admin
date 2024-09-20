@@ -3,10 +3,10 @@ import { getVideoThumbnailBlob } from './functions'
 
 const picturesContainer = 'pictures'
 // const picturesContainer = 'testimages'
-const filesContainer = 'testfiles'
+// const filesContainer = 'testfiles'
 const videosContainer = 'videos'
 // const videosContainer = 'testvideos'
-// const filesContainer = 'files'
+const filesContainer = 'files'
 
 const storageName =
 	process.env.NEXT_PUBLIC_AZURE_STORAGE_RESOURCE_NAME
@@ -272,24 +272,30 @@ export const updateFiles = async (toBeUploaded, toBeDeleted) => {
 
 	const data = await Promise.all(queries)
 
-	const files = data.filter(
-		file => typeof file.newFilename !== 'object'
-	)
+	// const files = data.filter(
+	// 	file => typeof file.newFilename !== 'object'
+	// )
 
-	const formatted = files.map((file, i) => {
-		return {
-			name: file.newFilename,
-			originalName: file.originalFilename,
-			url: `https://${storageName}.blob.core.windows.net/${filesContainer}/${file.newFilename}`,
-			fileKey: i,
-		}
-	})
+	const files = data.filter(file => file.hasOwnProperty('newFilename'))
 
-	indices.map(index => {
-		formatted.splice(index, 0, null)
-	})
+	if (files.length > 0) {
+		const formatted = files.map((file, i) => {
+			return {
+				name: file.newFilename,
+				originalName: file.originalFilename,
+				url: `https://${storageName}.blob.core.windows.net/${filesContainer}/${file.newFilename}`,
+				fileKey: i,
+			}
+		})
 
-	return formatted
+		indices.map(index => {
+			formatted.splice(index, 0, null)
+		})
+
+		return formatted
+	}
+
+	return []
 
 	// let currentIndex = 0
 

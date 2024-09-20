@@ -200,15 +200,13 @@ const OrdersDrawer = () => {
 			return
 		}
 
-		console.log(formValue)
-
-		// if (isEditing) {
-		// 	//update
-		// 	await updateOrder(order, formValue)
-		// } else {
-		// 	//create
-		// 	await createOrder(formValue)
-		// }
+		if (isEditing) {
+			//update
+			await updateOrder(order, formValue)
+		} else {
+			//create
+			await createOrder(formValue)
+		}
 	}
 
 	const handleSelect = data => {

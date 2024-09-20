@@ -278,7 +278,7 @@ const UsersDrawer = () => {
 			setImageToBeDeleted([])
 		} else {
 			//create
-			console.log(formValue)
+
 			await createUser(formValue)
 		}
 	}

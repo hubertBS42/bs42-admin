@@ -51,17 +51,17 @@ import SupplierCard from '../SupplierCard/SupplierCard'
 const InventoryOrderForm = ({ order }) => {
 	const router = useRouter()
 	const [isLoading, setIsLoading] = useState(false)
+	const [filesToBeDeleted, setFilesToBeDeleted] = useState([])
 	const [formValue, setFormValue] = useState({
-		// supplier: order.supplier._id,
-		// products: order.products,
 		files: order.files,
-		// shippingCost: order.shippingCost,
-		// subtotal: order.subtotal,
-		// total: order.total,
 		status: order.status.map(event => event.type),
 	})
 
-	const dispatch = useDispatch()
+	const grabRemovedFiles = file => {
+		setFilesToBeDeleted(prev => {
+			return [...prev, file.name]
+		})
+	}
 
 	const handleFileDownload = async file => {
 		// Fetch the file
@@ -92,54 +92,83 @@ const InventoryOrderForm = ({ order }) => {
 
 		setIsLoading(true)
 
-		// let uploadedFiles = []
+		let uploadedFiles = []
+		let filesToBeUploaded = []
+		let existingFiles = []
+		let status = [...order.status]
 
-		// const filesToBeUploaded = formValue.files.map(file => file.blobFile)
+		if (formValue.status.includes('cancelled')) {
+			status.push({
+				type: 'cancelled',
+				timestamp: new Date().toISOString(),
+			})
+		} else {
+			const steps = [
+				{ label: 'Pending', value: 'created' },
+				{ label: 'Processing', value: 'processing' },
+				{ label: 'Delivering', value: 'delivering' },
+				{ label: 'Delivered', value: 'delivered' },
+				{ label: 'Cancelled', value: 'cancelled' },
+			]
+			const latestStepIndex = steps.findIndex(
+				step =>
+					step.value === formValue.status[formValue.status.length - 1]
+			)
 
-		// if (filesToBeUploaded.length > 0) {
-		// 	uploadedFiles = await updateFiles(filesToBeUploaded, [])
-		// }
+			const statusUpdate = steps.slice(
+				status.length,
+				latestStepIndex + 1
+			)
 
-		// const formattedStatus = formValue.status.map(event => ({
-		// 	type: event,
-		// 	timestamp: new Date().toISOString(),
-		// }))
+			statusUpdate.forEach(event =>
+				status.push({
+					type: event.value,
+					timestamp: new Date().toISOString(),
+				})
+			)
+		}
 
-		// const preparedData = {
-		// 	...formValue,
-		// 	supplier: supplier._id,
-		// 	user: userID,
-		// 	files: uploadedFiles,
-		// 	products: items.map(item => ({
-		// 		...item,
-		// 		product: item.product._id,
-		// 		price: item.product.buyPrice,
-		// 	})),
-		// 	status: formattedStatus,
-		// 	subtotal: cartPriceTotal,
-		// 	total: cartPriceTotal + formValue.shippingCost,
-		// }
+		formValue.files.forEach(file => {
+			if (file.hasOwnProperty('blobFile')) {
+				filesToBeUploaded.push(file.blobFile)
+			} else {
+				existingFiles.push(file)
+			}
+		})
 
-		// const {
-		// 	status,
-		// 	message,
-		// 	data: inventoryOrder,
-		// } = await fetcher('/api/inventory-orders/add', {
-		// 	method: 'POST',
-		// 	body: JSON.stringify(preparedData),
-		// 	headers: {
-		// 		'Content-type': 'application/json; charset=UTF-8',
-		// 	},
-		// })
+		if (filesToBeUploaded.length > 0 || filesToBeDeleted.length > 0) {
+			uploadedFiles = await updateFiles(
+				filesToBeUploaded,
+				filesToBeDeleted
+			)
+		}
 
-		// if (status === 'success') {
-		// 	router.push(`/inventory-orders/${inventoryOrder.orderNumber}`)
-		// 	toast.success('Inventory order created.')
-		// 	dispatch(emptyCart())
-		// } else {
-		// 	console.log(message)
-		// 	toast.error('Failed to create order.')
-		// }
+		const preparedData = {
+			...formValue,
+			files:
+				uploadedFiles.length > 0
+					? [...existingFiles, ...uploadedFiles]
+					: formValue.files,
+			status,
+		}
+
+		const { status: updateStatus, message } = await fetcher(
+			`/api/inventory-orders/${order.orderNumber}`,
+			{
+				method: 'PATCH',
+				body: JSON.stringify(preparedData),
+				headers: {
+					'Content-type': 'application/json; charset=UTF-8',
+				},
+			}
+		)
+
+		if (updateStatus === 'success') {
+			router.push('/inventory-orders')
+			toast.success('Inventory order updated.')
+		} else {
+			toast.error('Failed to update inventory order.')
+		}
 
 		setIsLoading(false)
 	}
@@ -301,7 +330,7 @@ const InventoryOrderForm = ({ order }) => {
 									onChange={files =>
 										setFormValue(prev => ({ ...prev, files }))
 									}
-									onPreview={file => console.log(file)}
+									onRemove={grabRemovedFiles}
 								>
 									<div
 										style={{

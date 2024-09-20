@@ -4,7 +4,7 @@ import { notFound } from 'next/navigation'
 
 const InventoryOrdersPage = async ({ params }) => {
 	const { status, data } = await fetcher(
-		`http://localhost:3000/api/inventory-orders/${params.number}`,
+		`https://portal.bs42.net/api/inventory-orders/${params.number}`,
 		{ cache: 'no-store' }
 	)
 
