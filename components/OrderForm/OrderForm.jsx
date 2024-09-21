@@ -84,8 +84,9 @@ const OrderForm = ({ order }) => {
 		status: order.status,
 		rate: order.rate,
 		discount: {
-			percentage: order.discount.percentage,
+			type: order.discount.type,
 			value: order.discount.value,
+			equivalent: order.discount.equivalent,
 			reason: order?.discount?.reason || '',
 		},
 		products: order.products,
@@ -205,12 +206,14 @@ const OrderForm = ({ order }) => {
 	useEffect(() => {
 		const handleCalculations = () => {
 			const cartTotal = calculateCartTotal(orderDetails.products)
-			const discountDifference = cartTotal - orderDetails.discount.value
+
+			const discountDifference =
+				cartTotal - orderDetails.discount.equivalent / orderDetails.rate
 
 			setOrderDetails(prev => ({
 				...prev,
 				subtotal: discountDifference,
-				total: discountDifference + Number(orderDetails.shipping.cost),
+				total: discountDifference + orderDetails.shipping.cost,
 			}))
 
 			setSubtotal(discountDifference * orderDetails.rate)
@@ -283,6 +286,7 @@ const OrderForm = ({ order }) => {
 		setOrderSteps()
 	}, [
 		orderDetails.discount.value,
+		orderDetails.discount.type,
 		orderDetails.shipping.method,
 		orderDetails.shipping.cost,
 		orderDetails.shipping.address,
@@ -317,7 +321,10 @@ const OrderForm = ({ order }) => {
 											<Stack
 												justifyContent='space-between'
 												alignItems='center'
-												style={{ fontSize: 12, color: '#D4D4D4' }}
+												style={{
+													fontSize: 12,
+													color: '#D4D4D4',
+												}}
 											>
 												<Stack spacing={15} style={{ width: 360 }}>
 													<div
@@ -351,7 +358,13 @@ const OrderForm = ({ order }) => {
 
 												<span>{product.quantity}</span>
 
-												<span style={{ display: 'flex', width: 100 }}>
+												<span
+													style={{
+														display: 'flex',
+														justifyContent: 'flex-end',
+														width: 100,
+													}}
+												>
 													GHS{' '}
 													{roundMoney(
 														product.price * product.quantity * orderDetails.rate
@@ -397,7 +410,14 @@ const OrderForm = ({ order }) => {
 												)}
 											</Col>
 											<Col xs={15}>
-												<Text>% {orderDetails.discount.percentage}</Text>
+												<Text>
+													{orderDetails.discount.type === 'percentage'
+														? '%'
+														: 'GHS'}{' '}
+													{orderDetails.discount.type === 'percentage'
+														? orderDetails.discount.value
+														: roundMoney(orderDetails.discount.equivalent)}
+												</Text>
 											</Col>
 										</Row>
 

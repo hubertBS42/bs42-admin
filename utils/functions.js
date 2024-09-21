@@ -801,3 +801,22 @@ export const processFormErrors = (e, formError) => {
 
 	return preparedData
 }
+
+// Format orders
+export const formatOrder = order => {
+	const { percentage, ...rest } = order.discount
+
+	const total = calculateCartTotal(order.products)
+	const discount = (percentage / 100) * total
+	const equivalent = discount * order.rate
+
+	return {
+		...order,
+		discount: {
+			...rest,
+			type: 'percentage',
+			value: percentage,
+			equivalent,
+		},
+	}
+}

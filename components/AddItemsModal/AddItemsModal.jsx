@@ -131,7 +131,7 @@ const AddItemsModal = ({ open, handleClose }) => {
 					spacing={20}
 					style={{ marginTop: '1.5em' }}
 				>
-					{results.length > 0 &&
+					{results.length > 0 ? (
 						results.map(result => (
 							<VStack
 								key={result.category}
@@ -201,7 +201,14 @@ const AddItemsModal = ({ open, handleClose }) => {
 									))}
 								</List>
 							</VStack>
-						))}
+						))
+					) : (
+						<HStack justifyContent='center'>
+							<Text muted size={13}>
+								No products found.
+							</Text>
+						</HStack>
+					)}
 				</VStack>
 			</Modal.Body>
 			<Modal.Footer>

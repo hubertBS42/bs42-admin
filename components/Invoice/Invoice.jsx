@@ -246,14 +246,18 @@ const Invoice = ({ data }) => {
 					</View>
 
 					<View style={styles.summaryBlock}>
-						{data.discount.percentage > 0 && (
+						{data.discount.value > 0 && (
 							<View style={styles.summaryBlockSection}>
 								<View style={{ width: '80%' }}>
-									<Text>Discount ({data.discount.percentage}%)</Text>
+									<Text>
+										Discount{' '}
+										{data.discount.type === 'percentage' &&
+											`(${data.discount.value}%)`}
+									</Text>
 								</View>
 								<View style={{ width: '20%' }}>
 									<Text style={styles.price}>
-										GHS {roundMoney(data.discount.value * data.rate)}
+										GHS {roundMoney(data.discount.equivalent)}
 									</Text>
 								</View>
 							</View>

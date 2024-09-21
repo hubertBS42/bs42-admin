@@ -88,8 +88,9 @@ const NewOrderForm = ({ handleModalOpen }) => {
 		subtotal: 0,
 		total: 0,
 		discount: {
-			percentage: 0,
+			type: 'percentage',
 			value: 0,
+			equivalent: 0,
 			reason: '',
 		},
 		notes: '',
@@ -110,7 +111,7 @@ const NewOrderForm = ({ handleModalOpen }) => {
 	}
 
 	const handleSubmit = async () => {
-		const { shipping, billingActive, profileImg, ...rest } =
+		const { shipping, billingActive, profileImg, discount, ...rest } =
 			orderDetails
 
 		setIsLoading(true)
@@ -119,6 +120,15 @@ const NewOrderForm = ({ handleModalOpen }) => {
 			type: event,
 			timestamp: new Date().toISOString(),
 		}))
+
+		const discountData = {
+			...discount,
+			value:
+				discount.type === 'percentage'
+					? Number(discount.value)
+					: Number(discount.value) / rate,
+			equivalent: Number(discount.equivalent),
+		}
 
 		const preparedData = {
 			...customer,
@@ -169,6 +179,7 @@ const NewOrderForm = ({ handleModalOpen }) => {
 				quantity: item.quantity,
 				price: item.product.sellPrice,
 			})),
+			discount: discountData,
 			rate,
 			status: data,
 			...rest,
@@ -200,19 +211,26 @@ const NewOrderForm = ({ handleModalOpen }) => {
 
 	useEffect(() => {
 		const handleCalculations = () => {
-			const discountValue =
-				(Number(orderDetails.discount.percentage) / 100) * cartPriceTotal
-			const discountDifference = cartPriceTotal - discountValue
+			// let discountValue
+
+			// if (orderDetails.discount.type === 'percentage') {
+			// 	discountValue =
+			// 		(orderDetails.discount.value / 100) * cartPriceTotal
+			// } else {
+			// 	discountValue = orderDetails.discount.value / rate
+			// }
+
+			const discountDifference =
+				cartPriceTotal - orderDetails.discount.equivalent / rate
 
 			setOrderDetails(prev => ({
 				...prev,
 				subtotal: discountDifference,
-				total: discountDifference + Number(orderDetails.shipping.cost),
+				total: discountDifference + orderDetails.shipping.cost,
 			}))
 			setSubtotal(discountDifference * rate)
 			setTotal(
-				discountDifference * rate +
-					Number(orderDetails.shipping.cost) * rate
+				discountDifference * rate + orderDetails.shipping.cost * rate
 			)
 		}
 
@@ -285,7 +303,8 @@ const NewOrderForm = ({ handleModalOpen }) => {
 		setOrderSteps()
 	}, [
 		cartItemsTotal,
-		orderDetails.discount.percentage,
+		orderDetails.discount.type,
+		orderDetails.discount.value,
 		orderDetails.shipping.cost,
 		orderDetails.shipping.method,
 		customer,
@@ -454,10 +473,18 @@ const NewOrderForm = ({ handleModalOpen }) => {
 													isLoading={isLoading}
 													rate={rate}
 													cartPriceTotal={cartPriceTotal}
+													newOrder
 												/>
 											</Col>
 											<Col xs={15}>
-												<Text>% {orderDetails.discount.percentage}</Text>
+												<Text>
+													{orderDetails.discount.type === 'percentage'
+														? '%'
+														: 'GHS'}{' '}
+													{orderDetails.discount.type === 'percentage'
+														? orderDetails.discount.value
+														: roundMoney(orderDetails.discount.equivalent)}
+												</Text>
 											</Col>
 										</Row>
 

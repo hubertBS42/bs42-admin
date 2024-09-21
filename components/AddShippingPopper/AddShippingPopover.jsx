@@ -49,7 +49,7 @@ const AddShippingPopover = ({
 						<Stack direction='column' alignItems='flex-start' spacing={3}>
 							<Text>Amount(GHS):</Text>
 							<InputNumber
-								onChange={amount => setShipping(amount)}
+								onChange={amount => setShipping(Number(amount))}
 								value={shipping}
 								min={0}
 							/>

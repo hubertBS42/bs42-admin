@@ -54,8 +54,13 @@ const OrderSchema = new mongoose.Schema(
 		],
 		rate: { type: Number },
 		discount: {
-			percentage: { type: Number, default: 0 },
+			type: {
+				type: String,
+				enum: ['percentage', 'amount'],
+				default: 'percentage',
+			},
 			value: { type: Number, default: 0 },
+			equivalent: { type: Number, default: 0 },
 			reason: { type: String },
 		},
 		products: [
