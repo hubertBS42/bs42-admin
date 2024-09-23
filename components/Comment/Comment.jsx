@@ -1,14 +1,19 @@
 'use client'
 import { format, formatDistance, subDays } from 'date-fns'
 import { Button, HStack, Panel, Text, VStack } from 'rsuite'
+import CommentPostField from '../CommentPostField/CommentPostField'
+import { useState } from 'react'
 
 const Comment = ({
 	comment,
 	user,
-	handleOpen,
-	setComment,
+	updateComment,
+	addComment,
+	openedCommentField,
+	setOpenedCommentField,
 	level = 0,
 }) => {
+	const [commentMode, setCommentMode] = useState('')
 	return (
 		<div className='comment' style={{ marginLeft: level * 20 + 'px' }}>
 			<Panel bordered>
@@ -22,8 +27,8 @@ const Comment = ({
 							<Button
 								appearance='link'
 								onClick={() => {
-									handleOpen('reply')
-									setComment(comment)
+									setOpenedCommentField(comment.id)
+									setCommentMode('reply')
 								}}
 								style={{ padding: 0 }}
 							>
@@ -33,8 +38,8 @@ const Comment = ({
 								<Button
 									appearance='link'
 									onClick={() => {
-										handleOpen('edit')
-										setComment(comment)
+										setOpenedCommentField(comment.id)
+										setCommentMode('edit')
 									}}
 									style={{ padding: 0 }}
 								>
@@ -46,9 +51,7 @@ const Comment = ({
 					<div
 						dangerouslySetInnerHTML={{ __html: comment.body }}
 						style={{ width: '100%', maxWidth: '82vw' }}
-						// className={classes.bodySection}
 					/>
-					{/* <p>{comment.body}</p> */}
 					<HStack justifyContent='space-between'>
 						<Text muted>
 							Posted on: {format(comment.createdAt, 'dd-MM-yyyy')}
@@ -64,21 +67,36 @@ const Comment = ({
 						)}
 					</HStack>
 				</VStack>
+				{openedCommentField === comment.id && (
+					<div style={{ marginTop: '1em' }}>
+						<CommentPostField
+							user={user}
+							comment={comment}
+							commentMode={commentMode}
+							updateComment={updateComment}
+							addComment={addComment}
+							parent={commentMode === 'edit' ? comment.parent : comment.id}
+							setOpenedCommentField={setOpenedCommentField}
+						/>
+					</div>
+				)}
 			</Panel>
-			{/* {comment.replies && comment.replies.length > 0 && (
+			{comment.replies && comment.replies.length > 0 && (
 				<div>
 					{comment.replies.map(reply => (
 						<Comment
 							key={reply.id}
 							comment={reply}
-							level={2}
 							user={user}
-							handleOpen={handleOpen}
-							setComment={setComment}
+							updateComment={updateComment}
+							addComment={addComment}
+							openedCommentField={openedCommentField}
+							setOpenedCommentField={setOpenedCommentField}
+							level={2}
 						/>
 					))}
 				</div>
-			)} */}
+			)}
 		</div>
 	)
 }

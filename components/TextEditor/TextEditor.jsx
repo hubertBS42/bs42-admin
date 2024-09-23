@@ -20,7 +20,7 @@ const TextEditor = ({ value, onChange, readOnly }) => {
 			Highlight,
 			TextAlign.configure({ types: ['heading', 'paragraph'] }),
 		],
-		content: value || '',
+		content: value,
 		onUpdate({ editor }) {
 			onChange(editor.getHTML())
 		},

@@ -13,21 +13,20 @@ const CommentPostField = ({
 	user,
 	typeRef,
 	comment,
-	setComment,
 	commentMode = 'add',
 	addComment,
 	updateComment,
 	parent = null,
+	setOpenedCommentField,
 }) => {
 	const formRef = useRef()
 
 	const [formError, setFormError] = useState({})
 	const [isLoading, setIsLoading] = useState(false)
-	const [value, setValue] = useState('')
 	const [formValue, setFormValue] = useState({
 		parent,
 		body: '',
-		typeRef,
+		typeRef: typeRef ? typeRef : comment.typeRef,
 		user: user.id,
 	})
 
@@ -55,8 +54,11 @@ const CommentPostField = ({
 			setIsLoading(false)
 		}
 
-		handleClearEditor()
+		if (commentMode === 'edit' || commentMode === 'reply') {
+			setOpenedCommentField('')
+		}
 
+		handleClearEditor()
 		setFormValue({
 			parent,
 			body: '',
@@ -80,7 +82,7 @@ const CommentPostField = ({
 							name='body'
 							accepter={TextEditor}
 							error={formError.body}
-							value={comment ? comment.body : formValue.body}
+							value={commentMode === 'edit' ? comment.body : formValue.body}
 						/>
 					</Col>
 				</Row>
@@ -97,7 +99,12 @@ const CommentPostField = ({
 								Post
 							</Button>
 							{commentMode !== 'add' && (
-								<Button disabled={isLoading}>Cancel</Button>
+								<Button
+									disabled={isLoading}
+									onClick={() => setOpenedCommentField('')}
+								>
+									Cancel
+								</Button>
 							)}
 						</HStack>
 					</Col>

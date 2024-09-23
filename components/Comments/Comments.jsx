@@ -1,16 +1,5 @@
 'use client'
-import {
-	Col,
-	Form,
-	Grid,
-	HStack,
-	IconButton,
-	Loader,
-	Panel,
-	Row,
-	Text,
-	VStack,
-} from 'rsuite'
+import { Loader, Panel, Text, VStack } from 'rsuite'
 import Comment from '../Comment/Comment'
 import { useEffect, useState } from 'react'
 import { fetcher, formatComments } from '@/utils/functions'
@@ -18,10 +7,6 @@ import { toast } from 'react-toastify'
 
 import { useSession } from 'next-auth/react'
 
-import PlusIcon from '@rsuite/icons/Plus'
-import CommentModal from '../CommentModal/CommentModal'
-import Field from '../Field/Field'
-import TextEditor from '../TextEditor/TextEditor'
 import CommentPostField from '../CommentPostField/CommentPostField'
 
 const Comments = ({ typeRef }) => {
@@ -29,19 +14,10 @@ const Comments = ({ typeRef }) => {
 
 	const user = session?.data?.user
 
-	const [open, setOpen] = useState(false)
-
 	const [isLoading, setIsLoading] = useState(false)
-	const [commentMode, setCommentMode] = useState('add')
-	const [comment, setComment] = useState(null)
 	const [comments, setComments] = useState([])
+	const [openedCommentField, setOpenedCommentField] = useState('')
 	const [count, setCount] = useState(0)
-
-	const handleOpen = state => {
-		setCommentMode(state)
-		setOpen(true)
-	}
-	const handleClose = () => setOpen(false)
 
 	const loadComments = async () => {
 		setIsLoading(true)
@@ -101,106 +77,45 @@ const Comments = ({ typeRef }) => {
 	}, [])
 
 	return (
-		<>
-			{user && (
-				<CommentModal
-					user={user}
-					comment={comment}
-					typeRef={typeRef}
-					commentMode={commentMode}
-					open={open}
-					addComment={addComment}
-					updateComment={updateComment}
-					handleClose={handleClose}
-				/>
-			)}
+		<Panel header={<span>Comments ({count})</span>}>
+			<CommentPostField
+				user={user}
+				typeRef={typeRef}
+				addComment={addComment}
+			/>
 
-			<Panel
-				header={
-					<HStack justifyContent='space-between'>
-						<span>Comments ({count})</span>
-						<IconButton
-							icon={<PlusIcon />}
-							circle
-							size='sm'
-							appearance='primary'
-							onClick={() => handleOpen('add')}
-						/>
-					</HStack>
-				}
+			<VStack
+				alignItems='stretch'
+				style={{ position: 'relative', minHeight: 400 }}
+				spacing={0}
 			>
-				<CommentPostField
-					user={user}
-					typeRef={typeRef}
-					addComment={addComment}
-					comment={comment}
-					setComment={setComment}
-				/>
-
-				{/* <Grid fluid style={{ position: 'relative', minHeight: 400 }}>
-					{!user ||
-						(isLoading && (
-							<Loader backdrop content='loading...' vertical />
-						))}
-
-					{comments.length > 0 ? (
-						comments.map(comment => (
-							<Row>
-								<Col xs={24}>
-									<Comment
-										key={comment.id}
-										comment={comment}
-										user={user}
-										handleOpen={handleOpen}
-										setComment={setComment}
-									/>
-								</Col>
-							</Row>
-						))
-					) : (
-						<Row style={{ minHeight: 400 }}>
-							<Col xs={24}>
-								<Text muted size='md'>
-									No comments posted.
-								</Text>
-							</Col>
-						</Row>
-					)}
-				</Grid> */}
-
-				<VStack
-					alignItems='stretch'
-					style={{ position: 'relative', minHeight: 400 }}
-					spacing={0}
-				>
-					{!user ||
-						(isLoading && (
-							<Loader backdrop content='loading...' vertical />
-						))}
-					{comments.length > 0 ? (
-						comments.map(comment => (
-							<Comment
-								key={comment.id}
-								comment={comment}
-								user={user}
-								handleOpen={handleOpen}
-								setComment={setComment}
-							/>
-						))
-					) : (
-						<VStack
-							alignItems='center'
-							justifyContent='center'
-							style={{ minHeight: 400 }}
-						>
-							<Text muted size='md'>
-								No comments posted.
-							</Text>
-						</VStack>
-					)}
-				</VStack>
-			</Panel>
-		</>
+				{!user ||
+					(isLoading && <Loader backdrop content='loading...' vertical />)}
+				{comments.length > 0 ? (
+					comments.map(comment => (
+						<Comment
+							key={comment.id}
+							comment={comment}
+							user={user}
+							updateComment={updateComment}
+							addComment={addComment}
+							openedCommentField={openedCommentField}
+							setOpenedCommentField={setOpenedCommentField}
+						/>
+					))
+				) : (
+					<VStack
+						alignItems='center'
+						justifyContent='center'
+						style={{ minHeight: 400 }}
+					>
+						<Text muted size='md'>
+							No comments posted.
+						</Text>
+					</VStack>
+				)}
+			</VStack>
+		</Panel>
 	)
 }
 export default Comments
