@@ -820,3 +820,19 @@ export const formatOrder = order => {
 		},
 	}
 }
+
+export const formatComments = (comments, parent = null) => {
+	return comments
+		.filter(comment => comment.parent === parent)
+		.map(comment => ({
+			id: comment._id,
+			type: comment.type,
+			typeRef: comment.typeRef,
+			user: comment.user,
+			body: comment.body,
+			parent: comment.parent,
+			updatedAt: comment.updatedAt,
+			createdAt: comment.createdAt,
+			replies: formatComments(comments, comment._id),
+		}))
+}

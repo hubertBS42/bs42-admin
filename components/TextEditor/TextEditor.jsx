@@ -8,6 +8,7 @@ import Underline from '@tiptap/extension-underline'
 import TextAlign from '@tiptap/extension-text-align'
 import Superscript from '@tiptap/extension-superscript'
 import { poppins } from '@/utils/font'
+import { useEffect } from 'react'
 
 const TextEditor = ({ value, onChange, readOnly }) => {
 	const editor = useEditor({
@@ -19,11 +20,18 @@ const TextEditor = ({ value, onChange, readOnly }) => {
 			Highlight,
 			TextAlign.configure({ types: ['heading', 'paragraph'] }),
 		],
-		content: value,
+		content: value || '',
 		onUpdate({ editor }) {
 			onChange(editor.getHTML())
 		},
 	})
+
+	useEffect(() => {
+		if (editor && value === '') {
+			editor.commands.clearContent()
+		}
+	}, [value, editor])
+
 	return (
 		<RichTextEditor
 			editor={editor}

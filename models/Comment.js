@@ -2,26 +2,19 @@ import mongoose from 'mongoose'
 
 const CommentSchema = new mongoose.Schema(
 	{
-		type: {
+		typeRef: {
 			type: String,
-			enum: ['product', 'order', 'inventory-order'],
 			required: true,
 		},
 		parent: {
 			type: mongoose.Schema.Types.ObjectId,
-			ref: 'CommentSchema',
+			ref: 'Comment',
 			default: null,
-			autopopulate: true,
 		},
 		user: {
 			type: mongoose.Schema.Types.ObjectId,
 			ref: 'User',
 			autopopulate: true,
-			required: true,
-		},
-		order: {
-			type: mongoose.Schema.Types.ObjectId,
-			ref: 'InventoryOrder',
 			required: true,
 		},
 		body: { type: String, required: true },
@@ -31,5 +24,5 @@ const CommentSchema = new mongoose.Schema(
 
 CommentSchema.plugin(require('mongoose-autopopulate'))
 
-export default mongoose.models.InventoryOrderComment ||
-	mongoose.model('InventoryOrderComment', CommentSchema)
+export default mongoose.models.Comment ||
+	mongoose.model('Comment', CommentSchema)

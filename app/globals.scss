@@ -108,3 +108,15 @@
 .rs-uploader-picture .rs-uploader-file-item {
 	margin-top: 0 !important;
 }
+
+.comment > .rs-panel {
+	border-top: none;
+	border-left: none;
+	border-right: none;
+	border-radius: 0;
+}
+
+.comment .rs-panel-body {
+	padding-left: 0;
+	padding-right: 0;
+}

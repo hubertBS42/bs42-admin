@@ -61,3 +61,15 @@
 .full-width .rs-form-control-wrapper {
 	width: 100% !important;
 } /*# sourceMappingURL=globals.css.map */
+
+body
+	> div.layout_mainWrapper__pUV87
+	> section
+	> main
+	> div
+	> div
+	> div:nth-child(1)
+	> div.custom.rs-panel.rs-panel-bordered
+	> div {
+	padding: 0 !important;
+}
