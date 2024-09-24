@@ -826,7 +826,6 @@ export const formatComments = (comments, parent = null) => {
 		.filter(comment => comment.parent === parent)
 		.map(comment => ({
 			id: comment._id,
-			type: comment.type,
 			typeRef: comment.typeRef,
 			user: comment.user,
 			body: comment.body,

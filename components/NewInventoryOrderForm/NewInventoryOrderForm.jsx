@@ -369,9 +369,16 @@ const NewInventoryOrderForm = ({ handleModalOpen }) => {
 										<span>Click or Drag files to this area to upload</span>
 									</div>
 								</Uploader>
+								{formValue.files.length === 0 && (
+									<VStack
+										justifyContent='center'
+										alignItems='center'
+										style={{ minHeight: 100 }}
+									>
+										<Text muted>There are no files.</Text>
+									</VStack>
+								)}
 							</Panel>
-
-							<Panel header='Comments'></Panel>
 						</PanelGroup>
 					</Col>
 					<Col xs={8}>

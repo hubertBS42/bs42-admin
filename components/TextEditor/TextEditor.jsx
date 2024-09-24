@@ -10,7 +10,12 @@ import Superscript from '@tiptap/extension-superscript'
 import { poppins } from '@/utils/font'
 import { useEffect } from 'react'
 
-const TextEditor = ({ value, onChange, readOnly }) => {
+const TextEditor = ({
+	value,
+	onChange,
+	readOnly,
+	editable = true,
+}) => {
 	const editor = useEditor({
 		extensions: [
 			StarterKit,
@@ -21,6 +26,7 @@ const TextEditor = ({ value, onChange, readOnly }) => {
 			TextAlign.configure({ types: ['heading', 'paragraph'] }),
 		],
 		content: value,
+		editable,
 		onUpdate({ editor }) {
 			onChange(editor.getHTML())
 		},

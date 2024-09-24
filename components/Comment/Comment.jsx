@@ -18,11 +18,23 @@ const Comment = ({
 		<div className='comment' style={{ marginLeft: level * 20 + 'px' }}>
 			<Panel bordered>
 				<VStack alignItems='stretch' spacing={10}>
-					<HStack justifyContent='space-between'>
+					<HStack>
 						<strong>
 							{comment.user?.firstName} {comment.user?.lastName}
 						</strong>
-
+						<Text muted size='sm'>
+							{`${formatDistance(comment.updatedAt, new Date(), {
+								addSuffix: true,
+							})} ${
+								comment.createdAt !== comment.updatedAt ? '(Edited)' : ''
+							}`}
+						</Text>
+					</HStack>
+					<div
+						dangerouslySetInnerHTML={{ __html: comment.body }}
+						style={{ width: '100%', maxWidth: '82vw' }}
+					/>
+					{!openedCommentField && (
 						<HStack>
 							<Button
 								appearance='link'
@@ -47,15 +59,9 @@ const Comment = ({
 								</Button>
 							)}
 						</HStack>
-					</HStack>
-					<div
-						dangerouslySetInnerHTML={{ __html: comment.body }}
-						style={{ width: '100%', maxWidth: '82vw' }}
-					/>
-					<HStack justifyContent='space-between'>
-						<Text muted>
-							Posted on: {format(comment.createdAt, 'dd-MM-yyyy')}
-						</Text>
+					)}
+					{/* <HStack justifyContent='space-between'>
+						
 
 						{comment.createdAt !== comment.updatedAt && (
 							<Text muted>
@@ -65,7 +71,7 @@ const Comment = ({
 								})}
 							</Text>
 						)}
-					</HStack>
+					</HStack> */}
 				</VStack>
 				{openedCommentField === comment.id && (
 					<div style={{ marginTop: '1em' }}>
@@ -80,6 +86,19 @@ const Comment = ({
 						/>
 					</div>
 				)}
+
+				{/* {openedCommentField === comment.id && commentMode === 'reply' && (
+					<div style={{ marginTop: '1em' }}>
+						<CommentPostField
+							user={user}
+							comment=''
+							commentMode={commentMode}
+							addComment={addComment}
+							parent={comment.id}
+							setOpenedCommentField={setOpenedCommentField}
+						/>
+					</div>
+				)} */}
 			</Panel>
 			{comment.replies && comment.replies.length > 0 && (
 				<div>

@@ -86,7 +86,7 @@ const Comments = ({ typeRef }) => {
 
 			<VStack
 				alignItems='stretch'
-				style={{ position: 'relative', minHeight: 400 }}
+				style={{ position: 'relative', minHeight: 300 }}
 				spacing={0}
 			>
 				{!user ||
@@ -107,7 +107,7 @@ const Comments = ({ typeRef }) => {
 					<VStack
 						alignItems='center'
 						justifyContent='center'
-						style={{ minHeight: 400 }}
+						style={{ minHeight: 300 }}
 					>
 						<Text muted size='md'>
 							No comments posted.

@@ -2,13 +2,6 @@
 import Link from 'next/link'
 import { useState } from 'react'
 
-import SpinnerIcon from '@rsuite/icons/legacy/Spinner'
-import SearchIcon from '@rsuite/icons/Search'
-import TrashIcon from '@rsuite/icons/Trash'
-import AdminIcon from '@rsuite/icons/Admin'
-import EmailIcon from '@rsuite/icons/Email'
-import PhoneIcon from '@rsuite/icons/Phone'
-import LocationIcon from '@rsuite/icons/Location'
 import FileDownloadIcon from '@rsuite/icons/FileDownload'
 
 import {
@@ -19,7 +12,6 @@ import {
 	Grid,
 	HStack,
 	InputNumber,
-	InputPicker,
 	Panel,
 	PanelGroup,
 	Row,
@@ -28,25 +20,14 @@ import {
 	Uploader,
 	VStack,
 } from 'rsuite'
-import { useDispatch, useSelector } from 'react-redux'
-import {
-	emptyCart,
-	modifyItem,
-	removeItem,
-	selectAllCartItems,
-	totalBuyPriceSelector,
-} from '@/redux/features/cart/cartSlice'
 import Image from 'next/image'
 import { fetcher, roundMoney } from '@/utils/functions'
-import AddBuyShippingPopover from '../AddBuyShippingPopper/AddBuyShippingPopover'
-import { useSuppliers } from '@/hooks/useSuppliers'
 import InventoryOrderStatusPanel from '../InventoryOrderStatusPanel/InventoryOrderStatusPanel'
-import { createInventoryOrder } from '@/redux/features/inventoryOrders/inventoryOrdersActions'
-import { getSession } from 'next-auth/react'
 import { toast } from 'react-toastify'
 import { useRouter } from 'next/navigation'
 import { updateFiles } from '@/utils/azure'
 import SupplierCard from '../SupplierCard/SupplierCard'
+import Comments from '../Comments/Comments'
 
 const InventoryOrderForm = ({ order }) => {
 	const router = useRouter()
@@ -174,91 +155,90 @@ const InventoryOrderForm = ({ order }) => {
 	}
 
 	return (
-		<Form disabled={isLoading}>
-			<Grid fluid>
-				<Row style={{ marginBottom: 10 }}>
-					<Col xs={24}>
-						<InventoryOrderStatusPanel
-							status={formValue.status}
-							order={order}
-							setFormValue={setFormValue}
-							editable={
-								!order.status.map(event => event.type).includes('cancelled')
-							}
-						/>
-					</Col>
-				</Row>
-				<Row>
-					<Col xs={16}>
-						<PanelGroup bordered>
-							<Panel header='Order items'>
-								{order.products.map(item => (
-									<Row key={item.productRef}>
-										<Col xs={24} style={{ marginBottom: 20 }}>
-											<Stack
-												justifyContent='space-between'
-												alignItems='center'
-												style={{
-													fontSize: 12,
-													color: '#D4D4D4',
-												}}
-											>
-												<Stack spacing={15} style={{ width: 360 }}>
-													<div
-														style={{
-															position: 'relative',
-															height: 60,
-															width: 60,
-															objectFit: 'contain',
-														}}
-													>
-														<Image
-															src={item.images[0].url}
-															alt={item.title}
-															fill
-															sizes='(max-width: 768px) 60px, (max-width: 1200px) 60px, 60px'
-														/>
-													</div>
-													<Stack direction='column' alignItems='flex-start'>
-														<span style={{ color: '#6CD6FF' }}>{item.title}</span>
-														<span>{item.brand.name}</span>
-													</Stack>
-												</Stack>
-
-												<InputNumber
-													value={item.quantity}
-													readOnly
-													style={{ width: 65 }}
-													size='sm'
-												/>
-
-												<span>x</span>
-
-												<InputNumber
-													value={item.buyPrice}
-													formatter={value => `$ ${value}`}
-													readOnly
-													style={{ width: 100 }}
-													size='sm'
-												/>
-
-												<span
+		<Grid fluid>
+			<Row style={{ marginBottom: 10 }}>
+				<Col xs={24}>
+					<InventoryOrderStatusPanel
+						status={formValue.status}
+						order={order}
+						setFormValue={setFormValue}
+						editable={
+							!order.status.map(event => event.type).includes('cancelled')
+						}
+					/>
+				</Col>
+			</Row>
+			<Row>
+				<Col xs={16}>
+					<PanelGroup bordered>
+						<Panel header='Order items'>
+							{order.products.map(item => (
+								<Row key={item.productRef}>
+									<Col xs={24} style={{ marginBottom: 20 }}>
+										<Stack
+											justifyContent='space-between'
+											alignItems='center'
+											style={{
+												fontSize: 12,
+												color: '#D4D4D4',
+											}}
+										>
+											<Stack spacing={15} style={{ width: 360 }}>
+												<div
 													style={{
-														display: 'flex',
-														width: 100,
-														justifyContent: 'flex-end',
+														position: 'relative',
+														height: 60,
+														width: 60,
+														objectFit: 'contain',
 													}}
 												>
-													${roundMoney(item.buyPrice * item.quantity)}
-												</span>
+													<Image
+														src={item.images[0].url}
+														alt={item.title}
+														fill
+														sizes='(max-width: 768px) 60px, (max-width: 1200px) 60px, 60px'
+													/>
+												</div>
+												<Stack direction='column' alignItems='flex-start'>
+													<span style={{ color: '#6CD6FF' }}>{item.title}</span>
+													<span>{item.brand.name}</span>
+												</Stack>
 											</Stack>
-										</Col>
-									</Row>
-								))}
 
-								<Row style={{ marginTop: 30 }}>
-									<Col xs={14}>
-										{/* <Text style={{ marginBottom: 5 }}>Notes:</Text>
+											<InputNumber
+												value={item.quantity}
+												readOnly
+												style={{ width: 65 }}
+												size='sm'
+											/>
+
+											<span>x</span>
+
+											<InputNumber
+												value={item.buyPrice}
+												formatter={value => `$ ${value}`}
+												readOnly
+												style={{ width: 100 }}
+												size='sm'
+											/>
+
+											<span
+												style={{
+													display: 'flex',
+													width: 100,
+													justifyContent: 'flex-end',
+												}}
+											>
+												${roundMoney(item.buyPrice * item.quantity)}
+											</span>
+										</Stack>
+									</Col>
+								</Row>
+							))}
+
+							<Row style={{ marginTop: 30 }}>
+								<Col xs={14}>
+									{/* <Text style={{ marginBottom: 5 }}>Notes:</Text>
 										<Input
 											as='textarea'
 											placeholder='Add a note...'
@@ -269,111 +249,117 @@ const InventoryOrderForm = ({ order }) => {
 											}
 											disabled={isLoading}
 										/> */}
-									</Col>
+								</Col>
 
-									<Col xs={10} style={{ fontSize: 12, color: '#D4D4D4' }}>
-										<Row style={{ textAlign: 'right', marginBottom: 12 }}>
-											<Col xs={9}>
-												<Text>Subtotal</Text>
-											</Col>
-											<Col xs={15}>
-												<Text>${roundMoney(order.subtotal)}</Text>
-											</Col>
-										</Row>
+								<Col xs={10} style={{ fontSize: 12, color: '#D4D4D4' }}>
+									<Row style={{ textAlign: 'right', marginBottom: 12 }}>
+										<Col xs={9}>
+											<Text>Subtotal</Text>
+										</Col>
+										<Col xs={15}>
+											<Text>${roundMoney(order.subtotal)}</Text>
+										</Col>
+									</Row>
 
-										<Row style={{ textAlign: 'right', marginBottom: 12 }}>
-											<Col xs={9}>
-												<Text>Shipping</Text>
-											</Col>
-											<Col xs={15}>
-												<Text>${roundMoney(order.shippingCost)}</Text>
-											</Col>
-										</Row>
+									<Row style={{ textAlign: 'right', marginBottom: 12 }}>
+										<Col xs={9}>
+											<Text>Shipping</Text>
+										</Col>
+										<Col xs={15}>
+											<Text>${roundMoney(order.shippingCost)}</Text>
+										</Col>
+									</Row>
 
-										<Row style={{ textAlign: 'right' }}>
-											<Col xs={9}>
-												<Text>Total</Text>
-											</Col>
-											<Col xs={15}>
-												<Text>${roundMoney(order.total)}</Text>
-											</Col>
-										</Row>
-									</Col>
-								</Row>
-							</Panel>
-							<Panel header='Files'>
-								<Uploader
-									action=''
-									draggable
-									autoUpload={false}
-									fileList={formValue.files}
-									renderFileInfo={(file, fileElement) => {
-										return (
-											<HStack
-												justifyContent='space-between'
-												style={{ width: '100%' }}
+									<Row style={{ textAlign: 'right' }}>
+										<Col xs={9}>
+											<Text>Total</Text>
+										</Col>
+										<Col xs={15}>
+											<Text>${roundMoney(order.total)}</Text>
+										</Col>
+									</Row>
+								</Col>
+							</Row>
+						</Panel>
+						<Panel header='Files'>
+							<Uploader
+								action=''
+								draggable
+								autoUpload={false}
+								fileList={formValue.files}
+								renderFileInfo={(file, fileElement) => {
+									return (
+										<HStack
+											justifyContent='space-between'
+											style={{ width: '100%' }}
+										>
+											<span>{file?.originalName || file.name}</span>
+
+											<Button
+												appearance='link'
+												size='sm'
+												style={{ padding: 0, marginRight: 5 }}
+												onClick={() => handleFileDownload(file)}
 											>
-												<span>{file.originalName}</span>
-
-												<Button
-													appearance='link'
-													size='sm'
-													style={{ padding: 0, marginRight: 5 }}
-													onClick={() => handleFileDownload(file)}
-												>
-													<FileDownloadIcon />
-												</Button>
-											</HStack>
-										)
+												<FileDownloadIcon />
+											</Button>
+										</HStack>
+									)
+								}}
+								multiple
+								onChange={files => setFormValue(prev => ({ ...prev, files }))}
+								onRemove={grabRemovedFiles}
+							>
+								<div
+									style={{
+										height: 200,
+										display: 'flex',
+										alignItems: 'center',
+										justifyContent: 'center',
 									}}
-									multiple
-									onChange={files =>
-										setFormValue(prev => ({ ...prev, files }))
-									}
-									onRemove={grabRemovedFiles}
 								>
-									<div
-										style={{
-											height: 200,
-											display: 'flex',
-											alignItems: 'center',
-											justifyContent: 'center',
-										}}
-									>
-										<span>Click or Drag files to this area to upload</span>
-									</div>
-								</Uploader>
-							</Panel>
+									<span>Click or Drag files to this area to upload</span>
+								</div>
+							</Uploader>
+							{formValue.files.length === 0 && (
+								<VStack
+									justifyContent='center'
+									alignItems='center'
+									style={{ minHeight: 100 }}
+								>
+									<Text muted>There are no files.</Text>
+								</VStack>
+							)}
+						</Panel>
 
-							<Panel header='Comments'></Panel>
-						</PanelGroup>
-					</Col>
-					<Col xs={8}>
-						<SupplierCard supplier={order.supplier} isLoading={isLoading} />
+						<Comments typeRef={order._id} />
+					</PanelGroup>
+				</Col>
+				<Col xs={8}>
+					<SupplierCard supplier={order.supplier} isLoading={isLoading} />
 
-						<Stack justifyContent='flex-end' style={{ marginTop: '1em' }}>
-							<ButtonToolbar>
-								<Button
-									appearance='primary'
-									onClick={handleSubmit}
-									// disabled={enableSubmit}
-									loading={isLoading}
-								>
-									Update order
-								</Button>
-								<Button
-									as={Link}
-									href='/inventory-orders'
-									disabled={isLoading}
-								>
-									Cancel
-								</Button>
-							</ButtonToolbar>
-						</Stack>
-					</Col>
-				</Row>
-			</Grid>
-		</Form>
+					<Stack justifyContent='flex-end' style={{ marginTop: '1em' }}>
+						<ButtonToolbar>
+							<Button
+								appearance='primary'
+								onClick={handleSubmit}
+								// disabled={enableSubmit}
+								loading={isLoading}
+							>
+								Update order
+							</Button>
+							<Button
+								as={Link}
+								href='/inventory-orders'
+								disabled={isLoading}
+							>
+								Cancel
+							</Button>
+						</ButtonToolbar>
+					</Stack>
+				</Col>
+			</Row>
+		</Grid>
 	)
 }
 export default InventoryOrderForm

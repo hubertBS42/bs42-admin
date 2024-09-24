@@ -66,6 +66,7 @@ const CommentPostField = ({
 			user: user.id,
 		})
 	}
+
 	return (
 		<Form
 			ref={formRef}
@@ -75,7 +76,7 @@ const CommentPostField = ({
 			model={model}
 			disabled={isLoading}
 		>
-			<Grid fluid>
+			<Grid fluid style={{ padding: 0 }}>
 				<Row style={{ marginBottom: '1.2em' }}>
 					<Col xs={24}>
 						<Field
@@ -83,6 +84,7 @@ const CommentPostField = ({
 							accepter={TextEditor}
 							error={formError.body}
 							value={commentMode === 'edit' ? comment.body : formValue.body}
+							editable={!isLoading}
 						/>
 					</Col>
 				</Row>
@@ -96,7 +98,7 @@ const CommentPostField = ({
 								disabled={isLoading}
 								loading={isLoading}
 							>
-								Post
+								{commentMode === 'edit' ? 'Update' : 'Post'}
 							</Button>
 							{commentMode !== 'add' && (
 								<Button
