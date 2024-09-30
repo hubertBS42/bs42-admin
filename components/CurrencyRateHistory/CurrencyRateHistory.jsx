@@ -16,7 +16,10 @@ import { useEffect, useState } from 'react'
 // import { Line } from 'react-chartjs-2'
 import { toast } from 'react-toastify'
 import { DateRangePicker, Loader, Stack } from 'rsuite'
-import Chart from 'react-apexcharts'
+import dynamic from 'next/dynamic'
+const ApexChart = dynamic(() => import('react-apexcharts'), {
+	ssr: false,
+})
 
 // ChartJS.register(
 // 	LineElement,
@@ -189,7 +192,7 @@ const CurrencyRateHistory = ({ currency }) => {
 				</Stack>
 			</Stack>
 
-			<Chart
+			<ApexChart
 				options={options}
 				series={series}
 				type='line'

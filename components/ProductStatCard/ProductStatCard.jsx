@@ -4,6 +4,10 @@ import TagIcon from '@rsuite/icons/Tag'
 import Chart from 'react-apexcharts'
 import { useState } from 'react'
 import { fetcher } from '@/utils/functions'
+import dynamic from 'next/dynamic'
+const ApexChart = dynamic(() => import('react-apexcharts'), {
+	ssr: false,
+})
 
 const ProductStatCard = ({ filterBy, data }) => {
 	const [options, setOptions] = useState({
@@ -106,7 +110,7 @@ const ProductStatCard = ({ filterBy, data }) => {
 				/>
 				{/* <TagIcon /> */}
 			</HStack>
-			<Chart
+			<ApexChart
 				options={options}
 				series={series}
 				type='donut'
