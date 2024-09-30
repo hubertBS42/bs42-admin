@@ -137,10 +137,12 @@ OrderSchema.pre('save', async function (next) {
 		if (!defaultLocation)
 			throw new Error('Could not find a default location.')
 
-		const products = order.products.map(product => ({
-			_id: product.productRef,
-			quantity: product.quantity,
-		}))
+		const products = order.products
+			.filter(product => product.productRef)
+			.map(product => ({
+				_id: product.productRef,
+				quantity: product.quantity,
+			}))
 
 		const toBeCreated = order.status.find(
 			step => step.type === 'created'

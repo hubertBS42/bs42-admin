@@ -1,6 +1,12 @@
 import Stats from '@/components/Stats/Stats'
+import { fetcher } from '@/utils/functions'
 
-const Dashboard = () => {
-	return <>{/* <Stats /> */}</>
+const Dashboard = async () => {
+	const { status, data } = await fetcher(
+		'http://localhost:3000/api/stats/products/categories',
+		{ cache: 'no-store' }
+	)
+
+	return <Stats data={data} />
 }
 export default Dashboard

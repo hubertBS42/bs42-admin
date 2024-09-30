@@ -336,7 +336,11 @@ const OrderForm = ({ order }) => {
 														}}
 													>
 														<Image
-															src={product.images[0].url}
+															src={
+																product?.images
+																	? product.images[0]?.url
+																	: '/images/labour.jpg'
+															}
 															alt={product.title}
 															fill
 															sizes='(max-width: 768px) 60px, (max-width: 1200px) 60px, 60px'

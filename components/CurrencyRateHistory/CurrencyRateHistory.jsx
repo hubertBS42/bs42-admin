@@ -1,30 +1,31 @@
 'use client'
 import { fetcher, filterRates } from '@/utils/functions'
-import {
-	Chart as ChartJS,
-	LineElement,
-	TimeScale, //time scale
-	LinearScale, //y
-	PointElement,
-	Tooltip,
-	Legend,
-} from 'chart.js'
+// import {
+// 	Chart as ChartJS,
+// 	LineElement,
+// 	TimeScale, //time scale
+// 	LinearScale, //y
+// 	PointElement,
+// 	Tooltip,
+// 	Legend,
+// } from 'chart.js'
 
-import 'chartjs-adapter-date-fns'
+// import 'chartjs-adapter-date-fns'
 import { subDays } from 'date-fns'
 import { useEffect, useState } from 'react'
-import { Line } from 'react-chartjs-2'
+// import { Line } from 'react-chartjs-2'
 import { toast } from 'react-toastify'
 import { DateRangePicker, Loader, Stack } from 'rsuite'
+import Chart from 'react-apexcharts'
 
-ChartJS.register(
-	LineElement,
-	TimeScale,
-	LinearScale, //y
-	PointElement,
-	Tooltip,
-	Legend
-)
+// ChartJS.register(
+// 	LineElement,
+// 	TimeScale,
+// 	LinearScale, //y
+// 	PointElement,
+// 	Tooltip,
+// 	Legend
+// )
 
 const CurrencyRateHistory = ({ currency }) => {
 	const last7DaysStart = subDays(new Date(), 6) // Start of last 7 days
@@ -32,6 +33,54 @@ const CurrencyRateHistory = ({ currency }) => {
 	const [history, setHistory] = useState([])
 	const [currentRate, setCurrentRate] = useState(null)
 	const [isLoading, setIsLoading] = useState(true)
+	const [options, setOptions] = useState({
+		chart: {
+			id: 'basic-line',
+			zoom: {
+				enabled: false,
+			},
+		},
+		tooltip: {
+			theme: 'dark', // Use 'light' or 'dark' theme for tooltip
+			// x: {
+			// 	format: 'dd MMM yyyy HH:mm', // Customize the format for date and time
+			// },
+			// style: {
+			// 	fontSize: '14px',
+			// 	fontFamily: 'Arial',
+			// 	colors: ['#FF5733'], // Customize the text color inside the tooltip
+			// },
+		},
+		xaxis: {
+			type: 'datetime',
+			categories: [],
+			labels: {
+				style: {
+					colors: 'white',
+				},
+			},
+			title: {
+				text: 'Dates',
+				style: {
+					color: 'white',
+				},
+			},
+		},
+		yaxis: {
+			labels: {
+				style: {
+					colors: 'white',
+				},
+			},
+			title: {
+				text: 'Rates',
+				style: {
+					color: 'white',
+				},
+			},
+		},
+	})
+	const [series, setSeries] = useState([])
 
 	const [dateRange, setDateRange] = useState([
 		last7DaysStart,
@@ -54,44 +103,66 @@ const CurrencyRateHistory = ({ currency }) => {
 
 			const filteredHistory = filterRates(history)
 
-			setHistory(filteredHistory)
+			const dates = filteredHistory.map(data => data.createdAt)
+			const rates = filteredHistory.map(data => data.rate)
+
+			setOptions(prev => ({
+				...prev,
+				xaxis: {
+					...prev.xaxis,
+					categories: dates,
+					// min: dateRange[0].getTime(),
+					// max: dateRange[1].getTime(),
+				},
+			}))
+
+			setSeries(prev => {
+				const data = { name: 'Dollar to GHS rate', data: rates }
+				return [data]
+			})
+
+			// setHistory(filteredHistory)
 			setCurrentRate(currentRate)
 		}
 
 		loadHistory()
 	}, [dateRange, currency])
 
-	const dates = history.map(data => data.createdAt)
-	const rates = history.map(data => data.rate)
+	// const dates = history.map(data => data.createdAt)
+	// const rates = history.map(data => data.rate)
 
-	const data = {
-		labels: dates,
-		datasets: [
-			{
-				label: 'Exhange Rate',
-				data: rates,
-				backgroundColor: 'aqua',
-				borderColor: 'white',
-				tension: 0.4,
-			},
-		],
-	}
+	// const data = {
+	// 	labels: dates,
+	// 	datasets: [
+	// 		{
+	// 			label: 'Exhange Rate',
+	// 			data: rates,
+	// 			backgroundColor: 'aqua',
+	// 			borderColor: 'white',
+	// 			tension: 0.4,
+	// 		},
+	// 	],
+	// }
 
-	const options = {
-		responsive: true,
-		scales: {
-			x: {
-				type: 'time',
-				time: {
-					unit: 'day',
-				},
-			},
-		},
-	}
+	// const options = {
+	// 	responsive: true,
+	// 	scales: {
+	// 		x: {
+	// 			type: 'time',
+	// 			time: {
+	// 				unit: 'day',
+	// 			},
+	// 		},
+	// 	},
+	// }
 
 	return (
 		<>
-			<Stack justifyContent='space-between' alignItems='center'>
+			<Stack
+				justifyContent='space-between'
+				alignItems='center'
+				style={{ marginBottom: '2em' }}
+			>
 				<Stack spacing={10}>
 					<span>Currency:</span>
 					{currency?.abbreviation} ({currency?.symbol})
@@ -118,7 +189,15 @@ const CurrencyRateHistory = ({ currency }) => {
 				</Stack>
 			</Stack>
 
-			<Line data={data} options={options}></Line>
+			<Chart
+				options={options}
+				series={series}
+				type='line'
+				width='100%'
+				height={400}
+			/>
+
+			{/* <Line data={data} options={options}></Line> */}
 
 			{isLoading && <Loader center content='loading' />}
 		</>

@@ -120,3 +120,20 @@
 	padding-left: 0;
 	padding-right: 0;
 }
+
+/* Target the export menu's text color */
+.apexcharts-menu {
+	// background-color: #1a1d24 !important; /* Set the background color of the menu */
+	background-color: rgba($color: #000, $alpha: 0.7) !important;
+	border: none !important;
+}
+
+.apexcharts-menu-item {
+	color: white; /* Set the text color of the menu items */
+	font-size: 14px; /* Adjust the font size */
+}
+
+.apexcharts-menu-item:hover {
+	background-color: #f0f0f0; /* Change background color on hover */
+	color: #333; /* Change text color on hover */
+}

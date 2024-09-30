@@ -102,6 +102,7 @@ const NewOrderForm = ({ handleModalOpen }) => {
 	})
 
 	const fetchCategories = id => {
+		if (!id) return null
 		const category = categories.find(category => category._id === id)
 		return [
 			category?.name,
@@ -169,13 +170,16 @@ const NewOrderForm = ({ handleModalOpen }) => {
 				status: orderDetails.shipping.status,
 			},
 			products: items?.map(item => ({
-				productRef: item.product._id || null,
+				productRef:
+					typeof item.product._id !== 'string' ? null : item.product._id,
 				title: item.product.title,
 				brand: {
 					name: item.product.brand.name,
 				},
-				category: fetchCategories(item.product.category._id),
-				images: item.product.images,
+				category: item.product.category
+					? fetchCategories(item.product.category._id)
+					: null,
+				images: item.product?.images || null,
 				quantity: item.quantity,
 				price: item.product.sellPrice,
 			})),
@@ -367,7 +371,11 @@ const NewOrderForm = ({ handleModalOpen }) => {
 															}}
 														>
 															<Image
-																src={item.product.images[0].url}
+																src={
+																	item.product?.images
+																		? item.product.images[0]?.url
+																		: '/images/labour.jpg'
+																}
 																alt={item.product.title}
 																fill
 																sizes='(max-width: 768px) 60px, (max-width: 1200px) 60px, 60px'
