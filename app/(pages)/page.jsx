@@ -2,11 +2,12 @@ import Stats from '@/components/Stats/Stats'
 import { fetcher } from '@/utils/functions'
 
 const Dashboard = async () => {
-	const { status, data } = await fetcher(
-		'http://localhost:3000/api/stats/products/categories',
-		{ cache: 'no-store' }
-	)
+	// const { status, data } = await fetcher(
+	// 	'https://portal.bs42.net/api/stats/products/categories',
+	// 	{ cache: 'no-store' }
+	// )
+	return <></>
 
-	return <Stats data={data} />
+	// return <Stats data={data} />
 }
 export default Dashboard
