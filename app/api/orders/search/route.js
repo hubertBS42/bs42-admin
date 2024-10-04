@@ -13,10 +13,10 @@ export const GET = async request => {
 				{ orderNumber: { $regex: query, $options: 'i' } },
 				{ status: { $regex: query, $options: 'i' } },
 				{ notes: { $regex: query, $options: 'i' } },
-				{ 'customerInfo.firstName': { $regex: query, $options: 'i' } },
-				{ 'customerInfo.lastName': { $regex: query, $options: 'i' } },
-				{ 'customerInfo.email': { $regex: query, $options: 'i' } },
-				{ 'customerInfo.phone': { $regex: query, $options: 'i' } },
+				{ 'contact.firstName': { $regex: query, $options: 'i' } },
+				{ 'contact.lastName': { $regex: query, $options: 'i' } },
+				{ 'contact.email': { $regex: query, $options: 'i' } },
+				{ 'contact.phone': { $regex: query, $options: 'i' } },
 			],
 		})
 			.sort({ createdAt: 'desc' })

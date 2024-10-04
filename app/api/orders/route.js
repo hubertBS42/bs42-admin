@@ -1,6 +1,4 @@
-import Currency from '@/models/Currency'
 import Order from '@/models/Order'
-import Rate from '@/models/Rate'
 import { connectToDB } from '@/utils/database'
 
 export const GET = async request => {
@@ -19,33 +17,16 @@ export const GET = async request => {
 			.sort({ [field]: sort })
 			.lean()
 
-		const fetchCurrencyQuery = Currency.findOne({
-			isActive: true,
-		}).lean()
-
 		const getOrdersCountQuery = Order.count()
 
-		const [orders, currency, count] = await Promise.all([
+		const [orders, count] = await Promise.all([
 			fetchOrdersQuery,
-			fetchCurrencyQuery,
 			getOrdersCountQuery,
 		])
-
-		let currentRate
-
-		if (currency.isCustomRate) {
-			currentRate = currency.customRate
-		} else {
-			currentRate = await Rate.findOne({ currency: currency._id })
-				.sort({ createdAt: -1 })
-				.limit(1)
-			currentRate = currentRate.rate
-		}
 
 		const data = {
 			orders,
 			count,
-			currentRate,
 		}
 
 		return new Response(

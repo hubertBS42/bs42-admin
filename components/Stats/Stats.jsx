@@ -13,16 +13,18 @@ import DetailIcon from '@rsuite/icons/Detail'
 import PeoplesIcon from '@rsuite/icons/Peoples'
 import CouponIcon from '@rsuite/icons/Coupon'
 import ProductStatCard from '../ProductStatCard/ProductStatCard'
+// import RateHistoryCard from '../RateHistoryCard/RateHistoryCard'
 
 const Stats = ({ data }) => {
 	return (
 		<Grid fluid>
 			<Row style={{ marginBottom: '.7em' }}>
-				<Col xs={12}>
+				<Col xs={10}>
 					<ProductStatCard data={data} />
 				</Col>
-				<Col xs={12}>
-					<Panel bordered>
+				<Col xs={14}>
+					{/* <RateHistoryCard /> */}
+					{/* <Panel bordered>
 						<HStack justifyContent='space-between'>
 							<Text weight='semibold' size='md'>
 								Total Orders
@@ -32,7 +34,7 @@ const Stats = ({ data }) => {
 						<Text size={30} weight='extrabold'>
 							100
 						</Text>
-					</Panel>
+					</Panel> */}
 				</Col>
 				{/* <Col xs={8}>
 					<Panel bordered>

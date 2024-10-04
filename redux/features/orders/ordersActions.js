@@ -21,7 +21,7 @@ export const loadOrders = async () => {
 	const {
 		status,
 		message,
-		data: { orders, count, currentRate },
+		data: { orders, count },
 	} = await fetcher('/api/orders')
 
 	if (status === 'error') {
@@ -31,7 +31,6 @@ export const loadOrders = async () => {
 
 	dispatch(setOrders(orders))
 	dispatch(setOrdersCount(count))
-	dispatch(setCurrentRate(currentRate))
 }
 
 export const loadCurrentRate = async () => {

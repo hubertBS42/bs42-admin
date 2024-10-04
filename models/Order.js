@@ -11,6 +11,10 @@ import StockLevel from './StockLevel'
 const OrderSchema = new mongoose.Schema(
 	{
 		orderNumber: { type: String, required: true, unique: true },
+		quotation: {
+			type: mongoose.Schema.Types.ObjectId,
+			ref: 'Quotation',
+		},
 		user: {
 			type: mongoose.Schema.Types.ObjectId,
 			ref: 'User',

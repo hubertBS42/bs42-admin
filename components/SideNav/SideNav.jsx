@@ -10,6 +10,7 @@ import DashboardIcon from '@rsuite/icons/legacy/Dashboard'
 import MessageIcon from '@rsuite/icons/Message'
 import DetailIcon from '@rsuite/icons/Detail'
 import PeoplesIcon from '@rsuite/icons/Peoples'
+import PageIcon from '@rsuite/icons/Page'
 import TagIcon from '@rsuite/icons/Tag'
 import TextImageIcon from '@rsuite/icons/TextImage'
 import CreativeIcon from '@rsuite/icons/Creative'
@@ -25,7 +26,7 @@ const SideNav = () => {
 
 	const links = [
 		{
-			title: 'Dashboard',
+			title: 'Overview',
 			slug: '',
 			eventKey: '1',
 			icon: <DashboardIcon />,
@@ -39,37 +40,44 @@ const SideNav = () => {
 			href: '/orders',
 		},
 		{
+			title: 'Quotations',
+			slug: 'quotations',
+			eventKey: '3',
+			icon: <PageIcon />,
+			href: '/quotations',
+		},
+		{
 			title: 'Applications',
 			slug: 'applications',
-			eventKey: '3',
+			eventKey: '4',
 			icon: <CreativeIcon />,
 			href: '/applications',
 		},
 		{
 			title: 'Manage Users',
 			slug: null,
-			eventKey: '4',
+			eventKey: '5',
 			icon: <PeoplesIcon />,
 			href: null,
 			sublinks: [
 				{
 					title: 'Users',
 					slug: 'users',
-					eventKey: '4-1',
+					eventKey: '5-1',
 					icon: null,
 					href: '/users',
 				},
 				{
 					title: 'Roles',
 					slug: 'roles',
-					eventKey: '4-2',
+					eventKey: '5-2',
 					icon: null,
 					href: '/roles',
 				},
 				{
 					title: 'Resources',
 					slug: 'resources',
-					eventKey: '4-3',
+					eventKey: '5-3',
 					icon: null,
 					href: '/resources',
 				},
@@ -78,56 +86,56 @@ const SideNav = () => {
 		{
 			title: 'Inventory',
 			slug: null,
-			eventKey: '5',
+			eventKey: '6',
 			icon: <TagIcon />,
 			href: null,
 			sublinks: [
 				{
 					title: 'Products',
 					slug: 'products',
-					eventKey: '5-1',
+					eventKey: '6-1',
 					icon: null,
 					href: '/products',
 				},
 				{
 					title: 'Categories',
 					slug: 'categories',
-					eventKey: '5-2',
+					eventKey: '6-2',
 					icon: null,
 					href: '/categories',
 				},
 				{
 					title: 'Brands',
 					slug: 'brands',
-					eventKey: '5-3',
+					eventKey: '6-3',
 					icon: null,
 					href: '/brands',
 				},
 				{
 					title: 'Stock Management',
 					slug: 'stock-management',
-					eventKey: '5-4',
+					eventKey: '6-4',
 					icon: null,
 					href: '/stock-management',
 				},
 				{
 					title: 'Orders',
 					slug: 'inventory-orders',
-					eventKey: '5-5',
+					eventKey: '6-5',
 					icon: null,
 					href: '/inventory-orders',
 				},
 				{
 					title: 'Locations',
 					slug: 'locations',
-					eventKey: '5-6',
+					eventKey: '6-6',
 					icon: null,
 					href: '/locations',
 				},
 				{
 					title: 'Suppliers',
 					slug: 'suppliers',
-					eventKey: '5-7',
+					eventKey: '6-7',
 					icon: null,
 					href: '/suppliers',
 				},
@@ -136,42 +144,42 @@ const SideNav = () => {
 		{
 			title: 'Blogs',
 			slug: 'blogs',
-			eventKey: '6',
+			eventKey: '7',
 			icon: <TextImageIcon />,
 			href: '/blogs',
 		},
 		{
 			title: 'Messages',
 			slug: 'messages',
-			eventKey: '7',
+			eventKey: '8',
 			icon: <MessageIcon />,
 			href: '/messages',
 		},
 		{
 			title: 'Settings',
 			slug: null,
-			eventKey: '8',
+			eventKey: '9',
 			icon: <GearIcon />,
 			href: null,
 			sublinks: [
 				{
 					title: 'Website',
 					slug: null,
-					eventKey: '8-1',
+					eventKey: '9-1',
 					icon: null,
 					href: null,
 					sublinks: [
 						{
 							title: 'Banner Slides',
 							slug: 'banner-slides',
-							eventKey: '8-1-1',
+							eventKey: '9-1-1',
 							icon: null,
 							href: '/settings/website/banner-slides',
 						},
 						{
 							title: 'Projects',
 							slug: 'projects',
-							eventKey: '8-1-2',
+							eventKey: '9-1-2',
 							icon: null,
 							href: '/settings/website/projects',
 						},
@@ -180,35 +188,35 @@ const SideNav = () => {
 				{
 					title: 'Currencies',
 					slug: 'currencies',
-					eventKey: '8-2',
+					eventKey: '9-2',
 					icon: null,
 					href: '/settings/currencies',
 				},
 				{
 					title: 'Email',
 					slug: null,
-					eventKey: '8-3',
+					eventKey: '9-3',
 					icon: null,
 					href: null,
 					sublinks: [
 						{
 							title: 'Outgoing Servers',
 							slug: 'outgoing-servers',
-							eventKey: '8-3-1',
+							eventKey: '9-3-1',
 							icon: null,
 							href: '/settings/email/outgoing-servers',
 						},
 						{
 							title: 'Credentials',
 							slug: 'credentials',
-							eventKey: '8-3-2',
+							eventKey: '9-3-2',
 							icon: null,
 							href: '/settings/email/credentials',
 						},
 						{
 							title: 'Templates',
 							slug: 'templates',
-							eventKey: '8-3-3',
+							eventKey: '9-3-3',
 							icon: null,
 							href: '/settings/email/templates',
 						},

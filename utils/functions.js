@@ -17,7 +17,7 @@ export const generatePageTitle = () => {
 	let pathname = usePathname()
 
 	if (pathname === '/') {
-		pathname = 'dashboard'
+		pathname = 'overview'
 	}
 	const choppedUp = pathname.split('/')
 

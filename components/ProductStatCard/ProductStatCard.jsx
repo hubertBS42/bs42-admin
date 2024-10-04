@@ -15,23 +15,26 @@ const ProductStatCard = ({ filterBy, data }) => {
 			type: 'donut',
 		},
 		labels: data.categories.map(category => category.name),
-		// colors: ['#FF4560', '#00E396', '#FEB019', '#775DD0'],
 		plotOptions: {
 			pie: {
 				donut: {
 					size: '60%',
 					labels: {
 						show: true,
+						value: {
+							color: 'white',
+							fontWeight: 900,
+							fontSize: 22,
+						},
 						total: {
 							show: true,
+							showAlways: true,
+							fontSize: 16,
 							label: 'Total',
+							color: 'white',
 							formatter: function (w) {
 								// Calculate total of all series
 								return w.globals.seriesTotals.reduce((a, b) => a + b, 0)
-							},
-							style: {
-								fontSize: '22px',
-								fontWeight: 'bold',
 							},
 						},
 					},
@@ -92,7 +95,7 @@ const ProductStatCard = ({ filterBy, data }) => {
 		<Panel bordered>
 			<HStack justifyContent='space-between'>
 				<Text weight='semibold' size='lg'>
-					Products overview
+					Products
 				</Text>
 
 				<SelectPicker
