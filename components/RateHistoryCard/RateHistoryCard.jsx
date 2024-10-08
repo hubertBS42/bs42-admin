@@ -2,41 +2,43 @@
 import { HStack, Panel, Text } from 'rsuite'
 import dynamic from 'next/dynamic'
 import { useState } from 'react'
+import { filterRates } from '@/utils/functions'
 const ApexChart = dynamic(() => import('react-apexcharts'), {
 	ssr: false,
 })
 
-const RateHistoryCard = () => {
+const RateHistoryCard = ({ data }) => {
+	const filteredHistory = filterRates(data)
+
+	const [series, setSeries] = useState([
+		{
+			name: 'Exchange rate',
+			data: filteredHistory.map(item => [item.createdAt, item.rate]),
+		},
+	])
+
 	const [options, setOptions] = useState({
 		chart: {
-			type: 'line',
+			id: 'area-datetime',
+			type: 'area',
+			height: 350,
 			zoom: {
-				enabled: false,
+				autoScaleYaxis: true,
 			},
 		},
-		tooltip: {
-			theme: 'dark', // Use 'light' or 'dark' theme for tooltip
-			// x: {
-			// 	format: 'dd MMM yyyy HH:mm', // Customize the format for date and time
-			// },
-			// style: {
-			// 	fontSize: '14px',
-			// 	fontFamily: 'Arial',
-			// 	colors: ['#FF5733'], // Customize the text color inside the tooltip
-			// },
+
+		dataLabels: {
+			enabled: false,
+		},
+		markers: {
+			size: 0,
+			style: 'hollow',
 		},
 		xaxis: {
 			type: 'datetime',
-			categories: [],
 			labels: {
 				style: {
 					colors: 'white',
-				},
-			},
-			title: {
-				text: 'Dates',
-				style: {
-					color: 'white',
 				},
 			},
 		},
@@ -46,26 +48,29 @@ const RateHistoryCard = () => {
 					colors: 'white',
 				},
 			},
-			title: {
-				text: 'Rates',
-				style: {
-					color: 'white',
-				},
+		},
+		tooltip: {
+			theme: 'dark',
+			x: {
+				format: 'dd MMM yyyy',
 			},
 		},
+		fill: {
+			type: 'gradient',
+		},
 	})
-	const [series, setSeries] = useState([])
+
 	return (
 		<Panel bordered>
 			<HStack justifyContent='space-between'>
 				<Text weight='semibold' size='lg'>
-					Dollar to Cedi Rates
+					Dollar to cedi exchange rate
 				</Text>
 			</HStack>
 			<ApexChart
 				options={options}
 				series={series}
-				type='line'
+				type='area'
 				width='100%'
 				// height={400}
 			/>
