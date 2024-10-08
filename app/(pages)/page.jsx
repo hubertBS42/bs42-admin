@@ -3,7 +3,7 @@ import { fetcher } from '@/utils/functions'
 
 const Dashboard = async () => {
 	const { status, data } = await fetcher(
-		'http://localhost:3000/api/stats/all',
+		'https://portal.bs42.net/api/stats/all',
 		{ cache: 'no-store' }
 	)
 
