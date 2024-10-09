@@ -22,7 +22,6 @@ import { useRouter } from 'next/navigation'
 const { Column, HeaderCell, Cell } = Table
 
 const TopSellersCard = ({ data, allCategories, rate }) => {
-	console.log(rate)
 	const router = useRouter()
 	const categories = formatForTreePicker(allCategories)
 	return (
@@ -46,22 +45,22 @@ const TopSellersCard = ({ data, allCategories, rate }) => {
 					</Cell>
 				</Column> */}
 
-				<Column flexGrow={1} fixed verticalAlign='middle'>
+				<Column fixed verticalAlign='middle'>
 					<HeaderCell>Sold</HeaderCell>
 					<Cell dataKey='totalQuantity' />
 				</Column>
 
-				<Column flexGrow={1} fixed verticalAlign='middle'>
+				<Column fixed verticalAlign='middle'>
 					<HeaderCell>In stock</HeaderCell>
 					<Cell dataKey='count' />
 				</Column>
 
-				<Column flexGrow={1} fixed verticalAlign='middle'>
+				{/* <Column flexGrow={1} fixed verticalAlign='middle'>
 					<HeaderCell>Sell price</HeaderCell>
 					<Cell>
 						{rowData => `GHS ${roundMoney(rowData.price * rate)}`}
 					</Cell>
-				</Column>
+				</Column> */}
 			</Table>
 		</Panel>
 	)

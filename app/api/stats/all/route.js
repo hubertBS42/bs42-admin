@@ -38,14 +38,49 @@ export const GET = async request => {
 	try {
 		await connectToDB()
 
-		const currency = await Currency.findOne({ isActive: true }).lean()
+		const activeCurrencyQuery = Currency.findOne({
+			isActive: true,
+		}).lean()
+
+		const defaultLocationQuery = Location.findOne({
+			isDefault: true,
+		}).lean({ autopopulate: false })
+
+		const allCategoriesQuery = Category.find().lean({
+			autopopulate: false,
+		})
+
+		const allProductsQuery = Product.find({ isActive: true })
+			.select('category')
+			.lean({ autopopulate: false })
+
+		const recentOrdersQuery = Order.find({})
+			.sort({ createdAt: 'desc' })
+			.limit(5)
+			.lean()
+
+		const [
+			activeCurrency,
+			allCategories,
+			allProducts,
+			orders,
+			defaultLocation,
+		] = await Promise.all([
+			activeCurrencyQuery,
+			allCategoriesQuery,
+			allProductsQuery,
+			recentOrdersQuery,
+			defaultLocationQuery,
+		])
 
 		let rate
 
-		if (currency.isCustomRate) {
-			rate = currency.customRate
+		if (activeCurrency.isCustomRate) {
+			rate = activeCurrency.customRate
 		} else {
-			const document = await Rate.findOne({ currency })
+			const document = await Rate.findOne({
+				currency: activeCurrency._id,
+			})
 				.sort({ createdAt: -1 })
 				.limit(1)
 
@@ -53,35 +88,6 @@ export const GET = async request => {
 		}
 
 		// PRODUCT CATEGORIES STATS
-		const allCategoriesQuery = Category.find()
-			// .select('name parent')
-			.lean({
-				autopopulate: false,
-			})
-
-		const allProductsQuery = Product.find({ isActive: true })
-			.select('category')
-			.lean({ autopopulate: false })
-
-		const activeCurrencyQuery = Currency.findOne({
-			isActive: true,
-		})
-			.select('_id')
-			.lean()
-
-		const recentOrdersQuery = Order.find({})
-			.sort({ createdAt: 'desc' })
-			.limit(5)
-			.lean()
-
-		const [allCategories, allProducts, activeCurrency, orders] =
-			await Promise.all([
-				allCategoriesQuery,
-				allProductsQuery,
-				activeCurrencyQuery,
-				recentOrdersQuery,
-			])
-
 		const strippedCategories = allCategories.map(category => ({
 			...category,
 			_id: category._id.toString(),
@@ -135,6 +141,7 @@ export const GET = async request => {
 				// Filter orders to only include those made in the last 7 days
 				$match: {
 					createdAt: { $gte: sevenDaysAgo },
+					'status.type': { $in: ['pickedUp', 'delivered'] },
 				},
 			},
 			{
@@ -229,11 +236,22 @@ export const GET = async request => {
 				$unwind: '$brandDetails',
 			},
 			{
-				// Lookup stock count from the stocklevels collection
+				// Lookup stock count from the stocklevels collection based on productId and location
 				$lookup: {
 					from: 'stocklevels', // Stock levels collection name
-					localField: '_id', // _id from the product aggregation (productId)
-					foreignField: 'product', // The 'productId' field in the stocklevels collection
+					let: { productId: '$_id' }, // Pass the productId as a variable
+					pipeline: [
+						{
+							$match: {
+								$expr: {
+									$and: [
+										{ $eq: ['$product', '$$productId'] }, // Match productId
+										{ $eq: ['$location', defaultLocation._id] }, // Match the default location
+									],
+								},
+							},
+						},
+					],
 					as: 'stockLevelDetails', // Output field name for the stock levels
 				},
 			},
@@ -264,7 +282,7 @@ export const GET = async request => {
 			allCategories,
 			rateHistory: history,
 			recentOrders: orders,
-			weeklySales: result,
+			dailySales: result,
 		}
 
 		return new Response(

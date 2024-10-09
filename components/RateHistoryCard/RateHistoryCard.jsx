@@ -23,7 +23,8 @@ const RateHistoryCard = ({ data }) => {
 			type: 'area',
 			height: 350,
 			zoom: {
-				autoScaleYaxis: true,
+				// autoScaleYaxis: true,
+				enabled: false,
 			},
 		},
 
@@ -61,12 +62,7 @@ const RateHistoryCard = ({ data }) => {
 	})
 
 	return (
-		<Panel bordered>
-			<HStack justifyContent='space-between'>
-				<Text weight='semibold' size='lg'>
-					Dollar to cedi exchange rate
-				</Text>
-			</HStack>
+		<Panel header='Exchange rate' bordered>
 			<ApexChart
 				options={options}
 				series={series}

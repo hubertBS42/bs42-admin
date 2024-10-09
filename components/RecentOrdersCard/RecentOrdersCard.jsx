@@ -17,14 +17,14 @@ const RecentOrdersCard = ({ data }) => {
 			header={
 				<Stack justifyContent='space-between'>
 					<span>Recent Orders</span>
-					<IconButton
+					{/* <IconButton
 						icon={<PlusIcon />}
 						circle
 						size='xs'
 						appearance='primary'
 						as={Link}
 						href='/orders/new'
-					/>
+					/> */}
 				</Stack>
 			}
 			bordered
@@ -32,7 +32,7 @@ const RecentOrdersCard = ({ data }) => {
 		>
 			<Table autoHeight data={data} wordWrap='break-word'>
 				<Column flexGrow={1} fixed verticalAlign='middle'>
-					<HeaderCell>Order number</HeaderCell>
+					<HeaderCell>Order</HeaderCell>
 					<Cell dataKey='orderNumber' />
 				</Column>
 

@@ -1,42 +1,138 @@
 'use client'
-import { HStack, Panel, Text } from 'rsuite'
+import { DateRangePicker, HStack, Panel, Text } from 'rsuite'
 import dynamic from 'next/dynamic'
 import { useState } from 'react'
-import { filterRates, roundMoney } from '@/utils/functions'
+import { fetcher, filterRates, roundMoney } from '@/utils/functions'
+import { subDays } from 'date-fns'
+import { toast } from 'react-toastify'
 const ApexChart = dynamic(() => import('react-apexcharts'), {
 	ssr: false,
 })
 
 const TotalSalesCard = ({ data }) => {
+	const last7DaysStart = subDays(new Date(), 6) // Start of last 7 days
+	const last7DaysEnd = new Date() // End of last 7 days (today)
+
+	const [dateRange, setDateRange] = useState([
+		last7DaysStart,
+		last7DaysEnd,
+	])
+	const [isLoading, setIsLoading] = useState(false)
+
+	const loadSales = async input => {
+		setIsLoading(true)
+		setDateRange(input)
+
+		const { status, message, data } = await fetcher(
+			`/api/stats/sales?start=${input[0]}&end=${input[1]}`
+		)
+
+		setIsLoading(false)
+
+		if (status === 'error') return toast.error('Failed to load data.')
+
+		setSeries(prev => {
+			const preparedData = {
+				name: 'Total sales',
+				data: data.map(item => [
+					item._id,
+					roundMoney(item.totalSales * item.rate),
+				]),
+			}
+			return [preparedData]
+		})
+	}
+	// const [series, setSeries] = useState([
+	// 	{
+	// 		name: 'Total Sales',
+	// 		data: data.map(item => roundMoney(item.totalSales * item.rate)),
+	// 	},
+	// ])
+
+	// const [options, setOptions] = useState({
+	// 	chart: {
+	// 		type: 'bar',
+	// 		// height: 100,
+	// 	},
+	// 	plotOptions: {
+	// 		bar: {
+	// 			horizontal: false,
+	// 			columnWidth: '55%',
+	// 			endingShape: 'rounded',
+	// 		},
+	// 	},
+	// 	dataLabels: {
+	// 		enabled: false,
+	// 	},
+	// 	stroke: {
+	// 		show: true,
+	// 		width: 2,
+	// 		colors: ['transparent'],
+	// 	},
+	// 	xaxis: {
+	// 		categories: data.map(item => item._id),
+	// 		labels: {
+	// 			style: {
+	// 				colors: 'white',
+	// 			},
+	// 		},
+	// 	},
+	// 	yaxis: {
+	// 		title: {
+	// 			text: 'Total Sales (GHS)',
+	// 			style: {
+	// 				color: 'white',
+	// 			},
+	// 		},
+	// 		labels: {
+	// 			style: {
+	// 				colors: 'white',
+	// 			},
+	// 		},
+	// 	},
+	// 	fill: {
+	// 		opacity: 1,
+	// 	},
+	// 	tooltip: {
+	// 		theme: 'dark',
+	// 		y: {
+	// 			formatter: function (val) {
+	// 				return 'GHS ' + val
+	// 			},
+	// 		},
+	// 	},
+	// })
+
 	const [series, setSeries] = useState([
 		{
-			name: 'Total Sales',
-			data: data.map(item => roundMoney(item.totalSales * item.rate)),
+			name: 'Total sales',
+			data: data.map(item => [
+				item._id,
+				roundMoney(item.totalSales * item.rate),
+			]),
 		},
 	])
 
 	const [options, setOptions] = useState({
 		chart: {
-			type: 'bar',
-			height: 350,
-		},
-		plotOptions: {
-			bar: {
-				horizontal: false,
-				columnWidth: '55%',
-				endingShape: 'rounded',
+			id: 'area-datetime',
+			type: 'area',
+			// height: 350,
+			zoom: {
+				// autoScaleYaxis: true,
+				enabled: false,
 			},
 		},
+
 		dataLabels: {
 			enabled: false,
 		},
-		stroke: {
-			show: true,
-			width: 2,
-			colors: ['transparent'],
+		markers: {
+			size: 0,
+			style: 'hollow',
 		},
 		xaxis: {
-			categories: data.map(item => item._id),
+			type: 'datetime',
 			labels: {
 				style: {
 					colors: 'white',
@@ -44,20 +140,11 @@ const TotalSalesCard = ({ data }) => {
 			},
 		},
 		yaxis: {
-			title: {
-				text: 'Total Sales (GHS)',
-				style: {
-					color: 'white',
-				},
-			},
 			labels: {
 				style: {
 					colors: 'white',
 				},
 			},
-		},
-		fill: {
-			opacity: 1,
 		},
 		tooltip: {
 			theme: 'dark',
@@ -66,22 +153,40 @@ const TotalSalesCard = ({ data }) => {
 					return 'GHS ' + val
 				},
 			},
+			// x: {
+			// 	format: 'dd MMM yyyy',
+			// },
+		},
+		fill: {
+			type: 'gradient',
 		},
 	})
 
 	return (
-		<Panel bordered>
-			<HStack justifyContent='space-between'>
-				<Text weight='semibold' size='lg'>
-					Total sales
-				</Text>
-			</HStack>
+		<Panel
+			header={
+				<HStack justifyContent='space-between'>
+					<span>Total sales</span>
+
+					<HStack spacing={10}>
+						<Text size='md'>Period:</Text>
+						<DateRangePicker
+							showHeader={false}
+							value={dateRange}
+							onChange={loadSales}
+							cleanable={false}
+							disabled={isLoading}
+						/>
+					</HStack>
+				</HStack>
+			}
+			bordered
+		>
 			<ApexChart
 				options={options}
 				series={series}
-				type='bar'
+				type='area'
 				width='100%'
-				// height={400}
 			/>
 		</Panel>
 	)
