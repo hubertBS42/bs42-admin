@@ -168,16 +168,14 @@ const TotalSalesCard = ({ data }) => {
 				<HStack justifyContent='space-between'>
 					<span>Total sales</span>
 
-					<HStack spacing={10}>
-						<Text size='md'>Period:</Text>
-						<DateRangePicker
-							showHeader={false}
-							value={dateRange}
-							onChange={loadSales}
-							cleanable={false}
-							disabled={isLoading}
-						/>
-					</HStack>
+					<DateRangePicker
+						showHeader={false}
+						value={dateRange}
+						onChange={loadSales}
+						cleanable={false}
+						disabled={isLoading}
+						placement='bottomEnd'
+					/>
 				</HStack>
 			}
 			bordered
