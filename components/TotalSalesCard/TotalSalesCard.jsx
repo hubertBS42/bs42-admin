@@ -1,7 +1,7 @@
 'use client'
 import { DateRangePicker, HStack, Panel, Text } from 'rsuite'
 import dynamic from 'next/dynamic'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { fetcher, filterRates, roundMoney } from '@/utils/functions'
 import { subDays } from 'date-fns'
 import { toast } from 'react-toastify'
@@ -18,6 +18,20 @@ const TotalSalesCard = ({ data }) => {
 		last7DaysEnd,
 	])
 	const [isLoading, setIsLoading] = useState(false)
+	const [sumTotal, setSumTotal] = useState(0)
+
+	const calculateTotalSum = sales => {
+		const sum = sales.reduce(
+			(sum, sale) => sum + sale.totalSales * sale.rate,
+			0
+		)
+
+		setSumTotal(sum)
+	}
+
+	useEffect(() => {
+		calculateTotalSum(data)
+	}, [])
 
 	const loadSales = async input => {
 		setIsLoading(true)
@@ -31,6 +45,7 @@ const TotalSalesCard = ({ data }) => {
 
 		if (status === 'error') return toast.error('Failed to load data.')
 
+		calculateTotalSum(data)
 		setSeries(prev => {
 			const preparedData = {
 				name: 'Total sales',
@@ -166,7 +181,10 @@ const TotalSalesCard = ({ data }) => {
 		<Panel
 			header={
 				<HStack justifyContent='space-between'>
-					<span>Total sales</span>
+					<span>
+						Total sales:{' '}
+						{isLoading ? 'loading...' : `GHS ${roundMoney(sumTotal)}`}
+					</span>
 
 					<DateRangePicker
 						showHeader={false}

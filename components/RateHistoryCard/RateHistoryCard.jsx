@@ -1,8 +1,8 @@
 'use client'
 import { DateRangePicker, HStack, Panel, Text } from 'rsuite'
 import dynamic from 'next/dynamic'
-import { useState } from 'react'
-import { fetcher, filterRates } from '@/utils/functions'
+import { useEffect, useState } from 'react'
+import { fetcher, filterRates, roundMoney } from '@/utils/functions'
 import { toast } from 'react-toastify'
 import { subDays } from 'date-fns'
 const ApexChart = dynamic(() => import('react-apexcharts'), {
@@ -18,6 +18,14 @@ const RateHistoryCard = ({ data }) => {
 		last30DaysEnd,
 	])
 	const [isLoading, setIsLoading] = useState(false)
+	const [rateDifference, setRateDifference] = useState(0)
+
+	const calculateRateDifference = rates => {
+		const oldestRate = rates[rates.length - 1].rate
+		const mostRecentRate = rates[0].rate
+		const difference = mostRecentRate - oldestRate
+		setRateDifference(roundMoney(difference))
+	}
 
 	const loadRates = async input => {
 		setIsLoading(true)
@@ -36,6 +44,7 @@ const RateHistoryCard = ({ data }) => {
 		if (status === 'error') return toast.error('Failed to load data.')
 
 		const filteredHistory = filterRates(currencyRates)
+		calculateRateDifference(filteredHistory)
 
 		setSeries(prev => {
 			const preparedData = {
@@ -47,6 +56,10 @@ const RateHistoryCard = ({ data }) => {
 	}
 
 	const filteredHistory = filterRates(data)
+
+	useEffect(() => {
+		calculateRateDifference(filteredHistory)
+	}, [])
 
 	const [series, setSeries] = useState([
 		{
@@ -103,7 +116,7 @@ const RateHistoryCard = ({ data }) => {
 		<Panel
 			header={
 				<HStack justifyContent='space-between'>
-					<span>Exchange rate</span>
+					<span>Exchange rate: {rateDifference}</span>
 
 					<DateRangePicker
 						showHeader={false}
