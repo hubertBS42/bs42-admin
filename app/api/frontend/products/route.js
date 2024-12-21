@@ -170,7 +170,7 @@ export const GET = async request => {
 			// 	},
 			// })
 			.select(
-				'title slug brand sellPrice resellerPrice images category rating onSale featured discount isActive createdAt'
+				'title slug brand sellPrice resellerPrice isQuantityPreset quantityPresets images category rating onSale featured discount isActive createdAt'
 			)
 			.lean({ autopopulate: true })
 
